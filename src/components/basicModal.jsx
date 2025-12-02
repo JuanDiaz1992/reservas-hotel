@@ -1,26 +1,26 @@
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
-  Button,
 } from "@heroui/react";
+import { useState } from "react"
 
 export default function BasicModal({ isOpen, onOpenChange, Content, size = "md" }) {
+  const [scrollBehavior, setScrollBehavior] = useState("inside");
   return (
     <Modal
         size={size}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         backdrop="opaque"
+        scrollBehavior={scrollBehavior}
         classNames={{
           body: "py-6",
           backdrop: "bg-black/60 backdrop-opacity-90",
           base: "border-gray-200 bg-white text-gray-900",
           header: "border-b-[1px] border-gray-200",
           footer: "border-t-[1px] border-gray-200",
-          closeButton: "hover:bg-gray-100 active:bg-gray-200",
+          closeButton: "hover:bg-gray-100 active:bg-gray-200 cursor-pointer",
         }}
         >
       <ModalContent>

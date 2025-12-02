@@ -16,6 +16,7 @@ export default function ReservationForm({
   onSearch,
   setResults,
   isSearching = false,
+  setGuests
 }) {
   const [formData, setFormData] = useState({
     checkIn: undefined,
@@ -36,6 +37,7 @@ export default function ReservationForm({
     }
 
     console.log("Búsqueda de disponibilidad:", jsData);
+    setGuests(formData.guests);
     setResults(sampleRooms);
 
     if (onSearch) {

@@ -5,7 +5,8 @@ import RoomListing from "../components/roomListing.jsx";
 export default function Home() {
   const [hasSearchResults, setHasSearchResults] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [results, setResults] = useState([])
+  const [results, setResults] = useState([]);
+  const [guests, setGuests] = useState(0);
 
   const handleSearch = async (searchData) => {
     setIsSearching(true);
@@ -48,17 +49,18 @@ export default function Home() {
               onSearch={handleSearch}
               isSearching={isSearching}
               setResults={setResults}
+              setGuests={setGuests}
             />
           </div>
         </div>
       </section>
       {hasSearchResults && (
         <section id="results" className="w-full">
-          <RoomListing results={results}/>
+          <RoomListing results={results} guests={guests}/>
         </section>
       )}
       <section className="min-h-[800px] w-full">
-        <h1>Que onda carnak</h1>
+        <h1>Esto es otra sección</h1>
       </section>
     </>
   );
