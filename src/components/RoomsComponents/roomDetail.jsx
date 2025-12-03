@@ -10,7 +10,7 @@ import {
   Star
 } from "lucide-react";
 import { Button, Divider, Chip as HeroChip } from "@heroui/react";
-import ImageGallery from "./imageGallery";
+import ImageGallery from "../imageGallery";
 
 const iconMap = {
   wifi: Wifi,

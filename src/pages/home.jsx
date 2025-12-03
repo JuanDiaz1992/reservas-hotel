@@ -1,6 +1,6 @@
-import ReservationForm from "../components/reservationForm.jsx";
+import ReservationForm from "../components/reservationForm";
 import { useState } from "react";
-import RoomListing from "../components/roomListing.jsx";
+import RoomListing from "../components/RoomsComponents/roomListing";
 
 export default function Home() {
   const [hasSearchResults, setHasSearchResults] = useState(false);
