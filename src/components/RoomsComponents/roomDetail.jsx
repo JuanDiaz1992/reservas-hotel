@@ -7,7 +7,8 @@ import {
   Coffee,
   Dumbbell,
   CheckCircle2,
-  Star
+  Star,
+  DoorOpen
 } from "lucide-react";
 import { Button, Divider, Chip as HeroChip } from "@heroui/react";
 import ImageGallery from "../imageGallery";
@@ -57,6 +58,10 @@ export default function RoomDetail({ room }) {
               <Square className="w-4 h-4" />
               <span>{room.size}m²</span>
             </div>
+            <div className="flex items-center gap-1 bg-[#5C6046]/10 text-[#5C6046] px-3 py-1 rounded-full font-medium">
+              <DoorOpen className="w-4 h-4" />
+              <span>{room.inventory} disponibles</span>
+            </div>
           </div>
 
           <p className="text-gray-600 leading-relaxed font-light text-sm md:text-base">
@@ -100,9 +105,6 @@ export default function RoomDetail({ room }) {
                 </span>
               </div>
             </div>
-            <Button className="w-full sm:w-auto bg-[#5C6046] text-white px-8 py-6">
-              Reservar Ahora
-            </Button>
         </div>
       </div>
     </div>

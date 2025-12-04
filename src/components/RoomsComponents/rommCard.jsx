@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Users,
   Square,
@@ -6,8 +7,10 @@ import {
   Coffee,
   Dumbbell,
   CheckCircle2,
+  Minus,
+  Plus,
 } from "lucide-react";
-import { Button, Card, CardBody, CardFooter, Chip } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter, Chip, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { useCurrency } from "../../context/currencyContext";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -29,11 +32,161 @@ const getIconComponent = (iconName) => {
   return iconMap[iconName] || iconMap.default;
 };
 
+const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+
+  const totalGuests = adults + children;
+
+  const extraAdultsCount = Math.max(0, adults - 2);
+  const remainingFreeSlots = Math.max(0, 2 - adults);
+  const extraChildrenCount = Math.max(0, children - remainingFreeSlots);
+
+  const extraAdultCost = extraAdultsCount * (room.extraAdult || 0);
+  const extraChildCost = extraChildrenCount * (room.extraChild || 0);
+  
+  const previewPricePerNight = room.price + extraAdultCost + extraChildCost;
+  
+  // Variable auxiliar para saber si hay extras
+  const hasExtras = extraAdultsCount > 0 || extraChildrenCount > 0;
+
+  const handleConfirm = () => {
+    onReserve({
+      ...room,
+      selectedExtras: {
+        adults: extraAdultsCount,    
+        children: extraChildrenCount 
+      },
+      extraAdult: room.extraAdult || 0,
+      extraChild: room.extraChild || 0,
+    });
+    setIsOpen(false);
+  };
+
+  return (
+    <Popover 
+      isOpen={isOpen} 
+      onOpenChange={(open) => setIsOpen(open)}
+      placement="left" 
+      offset={10}
+      showArrow
+      // AGREGA ESTO: Evita que el popover intente voltearse si cambia el tamaño
+      shouldFlip={false} 
+    >
+      <PopoverTrigger>
+        <Button
+          className="bg-[#5C6046] hover:bg-[#4a4e38] text-white px-6"
+          size="sm"
+        >
+          Reservar
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-4 w-72">
+        <div className="w-full space-y-4">
+          <div className="space-y-1">
+            <h4 className="font-bold text-medium">Seleccionar Huéspedes</h4>
+            <p className="text-xs text-gray-500">Capacidad máxima: {room.capacity} personas</p>
+          </div>
+
+          {/* ... (Tus controles de + y - se mantienen igual) ... */}
+           <div className="space-y-3">
+            {/* Adultos */}
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Adultos</span>
+              <div className="flex items-center gap-2">
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  className="h-6 w-6 min-w-6"
+                  isDisabled={adults <= 1}
+                  onPress={() => setAdults(prev => prev - 1)}
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="text-sm w-4 text-center">{adults}</span>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  className="h-6 w-6 min-w-6"
+                  isDisabled={totalGuests >= room.capacity}
+                  onPress={() => setAdults(prev => prev + 1)}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Niños */}
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Niños</span>
+              <div className="flex items-center gap-2">
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  className="h-6 w-6 min-w-6"
+                  isDisabled={children <= 0}
+                  onPress={() => setChildren(prev => prev - 1)}
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="text-sm w-4 text-center">{children}</span>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  className="h-6 w-6 min-w-6"
+                  isDisabled={totalGuests >= room.capacity}
+                  onPress={() => setChildren(prev => prev + 1)}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-gray-100">
+             <div className="flex justify-between items-end mb-3">
+                <div className="flex flex-col justify-center h-8"> {/* Fijamos altura mínima al contenedor */}
+                    <span className="text-xs text-gray-500 leading-none">Total por noche</span>
+                    
+                    {/* CAMBIO CLAVE: Usamos opacity en lugar de quitar el elemento del DOM */}
+                    {/* Esto mantiene el espacio ocupado aunque el texto sea invisible */}
+                    <span className={`text-[10px] text-orange-600 font-medium leading-tight transition-opacity ${
+                        hasExtras ? "opacity-100" : "opacity-0"
+                    }`}>
+                       (Incluye extras)
+                       {/* Texto de relleno invisible para mantener altura si no hay extras */}
+                       {!hasExtras && <span className="invisible">.</span>} 
+                    </span>
+                    
+                </div>
+                <span className="text-lg font-bold text-[#5C6046]">{formatPrice(previewPricePerNight)}</span>
+             </div>
+             <Button 
+               className="w-full bg-[#5C6046] text-white" 
+               onPress={handleConfirm}
+             >
+               Confirmar Reserva
+             </Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+
 export default function RoomCard({ room, onOpenModal, onReserve }) {
   const { formatPrice } = useCurrency();
+  
   return (
     <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/95 backdrop-blur-sm py-0">
       <CardBody className="p-0 overflow-hidden">
+        {/* Swiper Slider */}
         <div className="relative h-56 group/slider">
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
@@ -78,7 +231,7 @@ export default function RoomCard({ room, onOpenModal, onReserve }) {
 
           <div className="absolute top-4 right-4 z-10 pointer-events-none">
             <Chip className="bg-[#5C6046] text-white border-0 text-xs shadow-sm">
-              {room.available} disp.
+              {room.inventory} disp.
             </Chip>
           </div>
 
@@ -136,13 +289,8 @@ export default function RoomCard({ room, onOpenModal, onReserve }) {
               por noche
             </span>
           </div>
-          <Button
-            className="bg-[#5C6046] hover:bg-[#4a4e38] text-white px-6"
-            size="sm"
-            onPress={onReserve}
-          >
-            Reservar
-          </Button>
+          
+          <GuestSelectionPopover room={room} onReserve={onReserve} formatPrice={formatPrice} />
         </CardFooter>
       </CardBody>
     </Card>

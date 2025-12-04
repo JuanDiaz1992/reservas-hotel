@@ -7,6 +7,7 @@ import RoomDetail from "./roomDetail";
 import ReservationCart from "../reservationCart";
 import RoomCard from "./rommCard";
 import { useCart } from "../../context/cartContext";
+
 export default function RoomListing({ results, guests = 1 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -15,8 +16,9 @@ export default function RoomListing({ results, guests = 1 }) {
   const rooms = results;
   const showCapacityAlert = guests > 2;
 
-  const handleReserve = (room) => {
-    addToCart(room);
+  const handleReserve = (roomWithExtras) => {
+    console.log("Datos recibidos en RoomListing:", roomWithExtras); // Para que veas que llega bien
+    addToCart(roomWithExtras);
     onClose();
   };
 
@@ -68,9 +70,7 @@ export default function RoomListing({ results, guests = 1 }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
 
-          <div
-            className={`${getRoomContainerSpan()} transition-all duration-500`}
-          >
+          <div className={`${getRoomContainerSpan()} transition-all duration-500`}>
             {rooms.length === 0 ? (
               <div className="flex justify-center py-12 bg-white/50 rounded-2xl border border-dashed border-gray-300">
                 <div className="w-full max-w-2xl text-center px-4">
@@ -102,7 +102,7 @@ export default function RoomListing({ results, guests = 1 }) {
                     key={room.id}
                     room={room}
                     onOpenModal={() => handleOpenModal(room)}
-                    onReserve={() => handleReserve(room)}
+                    onReserve={(updatedRoomData) => handleReserve(updatedRoomData)}
                   />
                 ))}
               </div>
@@ -128,18 +128,16 @@ export default function RoomListing({ results, guests = 1 }) {
           )}
         />
 
-        {/* Carrito Móvil Flotante */}
         {isSidebarOpen && cart.length > 0 && (
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 lg:hidden z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
             <div className="flex justify-between items-center mb-2">
               <span className="font-bold text-[#5C6046]">
-                 {/* Aquí deberías importar el calculateTotal del contexto si quieres mostrar el total, o hacerlo simple */}
                  Ver Carrito
               </span>
               <Button
                 size="sm"
                 variant="flat"
-                onPress={() => setisSidebarOpen(false)}
+                onPress={() => setIsSidebarOpen(false)}
               >
                 Ocultar
               </Button>
