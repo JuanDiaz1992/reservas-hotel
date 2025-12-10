@@ -64,17 +64,15 @@ export const CartProvider = ({ children }) => {
 
       if (existingIndex >= 0) {
         const updatedCart = [...prevCart];
-        
+
         updatedCart[existingIndex] = {
           ...updatedCart[existingIndex],
           ...room,
-          quantity: updatedCart[existingIndex].quantity
+          quantity: updatedCart[existingIndex].quantity,
         };
-        
+
         return updatedCart;
       }
-
-      // Si no existe, lo agregamos como nuevo
       return [...prevCart, { ...room, quantity: 1 }];
     });
     setIsSidebarOpen(true);
@@ -102,8 +100,20 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  const [guestCount, setGuestCount] = useState(() => {
+    try {
+      const savedGuests = localStorage.getItem("booking_guests");
+      return savedGuests ? parseInt(savedGuests) : 2;
+    } catch (error) {
+      return 2;
+    }
+  });
+
   useEffect(() => {
-  }, [dateRange]);
+    localStorage.setItem("booking_guests", guestCount);
+  }, [guestCount]);
+
+  useEffect(() => {}, [dateRange]);
 
   return (
     <CartContext.Provider
@@ -118,6 +128,8 @@ export const CartProvider = ({ children }) => {
         setDateRange,
         totalNights,
         updateQuantity,
+        guestCount,
+        setGuestCount,
       }}
     >
       {children}

@@ -120,7 +120,7 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
             </div>
 
             {/* Niños */}
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Niños</span>
               <div className="flex items-center gap-2">
                 <Button
@@ -145,7 +145,7 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
                   <Plus className="h-3 w-3" />
                 </Button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="pt-2 border-t border-gray-100">

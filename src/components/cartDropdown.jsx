@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Popover,
   PopoverTrigger,
@@ -11,39 +11,51 @@ import { useCart } from "../context/cartContext";
 import BasicCart from "./basicCart";
 
 export default function CartDropdown() {
-  const { cart, setIsSidebarOpen } = useCart();
+  const { cart, setIsSidebarOpen, isSidebarOpen } = useCart();
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    if (isSidebarOpen) {
+      setIsOpen(false);
+    }
+  }, [isSidebarOpen]);
+
+  const handleOpenChange = (open) => {
+    setIsOpen(open);
+    if (open) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   if (!cart || cart.length === 0) return null;
-  if(isOpen) setIsSidebarOpen(false);
 
   return (
     <Popover
       isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
+      onOpenChange={handleOpenChange}
       placement="bottom-end"
       offset={10}
       showArrow={true}
       shouldBlockScroll={false}
       classNames={{
         base: "before:bg-white",
-        content: "p-0 w-[320px] sm:w-[380px] border border-white/20 shadow-2xl bg-white/95 backdrop-blur-xl z-[9999]",
+        content:
+          "p-0 w-[320px] sm:w-[380px] border border-white/20 shadow-2xl bg-white/95 backdrop-blur-xl z-[9999]",
       }}
     >
       <PopoverTrigger>
         <div className="flex items-center cursor-pointer select-none">
           <Badge
             content={cart.length}
-            color="danger"
             shape="circle"
-            className="border-none"
+            className="border-none bg-[#5C6046] text-white font-medium shadow-sm"
           >
             <Button
               isIconOnly
               variant="light"
               className="text-white data-[hover=true]:bg-white/10 min-w-10 w-10 h-10"
               aria-label="Ver carrito"
-              onPress={() => setIsOpen(!isOpen)}
+              onPress={() => handleOpenChange(!isOpen)}
             >
               <ShoppingBag className="w-5 h-5" />
             </Button>
@@ -52,7 +64,6 @@ export default function CartDropdown() {
       </PopoverTrigger>
 
       <PopoverContent>
-        {/* --- HEADER --- */}
         <div className="bg-[#5C6046] w-full rounded-t-xl text-white p-4 flex items-center justify-between shadow-sm z-10 relative">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-4 h-4" />
@@ -63,7 +74,7 @@ export default function CartDropdown() {
           </span>
         </div>
 
-        <BasicCart 
+        <BasicCart
           checkoutLabel="Pagar Ahora"
           onCheckout={(data) => {
             console.log("Ir al checkout", data);

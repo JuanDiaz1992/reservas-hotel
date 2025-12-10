@@ -17,7 +17,7 @@ export default function RoomListing({ results, guests = 1 }) {
   const showCapacityAlert = guests > 2;
 
   const handleReserve = (roomWithExtras) => {
-    console.log("Datos recibidos en RoomListing:", roomWithExtras); // Para que veas que llega bien
+    console.log("Datos recibidos en RoomListing:", roomWithExtras);
     addToCart(roomWithExtras);
     onClose();
   };
@@ -27,17 +27,12 @@ export default function RoomListing({ results, guests = 1 }) {
     onOpen();
   };
 
-  const getRoomContainerSpan = () => {
-    if (showCapacityAlert && isSidebarOpen && cart.length > 0) return "lg:col-span-5";
-    if (showCapacityAlert) return "lg:col-span-9";
+const getRoomContainerSpan = () => {
     if (isSidebarOpen && cart.length > 0) return "lg:col-span-8";
     return "lg:col-span-12";
   };
-
-  const getInnerGridCols = () => {
-    if (showCapacityAlert && isSidebarOpen && cart.length > 0) return "grid-cols-1 xl:grid-cols-2";
+const getInnerGridCols = () => {
     if (isSidebarOpen && cart.length > 0) return "grid-cols-1 md:grid-cols-2";
-    if (showCapacityAlert) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
     return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
   };
 
@@ -53,24 +48,25 @@ export default function RoomListing({ results, guests = 1 }) {
               Descubre nuestra selección de suites y habitaciones diseñadas para
               tu confort y lujo
             </p>
-          </div>
-        )}
-
-        {showCapacityAlert && rooms.length > 0 && (
-          <div className="max-w-4xl mx-auto mb-10 animate-appearance-in">
-            <div className="bg-amber-50 border border-amber-200/60 rounded-full px-6 py-3 flex items-center justify-center gap-3 text-amber-800 shadow-sm">
-              <AlertCircle className="w-5 h-5 shrink-0 text-amber-600" />
-              <p className="text-sm font-medium">
-                Para <strong>{guests} huéspedes</strong>, recomendamos reservar
-                múltiples habitaciones (Máximo 2 personas por cuarto).
-              </p>
-            </div>
+            {showCapacityAlert && rooms.length > 0 && (
+              <div className="max-w-4xl mx-auto mb-10 animate-appearance-in">
+                <div className="bg-amber-50 border border-amber-200/60 rounded-full px-6 py-3 flex items-center justify-center gap-3 text-amber-800 shadow-sm">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-amber-600" />
+                  <p className="text-sm font-medium">
+                    Para <strong>{guests} huéspedes</strong>, recomendamos
+                    reservar múltiples habitaciones (Máximo 2 personas por
+                    cuarto).
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
-
-          <div className={`${getRoomContainerSpan()} transition-all duration-500`}>
+          <div
+            className={`${getRoomContainerSpan()} transition-all duration-500`}
+          >
             {rooms.length === 0 ? (
               <div className="flex justify-center py-12 bg-white/50 rounded-2xl border border-dashed border-gray-300">
                 <div className="w-full max-w-2xl text-center px-4">
@@ -102,7 +98,9 @@ export default function RoomListing({ results, guests = 1 }) {
                     key={room.id}
                     room={room}
                     onOpenModal={() => handleOpenModal(room)}
-                    onReserve={(updatedRoomData) => handleReserve(updatedRoomData)}
+                    onReserve={(updatedRoomData) =>
+                      handleReserve(updatedRoomData)
+                    }
                   />
                 ))}
               </div>
@@ -131,9 +129,7 @@ export default function RoomListing({ results, guests = 1 }) {
         {isSidebarOpen && cart.length > 0 && (
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 lg:hidden z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
             <div className="flex justify-between items-center mb-2">
-              <span className="font-bold text-[#5C6046]">
-                 Ver Carrito
-              </span>
+              <span className="font-bold text-[#5C6046]">Ver Carrito</span>
               <Button
                 size="sm"
                 variant="flat"
@@ -144,17 +140,6 @@ export default function RoomListing({ results, guests = 1 }) {
             </div>
             <Button className="w-full bg-[#5C6046] text-white">
               Ver Reserva ({cart.length})
-            </Button>
-          </div>
-        )}
-
-        {rooms.length > 0 && (
-          <div className="text-center mt-12">
-            <Button
-              variant="bordered"
-              className="border-[#5C6046] text-[#5C6046]"
-            >
-              Ver todas las habitaciones
             </Button>
           </div>
         )}

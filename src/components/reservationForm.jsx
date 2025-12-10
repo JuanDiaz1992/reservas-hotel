@@ -39,7 +39,7 @@ export default function ReservationForm({
     onOpenChange: onWarningOpenChange,
   } = useDisclosure();
 
-  const { setDateRange: setGlobalDateRange, cart, clearCart } = useCart();
+  const { setDateRange: setGlobalDateRange, cart, clearCart, setGuestCount } = useCart();
 
   const isDateSelected = dateRange?.start && dateRange?.end;
 
@@ -53,6 +53,7 @@ export default function ReservationForm({
     if (dateRange) {
       setGlobalDateRange(dateRange);
     }
+    setGuestCount(guests);
 
     const jsData = {
       guests: guests,
