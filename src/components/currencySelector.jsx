@@ -7,7 +7,7 @@ import {
   Button,
 } from "@heroui/react";
 import { ChevronDown, Check } from "lucide-react";
-import { useCurrency } from "../context/CurrencyContext";
+import { useCurrency } from "../context/currencyContext";
 
 export default function CurrencySelector() {
   const { currency, toggleCurrency } = useCurrency();
