@@ -10,7 +10,7 @@ import {
   Button,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
-import CurrencySelector from "./CurrencySelector";
+import CurrencySelector from "./currencySelector";
 import CartDropdown from "./cartDropdown";
 
 export default function Component() {
