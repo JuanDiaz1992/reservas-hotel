@@ -9,10 +9,14 @@ import {
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "../context/cartContext";
 import BasicCart from "./basicCart";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function CartDropdown() {
   const { cart, setIsSidebarOpen, isSidebarOpen } = useCart();
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const checkoutPath = "/checkout";
 
   useEffect(() => {
     if (isSidebarOpen) {
@@ -27,7 +31,9 @@ export default function CartDropdown() {
     }
   };
 
-  if (!cart || cart.length === 0) return null;
+  if (!cart || cart.length === 0 || location.pathname === checkoutPath) {
+    return null;
+  }
 
   return (
     <Popover
@@ -48,7 +54,7 @@ export default function CartDropdown() {
           <Badge
             content={cart.length}
             shape="circle"
-            className="border-none bg-[#5C6046] text-white font-medium shadow-sm"
+            className="border-none bg-[#476d15] text-white font-medium shadow-sm"
           >
             <Button
               isIconOnly
@@ -64,7 +70,7 @@ export default function CartDropdown() {
       </PopoverTrigger>
 
       <PopoverContent>
-        <div className="bg-[#5C6046] w-full rounded-t-xl text-white p-4 flex items-center justify-between shadow-sm z-10 relative">
+        <div className="bg-[#222222] w-full rounded-t-xl text-white p-4 flex items-center justify-between shadow-sm z-10 relative">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-4 h-4" />
             <h3 className="font-medium text-sm">Tu Reserva</h3>
@@ -78,6 +84,7 @@ export default function CartDropdown() {
           checkoutLabel="Pagar Ahora"
           onCheckout={(data) => {
             console.log("Ir al checkout", data);
+            navigate("/checkout");
             setIsOpen(false);
           }}
           maxHeight="max-h-[300px]"

@@ -10,7 +10,16 @@ import {
   Minus,
   Plus,
 } from "lucide-react";
-import { Button, Card, CardBody, CardFooter, Chip, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Chip,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@heroui/react";
 import { useCurrency } from "../../context/currencyContext";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -45,18 +54,17 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
 
   const extraAdultCost = extraAdultsCount * (room.extraAdult || 0);
   const extraChildCost = extraChildrenCount * (room.extraChild || 0);
-  
+
   const previewPricePerNight = room.price + extraAdultCost + extraChildCost;
-  
-  // Variable auxiliar para saber si hay extras
+
   const hasExtras = extraAdultsCount > 0 || extraChildrenCount > 0;
 
   const handleConfirm = () => {
     onReserve({
       ...room,
       selectedExtras: {
-        adults: extraAdultsCount,    
-        children: extraChildrenCount 
+        adults: extraAdultsCount,
+        children: extraChildrenCount,
       },
       extraAdult: room.extraAdult || 0,
       extraChild: room.extraChild || 0,
@@ -65,18 +73,17 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
   };
 
   return (
-    <Popover 
-      isOpen={isOpen} 
+    <Popover
+      isOpen={isOpen}
       onOpenChange={(open) => setIsOpen(open)}
-      placement="left" 
+      placement="left"
       offset={10}
       showArrow
-      // AGREGA ESTO: Evita que el popover intente voltearse si cambia el tamaño
-      shouldFlip={false} 
+      shouldFlip={false}
     >
       <PopoverTrigger>
         <Button
-          className="bg-[#5C6046] hover:bg-[#4a4e38] text-white px-6"
+          className="bg-[#476d15] hover:bg-[#4a4e38] text-white px-6"
           size="sm"
         >
           Reservar
@@ -86,11 +93,12 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
         <div className="w-full space-y-4">
           <div className="space-y-1">
             <h4 className="font-bold text-medium">Seleccionar Huéspedes</h4>
-            <p className="text-xs text-gray-500">Capacidad máxima: {room.capacity} personas</p>
+            <p className="text-xs text-gray-500">
+              Capacidad máxima: {room.capacity} personas
+            </p>
           </div>
 
-          {/* ... (Tus controles de + y - se mantienen igual) ... */}
-           <div className="space-y-3">
+          <div className="space-y-3">
             {/* Adultos */}
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Adultos</span>
@@ -101,7 +109,7 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
                   variant="flat"
                   className="h-6 w-6 min-w-6"
                   isDisabled={adults <= 1}
-                  onPress={() => setAdults(prev => prev - 1)}
+                  onPress={() => setAdults((prev) => prev - 1)}
                 >
                   <Minus className="h-3 w-3" />
                 </Button>
@@ -112,7 +120,7 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
                   variant="flat"
                   className="h-6 w-6 min-w-6"
                   isDisabled={totalGuests >= room.capacity}
-                  onPress={() => setAdults(prev => prev + 1)}
+                  onPress={() => setAdults((prev) => prev + 1)}
                 >
                   <Plus className="h-3 w-3" />
                 </Button>
@@ -149,29 +157,31 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
           </div>
 
           <div className="pt-2 border-t border-gray-100">
-             <div className="flex justify-between items-end mb-3">
-                <div className="flex flex-col justify-center h-8"> {/* Fijamos altura mínima al contenedor */}
-                    <span className="text-xs text-gray-500 leading-none">Total por noche</span>
-                    
-                    {/* CAMBIO CLAVE: Usamos opacity en lugar de quitar el elemento del DOM */}
-                    {/* Esto mantiene el espacio ocupado aunque el texto sea invisible */}
-                    <span className={`text-[10px] text-orange-600 font-medium leading-tight transition-opacity ${
-                        hasExtras ? "opacity-100" : "opacity-0"
-                    }`}>
-                       (Incluye extras)
-                       {/* Texto de relleno invisible para mantener altura si no hay extras */}
-                       {!hasExtras && <span className="invisible">.</span>} 
-                    </span>
-                    
-                </div>
-                <span className="text-lg font-bold text-[#5C6046]">{formatPrice(previewPricePerNight)}</span>
-             </div>
-             <Button 
-               className="w-full bg-[#5C6046] text-white" 
-               onPress={handleConfirm}
-             >
-               Confirmar Reserva
-             </Button>
+            <div className="flex justify-between items-end mb-3">
+              <div className="flex flex-col justify-center h-8">
+                {" "}
+                <span className="text-xs text-gray-500 leading-none">
+                  Total por noche
+                </span>
+                <span
+                  className={`text-[10px] text-orange-600 font-medium leading-tight transition-opacity ${
+                    hasExtras ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  (Incluye extras)
+                  {!hasExtras && <span className="invisible">.</span>}
+                </span>
+              </div>
+              <span className="text-lg font-bold text-[#476d15]">
+                {formatPrice(previewPricePerNight)}
+              </span>
+            </div>
+            <Button
+              className="w-full bg-[#476d15] text-white"
+              onPress={handleConfirm}
+            >
+              Confirmar Reserva
+            </Button>
           </div>
         </div>
       </PopoverContent>
@@ -179,10 +189,9 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
   );
 };
 
-
 export default function RoomCard({ room, onOpenModal, onReserve }) {
   const { formatPrice } = useCurrency();
-  
+
   return (
     <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/95 backdrop-blur-sm py-0">
       <CardBody className="p-0 overflow-hidden">
@@ -230,7 +239,7 @@ export default function RoomCard({ room, onOpenModal, onReserve }) {
           </Swiper>
 
           <div className="absolute top-4 right-4 z-10 pointer-events-none">
-            <Chip className="bg-[#5C6046] text-white border-0 text-xs shadow-sm">
+            <Chip className="bg-[#476d15] text-white border-0 text-xs shadow-sm">
               {room.inventory} disp.
             </Chip>
           </div>
@@ -264,7 +273,7 @@ export default function RoomCard({ room, onOpenModal, onReserve }) {
               {room.amenities.slice(0, 3).map((amenity, idx) => {
                 const IconComponent = getIconComponent(amenity.icon);
                 return (
-                  <IconComponent key={idx} className="w-4 h-4 text-[#5C6046]" />
+                  <IconComponent key={idx} className="w-4 h-4 text-[#476d15]" />
                 );
               })}
             </div>
@@ -282,15 +291,19 @@ export default function RoomCard({ room, onOpenModal, onReserve }) {
 
         <CardFooter className="flex items-center justify-between pt-3 border-t border-gray-100 px-5 pb-5">
           <div className="flex flex-col items-start">
-            <span className="text-xl font-bold text-[#5C6046]">
+            <span className="text-xl font-bold text-[#22222]">
               {formatPrice(room.price)}
             </span>
-            <span className="text-xs text-[#5C6046] font-medium">
+            <span className="text-xs text-[#476d15] font-medium">
               por noche
             </span>
           </div>
-          
-          <GuestSelectionPopover room={room} onReserve={onReserve} formatPrice={formatPrice} />
+
+          <GuestSelectionPopover
+            room={room}
+            onReserve={onReserve}
+            formatPrice={formatPrice}
+          />
         </CardFooter>
       </CardBody>
     </Card>

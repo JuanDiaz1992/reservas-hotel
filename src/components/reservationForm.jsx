@@ -130,7 +130,7 @@ export default function ReservationForm({
                           Llegada
                         </span>
                         <div className="flex items-center gap-2 text-[#2c4549]">
-                          <CalendarIcon className="w-4 h-4 text-[#5C6046]" />
+                          <CalendarIcon className="w-4 h-4 text-[#476d15]" />
                           <span
                             className={`text-sm ${
                               !dateRange?.start
@@ -148,7 +148,7 @@ export default function ReservationForm({
                           Salida
                         </span>
                         <div className="flex items-center gap-2 text-[#2c4549]">
-                          <CalendarIcon className="w-4 h-4 text-[#5C6046]" />
+                          <CalendarIcon className="w-4 h-4 text-[#476d15]" />
                           <span
                             className={`text-sm ${
                               !dateRange?.end
@@ -186,7 +186,7 @@ export default function ReservationForm({
                   onValueChange={(value) =>
                     setGuestsLocal(parseInt(value) || 1)
                   }
-                  startContent={<User className="h-5 w-5 text-[#5C6046]" />}
+                  startContent={<User className="h-5 w-5 text-[#476d15]" />}
                   className="max-w-full"
                   classNames={{
                     input: [
@@ -205,7 +205,7 @@ export default function ReservationForm({
               {/* BOTÓN BUSCAR */}
               <Button
                 type="submit"
-                className="h-14 w-full bg-[#5C6046] text-white text-lg font-medium shadow-lg hover:bg-[#4a4e38] transition-all duration-300 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-14 w-full bg-[#476d15] text-white text-lg font-medium shadow-lg hover:bg-[#4a4e38] transition-all duration-300 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
                 // Aquí aplicamos la lógica: Si está buscando O NO hay fechas seleccionadas -> Deshabilitado
                 isDisabled={isSearching || !isDateSelected}
                 startContent={<Search className="h-5 w-5" />}
@@ -226,7 +226,7 @@ export default function ReservationForm({
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 items-center text-[#5C6046]">
+              <ModalHeader className="flex flex-col gap-1 items-center text-[#476d15]">
                 <AlertTriangle className="w-10 h-10 text-yellow-500 mb-2" />
                 Cambio de Fechas detectado
               </ModalHeader>
@@ -243,7 +243,7 @@ export default function ReservationForm({
                   Cancelar
                 </Button>
                 <Button
-                  className="bg-[#5C6046] text-white"
+                  className="bg-[#476d15] text-white"
                   onPress={() => {
                     executeSearch();
                     onClose();

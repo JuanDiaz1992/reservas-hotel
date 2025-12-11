@@ -37,7 +37,7 @@ export default function RoomDetail({ room }) {
       <div className="relative h-64 md:h-full overflow-y-auto scrollbar-hide">
         <ImageGallery images={room.images} />
         <div className="absolute top-4 left-4 pointer-events-none z-10">
-           <HeroChip className="bg-white/90 backdrop-blur text-[#5C6046] font-medium shadow-sm border-0">
+           <HeroChip className="bg-white/90 backdrop-blur text-[#476d15] font-medium shadow-sm border-0">
               <Star className="w-3 h-3 inline mr-1 fill-[#D4AF37] text-[#D4AF37]" />
               Premium Suite
            </HeroChip>
@@ -58,7 +58,7 @@ export default function RoomDetail({ room }) {
               <Square className="w-4 h-4" />
               <span>{room.size}m²</span>
             </div>
-            <div className="flex items-center gap-1 bg-[#5C6046]/10 text-[#5C6046] px-3 py-1 rounded-full font-medium">
+            <div className="flex items-center gap-1 bg-[#476d15]/10 text-[#476d15] px-3 py-1 rounded-full font-medium">
               <DoorOpen className="w-4 h-4" />
               <span>{room.inventory} disponibles</span>
             </div>
@@ -84,7 +84,7 @@ export default function RoomDetail({ room }) {
                 const IconComponent = getIconComponent(amenity.icon);
                 return (
                   <div key={index} className="flex items-center gap-3 text-gray-700">
-                    <div className="p-2 bg-[#5C6046]/10 rounded-lg text-[#5C6046]">
+                    <div className="p-2 bg-[#476d15]/10 rounded-lg text-[#476d15]">
                       <IconComponent className="w-5 h-5" />
                     </div>
                     <span className="text-sm font-medium">{amenity.name}</span>
@@ -100,7 +100,7 @@ export default function RoomDetail({ room }) {
                 Total por noche
               </p>
               <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-                <span className="text-3xl font-bold text-[#5C6046]">
+                <span className="text-3xl font-bold text-[#476d15]">
                   ${room.price}
                 </span>
               </div>

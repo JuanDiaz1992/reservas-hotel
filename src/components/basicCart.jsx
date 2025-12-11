@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useCurrency } from "../context/currencyContext";
 import { useCart } from "../context/cartContext";
+import { Link } from "react-router-dom";
 
 
 export default function BasicCart({
@@ -154,7 +155,7 @@ export default function BasicCart({
                     </h4>
                     <div className="flex flex-col gap-1 mt-1">
                       <div className="flex items-baseline gap-1">
-                        <span className="text-sm font-bold text-[#5C6046]">
+                        <span className="text-sm font-bold text-[#476d15]">
                           {formatPrice(pricing.pricePerNight)}
                         </span>
                         <span className="text-[10px] text-gray-500">
@@ -214,7 +215,7 @@ export default function BasicCart({
       </ScrollShadow>
 
       {showFooter && (
-        <div className="border-t border-gray-200 p-4 bg-white shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
+        <div className="border-t border-gray-200 p-4 bg-white shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10 rounded-b-3xl">
           <div className="space-y-2 mb-4">
             <div className="flex justify-between text-sm text-gray-600">
               <span>Huéspedes requeridos</span>
@@ -238,7 +239,7 @@ export default function BasicCart({
               <span className="text-gray-900 font-bold text-lg">
                 Total a Pagar
               </span>
-              <span className="text-xl font-bold text-[#5C6046]">
+              <span className="text-xl font-bold text-[#476d15]">
                 {formatPrice(calculateGrandTotal())}
               </span>
             </div>
@@ -246,7 +247,7 @@ export default function BasicCart({
 
           <Button
             className={`w-full text-white font-medium py-3 shadow-lg ${
-              !isCapacitySufficient ? "bg-gray-400 opacity-50" : "bg-[#5C6046]"
+              !isCapacitySufficient ? "bg-gray-400 opacity-50" : "bg-[#476d15]"
             }`}
             onPress={() =>
               onCheckout && onCheckout({ cart, total: calculateGrandTotal() })

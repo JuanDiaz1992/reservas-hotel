@@ -91,3 +91,71 @@ export const sampleRooms = [
     inventory:4
   },
 ];
+export const sampleAddsOn = [
+  {
+    id: 1,
+    name: "Bosque sobre el bosque 2 PAX*",
+    description: "Un recorrido escénico por los Andes Colombianos ascendiendo hasta los 3.500 msnm...",
+    price: 1780000,
+    images: [
+      "https://picsum.photos/seed/bosque1/800/600",
+      "https://picsum.photos/seed/bosque2/800/600",
+      "https://picsum.photos/seed/bosque3/800/600"
+    ],
+  },
+  {
+    id: 2,
+    name: "Cena Romántica Privada (2 PAX)",
+    description: "Disfrute de una cena gourmet de 3 tiempos...",
+    price: 450000,
+    images: [
+      "https://picsum.photos/seed/cena1/800/600",
+      "https://picsum.photos/seed/cena2/800/600",
+      "https://picsum.photos/seed/cena3/800/600"
+    ],
+  },
+  {
+    id: 3,
+    name: "Experiencia de Café de Origen",
+    description: "Un tour inmersivo de 3 horas por una finca cafetera local...",
+    price: 280000,
+    images: [
+      "https://picsum.photos/seed/cafe1/800/600",
+      "https://picsum.photos/seed/cafe2/800/600",
+      "https://picsum.photos/seed/cafe3/800/600"
+    ],
+  },
+  {
+    id: 4,
+    name: "Masaje de Relajación Profunda (90 min)",
+    description: "Sesión completa de 90 minutos de masaje terapéutico...",
+    price: 320000,
+    images: [
+      "https://picsum.photos/seed/spa1/800/600",
+      "https://picsum.photos/seed/spa2/800/600",
+      "https://picsum.photos/seed/spa3/800/600"
+    ],
+  },
+  {
+    id: 5,
+    name: "Transfer Aeropuerto Premium",
+    description: "Servicio de transporte privado y directo desde/hacia el aeropuerto...",
+    price: 150000,
+    images: [
+      "https://picsum.photos/seed/transfer1/800/600",
+      "https://picsum.photos/seed/transfer2/800/600",
+      "https://picsum.photos/seed/transfer3/800/600"
+    ],
+  },
+  {
+    id: 6,
+    name: "Kit de Bienvenida para Mascotas",
+    description: "Si viaja con su amigo peludo, este kit incluye cama premium...",
+    price: 80000,
+    images: [
+      "https://picsum.photos/seed/pets1/800/600",
+      "https://picsum.photos/seed/pets2/800/600",
+      "https://picsum.photos/seed/pets3/800/600"
+    ],
+  },
+];

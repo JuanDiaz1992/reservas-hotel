@@ -72,9 +72,9 @@ const getInnerGridCols = () => {
                 <div className="w-full max-w-2xl text-center px-4">
                   <div className="relative mx-auto w-24 h-24 mb-6 flex items-center justify-center">
                     <div className="absolute inset-0 border border-[#D4AF37]/20 rounded-full animate-pulse" />
-                    <div className="absolute inset-2 border border-[#5C6046]/10 rounded-full" />
-                    <div className="w-16 h-16 bg-[#5C6046]/5 rounded-full flex items-center justify-center">
-                      <CalendarX className="h-8 w-8 text-[#5C6046]" />
+                    <div className="absolute inset-2 border border-[#476d15]/10 rounded-full" />
+                    <div className="w-16 h-16 bg-[#476d15]/5 rounded-full flex items-center justify-center">
+                      <CalendarX className="h-8 w-8 text-[#476d15]" />
                     </div>
                   </div>
                   <h3 className="text-3xl font-serif text-[#2c4549] mb-3">
@@ -85,7 +85,7 @@ const getInnerGridCols = () => {
                   </p>
                   <Button
                     onPress={() => viewElement("disponibilidad")}
-                    className="bg-[#5C6046] text-white"
+                    className="bg-[#476d15] text-white"
                   >
                     Modificar Búsqueda
                   </Button>
@@ -129,7 +129,7 @@ const getInnerGridCols = () => {
         {isSidebarOpen && cart.length > 0 && (
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 lg:hidden z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
             <div className="flex justify-between items-center mb-2">
-              <span className="font-bold text-[#5C6046]">Ver Carrito</span>
+              <span className="font-bold text-[#476d15]">Ver Carrito</span>
               <Button
                 size="sm"
                 variant="flat"
@@ -138,7 +138,7 @@ const getInnerGridCols = () => {
                 Ocultar
               </Button>
             </div>
-            <Button className="w-full bg-[#5C6046] text-white">
+            <Button className="w-full bg-[#476d15] text-white">
               Ver Reserva ({cart.length})
             </Button>
           </div>

@@ -62,7 +62,7 @@ export default function Home() {
           loop
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/videos/video1.mp4" type="video/mp4" />
+          <source src="/videos/video2.mp4" type="video/mp4" />
           Tu navegador no soporta el video.
         </video>
         <div className="absolute inset-0 bg-black/30"></div>
@@ -96,14 +96,14 @@ export default function Home() {
       )}
 
       {/* 1. SECCIÓN "EXPERIENCIA" (FONDO NEGRO) */}
-      <section className="bg-[#111111] text-white py-24 px-4 relative">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#5C6046] opacity-10 blur-[120px] rounded-full pointer-events-none"></div>
+      <section className="bg-[#222222] text-white py-24 px-4 relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#476d15] opacity-10 blur-[120px] rounded-full pointer-events-none"></div>
 
         <div className="container mx-auto max-w-[1200px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Texto */}
             <div className="space-y-8">
-              <span className="text-[#5C6046] uppercase tracking-[0.2em] text-sm font-medium">
+              <span className="text-[#476d15] uppercase tracking-[0.2em] text-sm font-medium">
                 Nuestra Filosofía
               </span>
               <h2 className="text-4xl md:text-5xl font-serif leading-tight">
@@ -126,7 +126,7 @@ export default function Home() {
 
               <div className="pt-4">
                 <Button
-                  className="bg-white text-black font-medium px-8 py-6 rounded-none hover:bg-gray-200 transition-colors"
+                  className="bg-[#476d15] text-white font-medium px-8 py-6 rounded-none hover:bg-gray-200 hover:text-[#476d15] transition-colors"
                   endContent={<ArrowRight className="w-4 h-4 ml-2" />}
                 >
                   Conoce nuestra historia
@@ -138,7 +138,7 @@ export default function Home() {
             <div className="relative">
               <div className="aspect-[4/5] w-full overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80"
+                  src="/images/590840603_17864427183532582_8924480613698638280_n.webp"
                   alt="Arquitectura oscura y elegante"
                   className="w-full h-full object-cover "
                 />
@@ -169,8 +169,8 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Card 1 */}
-            <div className="group bg-white p-8 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#5C6046]/20">
-              <div className="w-12 h-12 bg-[#5C6046]/10 rounded-full flex items-center justify-center mb-6 text-[#5C6046] group-hover:bg-[#5C6046] group-hover:text-white transition-colors">
+            <div className="group bg-white p-8 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#476d15]/20">
+              <div className="w-12 h-12 bg-[#476d15]/10 rounded-full flex items-center justify-center mb-6 text-[#476d15] group-hover:bg-[#476d15] group-hover:text-white transition-colors">
                 <Utensils className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -182,15 +182,15 @@ export default function Home() {
               </p>
               <a
                 href="#"
-                className="text-sm font-medium text-[#5C6046] hover:underline flex items-center gap-1"
+                className="text-sm font-medium text-[#476d15] hover:underline flex items-center gap-1"
               >
                 Ver Menú <ArrowRight className="w-3 h-3" />
               </a>
             </div>
 
             {/* Card 2 */}
-            <div className="group bg-white p-8 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#5C6046]/20">
-              <div className="w-12 h-12 bg-[#5C6046]/10 rounded-full flex items-center justify-center mb-6 text-[#5C6046] group-hover:bg-[#5C6046] group-hover:text-white transition-colors">
+            <div className="group bg-white p-8 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#476d15]/20">
+              <div className="w-12 h-12 bg-[#476d15]/10 rounded-full flex items-center justify-center mb-6 text-[#476d15] group-hover:bg-[#476d15] group-hover:text-white transition-colors">
                 <Sparkles className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -202,15 +202,15 @@ export default function Home() {
               </p>
               <a
                 href="#"
-                className="text-sm font-medium text-[#5C6046] hover:underline flex items-center gap-1"
+                className="text-sm font-medium text-[#476d15] hover:underline flex items-center gap-1"
               >
                 Reservar Tratamiento <ArrowRight className="w-3 h-3" />
               </a>
             </div>
 
             {/* Card 3 */}
-            <div className="group bg-white p-8 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#5C6046]/20">
-              <div className="w-12 h-12 bg-[#5C6046]/10 rounded-full flex items-center justify-center mb-6 text-[#5C6046] group-hover:bg-[#5C6046] group-hover:text-white transition-colors">
+            <div className="group bg-white p-8 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#476d15]/20">
+              <div className="w-12 h-12 bg-[#476d15]/10 rounded-full flex items-center justify-center mb-6 text-[#476d15] group-hover:bg-[#476d15] group-hover:text-white transition-colors">
                 <Compass className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -222,7 +222,7 @@ export default function Home() {
               </p>
               <a
                 href="#"
-                className="text-sm font-medium text-[#5C6046] hover:underline flex items-center gap-1"
+                className="text-sm font-medium text-[#476d15] hover:underline flex items-center gap-1"
               >
                 Explorar Rutas <ArrowRight className="w-3 h-3" />
               </a>
@@ -280,7 +280,7 @@ export default function Home() {
           <div className="flex justify-between items-end mb-10">
             <div>
               <h2 className="text-3xl font-serif text-[#2c4549]">
-                @TuHotelSanctuary
+                @Catleyaroyalclub
               </h2>
               <p className="text-gray-500 mt-2">
                 Síguenos para tu dosis diaria de calma.
@@ -288,7 +288,7 @@ export default function Home() {
             </div>
             <Button
               variant="bordered"
-              className="hidden md:flex border-[#5C6046] text-[#5C6046]"
+              className="hidden md:flex border-[#476d15] text-[#476d15]"
             >
               Ver Galería Completa
             </Button>

@@ -135,7 +135,7 @@ export default function Footer() {
               />
               <Button
                 type="submit"
-                className="bg-[#5C6046] text-white data-[hover=true]:bg-[#5C6046]/80 w-full max-w-xs"
+                className="bg-[#476d15] text-white data-[hover=true]:bg-[#476d15]/80 w-full max-w-xs"
                 endContent={<ArrowRight className="w-4 h-4" />}
                 onPress={(e) => {
                   e.preventDefault();

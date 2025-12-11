@@ -13,6 +13,9 @@ import { useEffect, useState } from "react";
 import CurrencySelector from "./currencySelector";
 import CartDropdown from "./cartDropdown";
 
+// ⬇️ IMPORTAR LA VERSIÓN INSTANTÁNEA ⬇️
+import { scrollToTopInstant } from "../utils/scrollToTop"; 
+
 export default function Component() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,6 +30,12 @@ export default function Component() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // ⬇️ FUNCIÓN DE NAVEGACIÓN AHORA USA scrollToTopInstant ⬇️
+  const handleNavigationClick = () => {
+    setIsMenuOpen(false);
+    scrollToTopInstant();
+  };
 
   return (
     <Navbar
@@ -43,7 +52,7 @@ export default function Component() {
     >
       <NavbarContent>
         <NavbarBrand>
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2" onClick={handleNavigationClick}>
             <img
               src="/images/logo.webp"
               alt="Logo"
@@ -57,12 +66,14 @@ export default function Component() {
       </NavbarContent>
 
       <NavbarContent className="hidden md:flex gap-4" justify="center">
+        
         <NavbarItem>
           <Button
             as={Link}
             to="/"
             variant="light"
             className="text-white data-[hover=true]:bg-white/10"
+            onClick={handleNavigationClick}
           >
             Inicio
           </Button>
@@ -71,9 +82,10 @@ export default function Component() {
         <NavbarItem>
           <Button
             as={Link}
-            to="/"
+            to="/habitaciones"
             variant="light"
             className="text-white data-[hover=true]:bg-white/10"
+            onClick={handleNavigationClick}
           >
             Habitaciones
           </Button>
@@ -85,6 +97,7 @@ export default function Component() {
             to="/about"
             variant="light"
             className="text-white data-[hover=true]:bg-white/10"
+            onClick={handleNavigationClick}
           >
             Nosotros
           </Button>
@@ -96,6 +109,7 @@ export default function Component() {
             to="/contact"
             variant="light"
             className="text-white data-[hover=true]:bg-white/10"
+            onClick={handleNavigationClick}
           >
             Contacto
           </Button>
@@ -107,6 +121,7 @@ export default function Component() {
           <Button
             variant="bordered"
             className="border-white hover:bg-[#5C6046]/20 text-white hover:border-[#5C6046]"
+            onClick={handleNavigationClick}
           >
             Reserva Ahora
           </Button>
@@ -114,7 +129,8 @@ export default function Component() {
           <Button
             as={Link}
             to="/loguin"
-            className="bg-[#5C6046] text-white hover:bg-white/90 hover:text-[#5C6046]"
+            className="bg-[#476d15] text-white hover:bg-white/90 hover:text-[#5C6046]"
+            onClick={handleNavigationClick}
           >
             Miembros
           </Button>
@@ -125,10 +141,8 @@ export default function Component() {
           </div>
         </div>
 
-        {/* --- MENU MÓVIL --- */}
         <div className="flex md:hidden items-center gap-2">
           <CartDropdown />
-
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
             className="text-white"
@@ -141,7 +155,7 @@ export default function Component() {
           <Link
             to="/"
             className="w-full text-lg text-white hover:text-white/80 py-2 block"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={handleNavigationClick}
           >
             Inicio
           </Link>
@@ -150,7 +164,7 @@ export default function Component() {
           <Link
             to="/habitaciones"
             className="w-full text-lg text-white hover:text-white/80 py-2 block"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={handleNavigationClick}
           >
             Habitaciones
           </Link>
@@ -159,7 +173,7 @@ export default function Component() {
           <Link
             to="/loguin"
             className="w-full text-lg text-white hover:text-white/80 py-2 block"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={handleNavigationClick}
           >
             Miembros
           </Link>
