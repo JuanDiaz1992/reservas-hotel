@@ -2,11 +2,17 @@ import AddsOnListing from "../components/CheckingComponents/addsOnListing";
 import CheckOutCart from "../components/CheckingComponents/cartCheckOut";
 import { useState, useEffect } from "react";
 import { scrollToTop } from '../utils/scrollToTop';
+import FormCheckOut from "../components/CheckingComponents/formCheckOut";
 export default function Checkout() {
   const [title, setTitle] = useState("Finaliza tu Reserva");
+  const [view, setView] = useState(1);
   useEffect(() => {
         scrollToTop();
     }, []);
+  const navigateViews =(view)=>{
+    setView(view);
+    scrollToTop();
+  }
   return (
     <div className="bg-gray-50">
       <header className="relative w-full h-64 sm:h-80 overflow-hidden">
@@ -27,10 +33,15 @@ export default function Checkout() {
         <h2 className="text-2xl md:text-4xl font-serif italic leading-relaxed max-w-4xl mx-auto mb-8">{title}</h2>
         <div className=" flex gap-[24px]  ">
           <div className="w-8/12">
-            <AddsOnListing setTitle={setTitle}/>
+            {view === 1 ?(
+              <AddsOnListing setTitle={setTitle}/>
+              ):
+              view === 2 ? (
+                <FormCheckOut setTitle={setTitle} navigateViews={navigateViews}/>
+              ):(<></>)}
           </div>
           <div className="w-4/12">
-            <CheckOutCart />
+            <CheckOutCart view={view} setView={setView} />
           </div>
         </div>
       </section>

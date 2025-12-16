@@ -13,8 +13,7 @@ import { useEffect, useState } from "react";
 import CurrencySelector from "./currencySelector";
 import CartDropdown from "./cartDropdown";
 
-// ⬇️ IMPORTAR LA VERSIÓN INSTANTÁNEA ⬇️
-import { scrollToTopInstant } from "../utils/scrollToTop"; 
+import { scrollToTopInstant } from "../utils/scrollToTop";
 
 export default function Component() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,7 +30,6 @@ export default function Component() {
     };
   }, []);
 
-  // ⬇️ FUNCIÓN DE NAVEGACIÓN AHORA USA scrollToTopInstant ⬇️
   const handleNavigationClick = () => {
     setIsMenuOpen(false);
     scrollToTopInstant();

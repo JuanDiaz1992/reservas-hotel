@@ -41,7 +41,12 @@ const getIconComponent = (iconName) => {
   return iconMap[iconName] || iconMap.default;
 };
 
-const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
+const GuestSelectionPopover = ({
+  room,
+  onReserve,
+  formatPrice,
+  isDisabled,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
@@ -62,6 +67,7 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
   const handleConfirm = () => {
     onReserve({
       ...room,
+      type: "room",
       selectedExtras: {
         adults: extraAdultsCount,
         children: extraChildrenCount,
@@ -82,11 +88,17 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
       shouldFlip={false}
     >
       <PopoverTrigger>
+
         <Button
-          className="bg-[#476d15] hover:bg-[#4a4e38] text-white px-6"
+          className={`px-6 text-white ${
+            isDisabled
+              ? "bg-gray-400 cursor-not-allowed opacity-70"
+              : "bg-[#476d15] hover:bg-[#4a4e38]"
+          }`}
           size="sm"
+          isDisabled={isDisabled}
         >
-          Reservar
+          {isDisabled ? "En el carrito" : "Reservar"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-4 w-72">
@@ -189,7 +201,7 @@ const GuestSelectionPopover = ({ room, onReserve, formatPrice }) => {
   );
 };
 
-export default function RoomCard({ room, onOpenModal, onReserve }) {
+export default function RoomCard({ room, onOpenModal, onReserve, isInCart }) {
   const { formatPrice } = useCurrency();
 
   return (
@@ -303,6 +315,7 @@ export default function RoomCard({ room, onOpenModal, onReserve }) {
             room={room}
             onReserve={onReserve}
             formatPrice={formatPrice}
+            isDisabled={isInCart}
           />
         </CardFooter>
       </CardBody>

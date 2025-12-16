@@ -8,7 +8,7 @@ import {
   CardBody,
   CardFooter,
 } from "@heroui/react";
-import { Plus, Minus, ShoppingCart } from "lucide-react";
+import { Plus, Minus, ShoppingCart, Check } from "lucide-react";
 
 import BasicModal from "../basicModal";
 import AddsOnModalContent from "./addsOnModalContent";
@@ -18,15 +18,30 @@ function StandardImage({ src, alt, className }) {
   return <img src={src} alt={alt} className={className} />;
 }
 
-export default function AddsOnCard({ addsOnInfo }) {
+export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
   const { id, name, price, images } = addsOnInfo;
 
   const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-const { formatPrice } = useCurrency();
+  const { formatPrice } = useCurrency();
 
   const handleAddToCart = () => {
-    console.log(`Añadiendo ${quantity} de ${name} al carrito.`);
+    const itemToAdd = {
+      ...addsOnInfo,
+      id: `${id}-${Date.now()}`,
+      originalId: id,
+      type: "addon",
+      quantity: quantity,
+      totalPrice: price * quantity,
+      image: images[0],
+    };
+
+    onAddToCart(itemToAdd);
+
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+    setQuantity(1);
   };
 
   return (
@@ -44,7 +59,7 @@ const { formatPrice } = useCurrency();
                 onClick={onOpen}
                 variant="solid"
                 color="gray"
-                className="absolute top-4 right-4 text-xs font-semibold bg-black/60 hover:bg-black/80 text-white rounded-full p-2 h-auto z-10" // z-10 para asegurar visibilidad
+                className="absolute top-4 right-4 text-xs font-semibold bg-black/60 hover:bg-black/80 text-white rounded-full p-2 h-auto z-10"
                 size="sm"
               >
                 Ver Más
@@ -82,6 +97,8 @@ const { formatPrice } = useCurrency();
               variant="flat"
               color="gray"
               size="sm"
+
+              isDisabled={isInCart}
               className="rounded-r-none h-8 w-8 min-w-8"
               aria-label="Disminuir cantidad"
             >
@@ -92,6 +109,8 @@ const { formatPrice } = useCurrency();
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+
+              isDisabled={isInCart}
               className="w-full text-center text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               classNames={{ input: "text-center p-0 h-8" }}
               variant="bordered"
@@ -102,6 +121,7 @@ const { formatPrice } = useCurrency();
               variant="flat"
               color="gray"
               size="sm"
+              isDisabled={isInCart}
               className="rounded-l-none h-8 w-8 min-w-8"
               aria-label="Aumentar cantidad"
             >
@@ -111,11 +131,24 @@ const { formatPrice } = useCurrency();
 
           <Button
             onClick={handleAddToCart}
-            className="flex-grow font-semibold h-9 bg-[#476d15] hover:bg-[#4a4e38] text-white ml-3"
+            isDisabled={isInCart}
+            className={`flex-grow font-semibold h-9 ml-3 text-white transition-colors duration-300 ${
+              isInCart
+                ? "bg-gray-400 opacity-70 cursor-not-allowed"
+                : isAdded
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-[#476d15] hover:bg-[#4a4e38]"
+            }`}
             variant="solid"
-            startContent={<ShoppingCart className="h-5 w-5" />}
+            startContent={
+              isInCart ? null : isAdded ? (
+                <Check className="h-5 w-5" />
+              ) : (
+                <ShoppingCart className="h-5 w-5" />
+              )
+            }
           >
-            Añadir
+            {isInCart ? "En el carrito" : isAdded ? "Agregado" : "Añadir"}
           </Button>
         </CardFooter>
       </Card>

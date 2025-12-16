@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarX, Phone, Search, AlertCircle, Users } from "lucide-react";
+import { CalendarX, AlertCircle } from "lucide-react";
 import { Button, useDisclosure } from "@heroui/react";
 import viewElement from "../../utils/scrollToObject";
 import BasicModal from "../basicModal";
@@ -11,14 +11,15 @@ import { useCart } from "../../context/cartContext";
 export default function RoomListing({ results, guests = 1 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRoom, setSelectedRoom] = useState(null);
-
   const { cart, isSidebarOpen, addToCart, setIsSidebarOpen } = useCart();
+
   const rooms = results;
   const showCapacityAlert = guests > 2;
 
   const handleReserve = (roomWithExtras) => {
     console.log("Datos recibidos en RoomListing:", roomWithExtras);
-    addToCart(roomWithExtras);
+    // IMPORTANTE: Aseguramos que el item tenga el tipo 'room' al guardarlo
+    addToCart({ ...roomWithExtras, type: "room" });
     onClose();
   };
 
@@ -27,11 +28,12 @@ export default function RoomListing({ results, guests = 1 }) {
     onOpen();
   };
 
-const getRoomContainerSpan = () => {
+  const getRoomContainerSpan = () => {
     if (isSidebarOpen && cart.length > 0) return "lg:col-span-8";
     return "lg:col-span-12";
   };
-const getInnerGridCols = () => {
+
+  const getInnerGridCols = () => {
     if (isSidebarOpen && cart.length > 0) return "grid-cols-1 md:grid-cols-2";
     return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
   };
@@ -93,16 +95,24 @@ const getInnerGridCols = () => {
               </div>
             ) : (
               <div className={`grid gap-6 ${getInnerGridCols()}`}>
-                {rooms.map((room) => (
-                  <RoomCard
-                    key={room.id}
-                    room={room}
-                    onOpenModal={() => handleOpenModal(room)}
-                    onReserve={(updatedRoomData) =>
-                      handleReserve(updatedRoomData)
-                    }
-                  />
-                ))}
+                {rooms.map((room) => {
+                  // VALIDACIÓN MEJORADA: Chequeamos ID y TYPE
+                  const isRoomInCart = cart.some(
+                    (item) => item.type === "room" && item.id === room.id
+                  );
+
+                  return (
+                    <RoomCard
+                      key={room.id}
+                      room={room}
+                      onOpenModal={() => handleOpenModal(room)}
+                      onReserve={(updatedRoomData) =>
+                        handleReserve(updatedRoomData)
+                      }
+                      isInCart={isRoomInCart}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>
@@ -122,6 +132,13 @@ const getInnerGridCols = () => {
             <RoomDetail
               room={selectedRoom}
               onReserve={() => handleReserve(selectedRoom)}
+              // VALIDACIÓN MEJORADA TAMBIÉN EN EL MODAL
+              isInCart={
+                selectedRoom &&
+                cart.some(
+                  (item) => item.type === "room" && item.id === selectedRoom.id
+                )
+              }
             />
           )}
         />

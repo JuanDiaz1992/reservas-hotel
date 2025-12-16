@@ -59,6 +59,7 @@ export const CartProvider = ({ children }) => {
   const totalNights = calculateNights();
 
   const addToCart = (room) => {
+    console.log(room);
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex((item) => item.id === room.id);
 
