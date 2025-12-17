@@ -11,13 +11,12 @@ import {
   useDisclosure,
   Card,
   CardBody,
-  Autocomplete, // Nuevo import
-  AutocompleteItem, // Nuevo import
-  Avatar, // Para mostrar la bandera (opcional pero se ve bien)
+  Autocomplete,
+  AutocompleteItem,
+  Avatar,
 } from "@heroui/react";
 import {
   User,
-  // MapPin, (Ya no lo necesitamos en el icono del input porque usamos la bandera o el autocomplete)
   Mail,
   Phone,
   FileText,
@@ -33,10 +32,8 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
   const { guestCount } = useCart();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // --- 1. ESTADO PARA LOS PAÍSES ---
   const [countries, setCountries] = useState([]);
 
-  // --- 2. FETCH DE LA API DE PAÍSES ---
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all?fields=name,flags,cca2")
       .then((res) => res.json())
@@ -75,9 +72,7 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
     setMainContact((prev) => ({ ...prev, [name]: value }));
   };
 
-  // --- HANDLER ESPECÍFICO PARA AUTOCOMPLETE DEL TITULAR ---
   const handleMainCountryChange = (key) => {
-    // El Autocomplete devuelve la key (que configuramos como el nombre del país)
     setMainContact((prev) => ({ ...prev, country: key }));
   };
 
@@ -100,7 +95,6 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
     setTempGuestData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // --- HANDLER ESPECÍFICO PARA AUTOCOMPLETE DEL GUEST ---
   const handleGuestCountryChange = (key) => {
     setTempGuestData((prev) => ({ ...prev, country: key }));
   };
@@ -166,7 +160,6 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
               variant="bordered"
             />
 
-            {/* --- REEMPLAZO INPUT POR AUTOCOMPLETE (TITULAR) --- */}
             <Autocomplete
               label="País de residencia"
               placeholder="Busca tu país"
@@ -174,7 +167,7 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
               selectedKey={mainContact.country}
               onSelectionChange={handleMainCountryChange}
               inputProps={{
-                autoComplete: "new-password", // Evita sugerencias molestas del navegador
+                autoComplete: "new-password",
               }}
             >
               {countries.map((item) => (
@@ -303,15 +296,6 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
           </div>
         </CardBody>
       </Card>
-
-      <Button
-        size="lg"
-        className="bg-[#476d15] text-white font-semibold shadow-lg w-full py-6"
-        onPress={handleSubmit}
-      >
-        Continuar al Pago
-      </Button>
-
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -357,7 +341,6 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
                     size="sm"
                   />
 
-                  {/* --- REEMPLAZO INPUT POR AUTOCOMPLETE (MODAL GUEST) --- */}
                   <Autocomplete
                     label="País"
                     placeholder="Seleccionar"

@@ -17,12 +17,12 @@ export default function Checkout() {
     <div className="bg-gray-50">
       <header className="relative w-full h-64 sm:h-80 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1596436889146-c215d2a21b33?q=80&w=2000&auto=format&fit=crop"
+          src="/images/home-2.webp"
           alt="Habitación de hotel lujosa"
           className="w-full h-full object-cover"
         />
 
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
           <h1 className="text-white text-5xl lg:text-6xl font-extrabold tracking-wide">
             Checkout
           </h1>
