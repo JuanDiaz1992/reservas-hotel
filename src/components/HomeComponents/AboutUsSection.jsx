@@ -30,7 +30,7 @@ export default function AboutUsSection() {
   };
 
   return (
-    <section className="bg-[#111111] text-white overflow-hidden">
+    <section className="bg-[#111111] text-white">
       <div className="container mx-auto max-w-[1400px]">
         <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[650px]">
           
