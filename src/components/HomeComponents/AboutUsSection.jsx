@@ -7,7 +7,7 @@ export default function AboutUsSection() {
     visible: {
       clipPath: "inset(0 0% 0 0)",
       opacity: 1,
-      transition: { duration: 1.4, ease: [0.19, 1, 0.22, 1] },
+      transition: { duration: 1.1, ease: [0.19, 1, 0.22, 1] },
     },
   };
 
@@ -16,34 +16,35 @@ export default function AboutUsSection() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, delay: 0.5, ease: "easeOut" },
+      transition: { duration: 0.8, delay: 0.1, ease: "easeOut" },
     },
   };
 
   const rightColumnSlide = {
-    hidden: { opacity: 0, x: 30 },
+    hidden: { opacity: 0, x: 20 },
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 1, delay: 0.8, ease: [0.19, 1, 0.22, 1] },
+      transition: { duration: 0.8, delay: 0.2, ease: [0.19, 1, 0.22, 1] },
     },
   };
 
   return (
-    <section className="bg-[#111111] text-white">
+    <section className="bg-[#111111] text-white overflow-hidden">
       <div className="container mx-auto max-w-[1400px]">
         <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[650px]">
+          
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={leftImageReveal}
             className="lg:col-span-4 relative h-[450px] lg:h-auto overflow-hidden"
           >
             <motion.img
-              initial={{ scale: 1.2 }}
+              initial={{ scale: 1.1 }}
               whileInView={{ scale: 1 }}
-              transition={{ duration: 1.8, ease: "easeOut" }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
               src="/images/about-catleya-2.webp"
               alt="Experiencia Catleya"
               className="absolute inset-0 w-full h-full object-cover"
@@ -64,18 +65,13 @@ export default function AboutUsSection() {
               <p className="text-gray-400 font-light leading-relaxed text-sm md:text-base">
                 Un santuario privado inmerso en jardines ancestrales, donde cada
                 detalle está diseñado para ofrecer una escapada de lujo íntimo.
-                Reconecta contigo mismo en espacios que fusionan arquitectura y
-                naturaleza.
+                Reconecta contigo mismo en espacios que fusionan arquitectura y naturaleza.
               </p>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="pt-4"
-              >
+              <div className="pt-4">
                 <Button className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 text-sm font-bold transition-all uppercase tracking-widest rounded-none border-none">
                   Reservar Ahora
                 </Button>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
 
@@ -90,7 +86,7 @@ export default function AboutUsSection() {
               <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: 64 }}
-                transition={{ delay: 1.2, duration: 1 }}
+                transition={{ delay: 0.3, duration: 0.8 }} // Línea aparece rápido al entrar la columna
                 className="h-[1px] bg-gray-700"
               />
               <span className="text-[10px] uppercase tracking-[0.4em] text-gray-500 font-bold whitespace-nowrap">
@@ -102,7 +98,7 @@ export default function AboutUsSection() {
               <motion.h2
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4, duration: 0.8 }}
+                transition={{ delay: 0.4, duration: 0.6 }} // El título aparece casi de inmediato
                 className="text-3xl md:text-[42px] font-serif leading-tight text-right lg:pl-10"
               >
                 Descubre <br />
@@ -110,19 +106,20 @@ export default function AboutUsSection() {
               </motion.h2>
 
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.6, duration: 0.8 }}
-                className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group"
+                transition={{ delay: 0.5, duration: 0.6 }} // La imagen final cierra la secuencia
+                className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden"
               >
                 <img
                   src="/images/about-catleya-1.webp"
                   alt="Arquitectura Catleya"
-                  className="w-full h-full object-cover rounded-sm shadow-2xl transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover rounded-sm shadow-2xl"
                 />
               </motion.div>
             </div>
           </motion.div>
+
         </div>
       </div>
     </section>
