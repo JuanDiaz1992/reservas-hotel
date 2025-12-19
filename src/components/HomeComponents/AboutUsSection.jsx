@@ -31,11 +31,9 @@ export default function AboutUsSection() {
 
   return (
     <section className="bg-[#111111] text-white">
-           {" "}
       <div className="container mx-auto max-w-[1400px]">
-               {" "}
         <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[650px]">
-                   {" "}
+          {/* Columna Izquierda - Imagen Principal */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -43,7 +41,6 @@ export default function AboutUsSection() {
             variants={leftImageReveal}
             className="lg:col-span-4 relative h-[450px] lg:h-auto overflow-hidden"
           >
-                       {" "}
             <motion.img
               initial={{ scale: 1.2 }}
               whileInView={{ scale: 1 }}
@@ -52,9 +49,9 @@ export default function AboutUsSection() {
               alt="Experiencia Catleya"
               className="absolute inset-0 w-full h-full object-cover"
             />
-                     {" "}
           </motion.div>
-                   {" "}
+
+          {/* Columna Central - Texto y Botón */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -62,37 +59,28 @@ export default function AboutUsSection() {
             variants={textFade}
             className="lg:col-span-4 px-8 py-16 lg:py-24 flex flex-col justify-end lg:pb-32"
           >
-                       {" "}
             <div className="space-y-6 max-w-[380px]">
-                           {" "}
               <p className="text-[#476d15] text-xs uppercase tracking-[0.3em] font-bold">
-                                Lujo Sostenible              {" "}
+                Lujo Sostenible
               </p>
-                           {" "}
               <p className="text-gray-400 font-light leading-relaxed text-sm md:text-base">
-                                Un santuario privado inmerso en jardines
-                ancestrales, donde cada                 detalle está diseñado
-                para ofrecer una escapada de lujo íntimo.                
-                Reconecta contigo mismo en espacios que fusionan arquitectura y
-                                naturaleza.              {" "}
+                Un santuario privado inmerso en jardines ancestrales, donde cada 
+                detalle está diseñado para ofrecer una escapada de lujo íntimo. 
+                Reconecta contigo mismo en espacios que fusionan arquitectura y naturaleza.
               </p>
-                           {" "}
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="pt-4"
               >
-                               {" "}
                 <Button className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 text-sm font-bold transition-all uppercase tracking-widest rounded-none border-none">
-                                    Reservar Ahora                {" "}
+                  Reservar Ahora
                 </Button>
-                             {" "}
               </motion.div>
-                         {" "}
             </div>
-                     {" "}
           </motion.div>
-                   {" "}
+
+          {/* Columna Derecha - Título e Imagen Secundaria */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -100,58 +88,45 @@ export default function AboutUsSection() {
             variants={rightColumnSlide}
             className="lg:col-span-4 p-8 lg:p-12 flex flex-col justify-between items-end"
           >
-                       {" "}
             <div className="flex items-center gap-4 mb-8">
-                           {" "}
               <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: 64 }}
                 transition={{ delay: 1.2, duration: 1 }}
                 className="h-[1px] bg-gray-700"
               />
-                           {" "}
               <span className="text-[10px] uppercase tracking-[0.4em] text-gray-500 font-bold whitespace-nowrap">
-                                Sobre Nosotros              {" "}
+                Sobre Nosotros
               </span>
-                         {" "}
             </div>
-                       {" "}
+
             <div className="w-full space-y-8">
-                           {" "}
               <motion.h2
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.4, duration: 0.8 }}
                 className="text-3xl md:text-[42px] font-serif leading-tight text-right lg:pl-10"
               >
-                                Descubre <br />               {" "}
+                Descubre <br />
                 <span className="italic text-gray-400">Catleya Royal Club</span>
-                             {" "}
               </motion.h2>
-                           {" "}
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.6, duration: 0.8 }}
                 className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group"
               >
-                               {" "}
                 <img
                   src="/images/about-catleya-1.webp"
                   alt="Arquitectura Catleya"
                   className="w-full h-full object-cover rounded-sm shadow-2xl transition-transform duration-700 group-hover:scale-110"
                 />
-                             {" "}
               </motion.div>
-                         {" "}
             </div>
-                     {" "}
           </motion.div>
-                 {" "}
         </div>
-             {" "}
       </div>
-         {" "}
     </section>
   );
 }

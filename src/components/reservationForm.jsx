@@ -22,7 +22,7 @@ import {
 } from "@heroui/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { useCart } from "../context/cartContext";
-
+import { get } from "../../api/get";
 export default function ReservationForm({
   onSearch,
   setResults,
@@ -39,11 +39,16 @@ export default function ReservationForm({
     onOpenChange: onWarningOpenChange,
   } = useDisclosure();
 
-  const { setDateRange: setGlobalDateRange, cart, clearCart, setGuestCount } = useCart();
+  const {
+    setDateRange: setGlobalDateRange,
+    cart,
+    clearCart,
+    setGuestCount,
+  } = useCart();
 
   const isDateSelected = dateRange?.start && dateRange?.end;
 
-  const executeSearch = () => {
+  const executeSearch = async () => {
     const { start, end } = dateRange || {};
 
     if (cart.length > 0) {
@@ -58,18 +63,24 @@ export default function ReservationForm({
     const jsData = {
       guests: guests,
       checkIn: start
-        ? new Date(start.year, start.month - 1, start.day)
+        ? new Date(start.year, start.month - 1, start.day).toISOString()
         : undefined,
-      checkOut: end ? new Date(end.year, end.month - 1, end.day) : undefined,
+      checkOut: end
+        ? new Date(end.year, end.month - 1, end.day).toISOString()
+        : undefined,
     };
 
-    console.log("Búsqueda de disponibilidad:", jsData);
+    const endpoint = `/search-rooms?check_in=${jsData.checkIn}&check_out=${jsData.checkOut}&guests=${jsData.guests}`;
 
-    if (onSearch) {
-      setGuests(guests);
-      setResults(sampleRooms);
-      onSearch(jsData);
+    const { data, error } = await get({ endpoint });
+
+    if (error) {
+      console.error("Error al buscar habitaciones:", error);
+      await onSearch([]);
+      return;
     }
+    setGuests(guests);
+    await onSearch(data.rooms);
   };
 
   const handleFormSubmit = (e) => {

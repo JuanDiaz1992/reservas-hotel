@@ -18,7 +18,6 @@ export default function RoomListing({ results, guests = 1 }) {
 
   const handleReserve = (roomWithExtras) => {
     console.log("Datos recibidos en RoomListing:", roomWithExtras);
-    // IMPORTANTE: Aseguramos que el item tenga el tipo 'room' al guardarlo
     addToCart({ ...roomWithExtras, type: "room" });
     onClose();
   };
@@ -70,7 +69,7 @@ export default function RoomListing({ results, guests = 1 }) {
             className={`${getRoomContainerSpan()} transition-all duration-500`}
           >
             {rooms.length === 0 ? (
-              <div className="flex justify-center py-12 bg-white/50 rounded-2xl border border-dashed border-gray-300">
+              <div id="no-results" className="flex justify-center py-12 bg-white/50 rounded-2xl border border-dashed border-gray-300">
                 <div className="w-full max-w-2xl text-center px-4">
                   <div className="relative mx-auto w-24 h-24 mb-6 flex items-center justify-center">
                     <div className="absolute inset-0 border border-[#D4AF37]/20 rounded-full animate-pulse" />
@@ -96,7 +95,6 @@ export default function RoomListing({ results, guests = 1 }) {
             ) : (
               <div className={`grid gap-6 ${getInnerGridCols()}`}>
                 {rooms.map((room) => {
-                  // VALIDACIÓN MEJORADA: Chequeamos ID y TYPE
                   const isRoomInCart = cart.some(
                     (item) => item.type === "room" && item.id === room.id
                   );
@@ -132,7 +130,6 @@ export default function RoomListing({ results, guests = 1 }) {
             <RoomDetail
               room={selectedRoom}
               onReserve={() => handleReserve(selectedRoom)}
-              // VALIDACIÓN MEJORADA TAMBIÉN EN EL MODAL
               isInCart={
                 selectedRoom &&
                 cart.some(

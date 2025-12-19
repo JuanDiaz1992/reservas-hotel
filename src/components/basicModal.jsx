@@ -5,8 +5,8 @@ import {
 } from "@heroui/react";
 import { useState } from "react"
 
-export default function BasicModal({ isOpen, onOpenChange, Content, size = "md" }) {
-  const [scrollBehavior, setScrollBehavior] = useState("inside");
+export default function BasicModal({ isOpen, onOpenChange, Content, size = "md", scrollBehavior="normal" }) {
+
   return (
     <Modal
         size={size}

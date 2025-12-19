@@ -88,7 +88,6 @@ const GuestSelectionPopover = ({
       shouldFlip={false}
     >
       <PopoverTrigger>
-
         <Button
           className={`px-6 text-white ${
             isDisabled
@@ -207,7 +206,6 @@ export default function RoomCard({ room, onOpenModal, onReserve, isInCart }) {
   return (
     <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/95 backdrop-blur-sm py-0">
       <CardBody className="p-0 overflow-hidden">
-        {/* Swiper Slider */}
         <div className="relative h-56 group/slider">
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
@@ -257,12 +255,12 @@ export default function RoomCard({ room, onOpenModal, onReserve, isInCart }) {
           </div>
 
           <div className="absolute bottom-4 left-4 z-10 pointer-events-none">
-            <Chip
+            {/* <Chip
               className="bg-black/60 text-white border-0 backdrop-blur-sm"
               startContent={<Square className="h-3 w-3" />}
             >
               {room.size}m²
-            </Chip>
+            </Chip> */}
           </div>
         </div>
 
@@ -282,12 +280,16 @@ export default function RoomCard({ room, onOpenModal, onReserve, isInCart }) {
               <Users className="h-3 w-3 mr-1" /> {room.capacity} pers.
             </div>
             <div className="flex gap-2">
-              {room.amenities.slice(0, 3).map((amenity, idx) => {
-                const IconComponent = getIconComponent(amenity.icon);
-                return (
-                  <IconComponent key={idx} className="w-4 h-4 text-[#476d15]" />
-                );
-              })}
+              {room.services &&
+                room.services.slice(0, 4).map((service, idx) => (
+                  <div key={idx} className="flex items-center justify-center">
+                    <i
+                      className={`${service.icon} text-[#476d15]`}
+                      style={{ fontSize: "14px" }}
+                      title={service.name}
+                    ></i>
+                  </div>
+                ))}
             </div>
           </div>
 
