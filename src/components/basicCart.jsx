@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Button, ScrollShadow } from "@heroui/react";
 import {
   Trash2,
@@ -14,15 +15,49 @@ import { useCart } from "../context/cartContext";
 import { Link, useLocation } from "react-router-dom";
 import { scrollToTop } from "../utils/scrollToTop";
 
+function CartImage({ src, alt }) {
+  const fallback = "/images/no_picture.webp";
+  const [imgSrc, setImgSrc] = useState(src || fallback);
+
+  useEffect(() => {
+    setImgSrc(src || fallback);
+  }, [src]);
+
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      className="w-full h-full object-cover"
+      onError={() => setImgSrc(fallback)}
+    />
+  );
+}
+
 export default function BasicCart({
   onCheckout,
   checkoutLabel = "Pagar Ahora",
   showFooter = true,
   maxHeight = "max-h-[calc(100vh-120px)]",
+  hideCheckoutButton = false,
 }) {
-  const { cart, removeFromCart, totalNights, updateQuantity, guestCount } =
-    useCart();
+  const {
+    cart,
+    removeFromCart,
+    totalNights,
+    updateQuantity,
+    guestCount,
+    clearCart,
+  } = useCart();
   const { formatPrice } = useCurrency();
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      const hasRoom = cart.some((item) => item.type === "room");
+      if (!hasRoom) {
+        clearCart();
+      }
+    }
+  }, [cart, clearCart]);
 
   const calculateItemPricing = (item) => {
     if (item.type === "addon") {
@@ -102,9 +137,11 @@ export default function BasicCart({
             <span className="font-bold">Capacidad insuficiente</span>
             <span className="opacity-90">
               Grupo de <strong>{guestCount}</strong>, espacio para{" "}
-              <strong>{currentCapacity}</strong>. {" "}
+              <strong>{currentCapacity}</strong>.{" "}
               {location.pathname !== "/" && (
-                <Link to="/" className="underline" onClick={scrollToTop}>Regresa a la página de reservas</Link>
+                <Link to="/" className="underline" onClick={scrollToTop}>
+                  Regresa a la página de reservas
+                </Link>
               )}
             </span>
           </div>
@@ -129,9 +166,8 @@ export default function BasicCart({
         <div className="space-y-3">
           {cart.map((item) => {
             const pricing = calculateItemPricing(item);
-
             const displayImage =
-              item.type === "room" ? item.images && item.images[0] : item.image; // Asume que addons/otros tienen .image simple
+              item.type === "room" ? item.images && item.images[0] : item.image;
 
             return (
               <div
@@ -147,22 +183,15 @@ export default function BasicCart({
                 </div>
 
                 <div className="flex justify-between items-start gap-3">
-                  {displayImage && (
-                    <div className="w-16 h-16 rounded-md overflow-hidden shrink-0 bg-gray-200 hidden sm:block">
-                      <img
-                        src={displayImage}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div className="w-16 h-16 rounded-md overflow-hidden shrink-0 bg-gray-200 hidden sm:block">
+                    <CartImage src={displayImage} alt={item.name} />
+                  </div>
 
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-gray-900 text-sm truncate pr-6">
                       {item.name}
                     </h4>
 
-                    {/* CAMBIO 4: Mostrar specs solo si es cuarto */}
                     {item.type === "room" && (
                       <p className="text-[10px] text-gray-400">
                         {item.capacity} Pers. • {item.size}m²
@@ -175,7 +204,6 @@ export default function BasicCart({
                           {formatPrice(pricing.priceDisplay)}
                         </span>
                         <span className="text-[10px] text-gray-500">
-                          {/* Texto dinámico */}
                           {item.type === "room" ? " /noche" : " /unidad"}
                         </span>
                       </div>
@@ -268,17 +296,23 @@ export default function BasicCart({
             </div>
           </div>
 
-          <Button
-            className={`w-full text-white font-medium py-3 shadow-lg ${
-              !isCapacitySufficient ? "bg-gray-400 opacity-50" : "bg-[#476d15]"
-            }`}
-            onPress={() =>
-              onCheckout && onCheckout({ cart, total: calculateGrandTotal() })
-            }
-            isDisabled={!isCapacitySufficient}
-          >
-            {!isCapacitySufficient ? "Agrega más habitaciones" : checkoutLabel}
-          </Button>
+          {!hideCheckoutButton && (
+            <Button
+              className={`w-full text-white font-medium py-3 shadow-lg ${
+                !isCapacitySufficient
+                  ? "bg-gray-400 opacity-50"
+                  : "bg-[#476d15]"
+              }`}
+              onPress={() =>
+                onCheckout && onCheckout({ cart, total: calculateGrandTotal() })
+              }
+              isDisabled={!isCapacitySufficient}
+            >
+              {!isCapacitySufficient
+                ? "Agrega más habitaciones"
+                : checkoutLabel}
+            </Button>
+          )}
         </div>
       )}
     </div>

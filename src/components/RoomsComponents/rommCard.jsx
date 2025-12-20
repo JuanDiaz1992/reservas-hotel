@@ -242,15 +242,21 @@ export default function RoomCard({ room, onOpenModal, onReserve, isInCart }) {
                 </SwiperSlide>
               ))
             ) : (
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
-                Sin imagen
-              </div>
+              <SwiperSlide>
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                  <img
+                    src="/images/no_picture.webp"
+                    alt="No disponible"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </SwiperSlide>
             )}
           </Swiper>
 
           <div className="absolute top-4 right-4 z-10 pointer-events-none">
             <Chip className="bg-[#476d15] text-white border-0 text-xs shadow-sm">
-              {room.inventory} disp.
+              {room.available_stock} disp.
             </Chip>
           </div>
 

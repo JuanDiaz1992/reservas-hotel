@@ -44,7 +44,7 @@ export default function RoomDetail({ room }) {
             </div>
             <div className="flex items-center gap-1 bg-[#476d15]/10 text-[#476d15] px-3 py-1 rounded-full font-medium">
               <DoorOpen className="w-4 h-4" />
-              <span>{room.inventory} disponibles</span>
+              <span>{room.available_stock} disponibles</span>
             </div>
           </div>
 

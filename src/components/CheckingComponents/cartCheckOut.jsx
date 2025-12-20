@@ -2,19 +2,22 @@ import { ShoppingBag, ArrowLeft } from "lucide-react";
 import { Button } from "@heroui/react";
 import { useCart } from "../../context/cartContext";
 import BasicCart from "../basicCart";
-import viewElement from "../../utils/scrollToObject";
 import { useNavigate } from "react-router-dom";
 import { scrollToTop } from "../../utils/scrollToTop";
-export default function CheckOutCart({view, setView}) {
+
+export default function CheckOutCart({ view, setView, onFinalSubmit }) {
   const { cart } = useCart();
   const navigate = useNavigate();
-  const viewFormCheckout = () => {
-    if (view === 1){
+
+const handleCheckoutAction = () => {
+    if (view === 1) {
       setView(2);
       scrollToTop();
-    };
+    } else {
+      onFinalSubmit();
+    }
+  };
 
-  }
   return (
     <aside className="h-full animate-appearance-in">
       {cart.length === 0 ? (
@@ -56,9 +59,10 @@ export default function CheckOutCart({view, setView}) {
           </div>
 
           <BasicCart
-            checkoutLabel="Continuar Reserva"
-            onCheckout={viewFormCheckout}
+            checkoutLabel={view === 2 ? "Finalizar Reserva" : "Continuar Reserva"}
+            onCheckout={handleCheckoutAction}
             maxHeight="flex-1 min-h-0"
+            hideCheckoutButton={view === 2}
           />
         </div>
       )}

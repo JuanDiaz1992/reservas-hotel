@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CalendarX, AlertCircle } from "lucide-react";
-import { Button, useDisclosure } from "@heroui/react";
+import { Button, useDisclosure, addToast } from "@heroui/react";
 import viewElement from "../../utils/scrollToObject";
 import BasicModal from "../basicModal";
 import RoomDetail from "./roomDetail";
@@ -19,6 +19,12 @@ export default function RoomListing({ results, guests = 1 }) {
   const handleReserve = (roomWithExtras) => {
     console.log("Datos recibidos en RoomListing:", roomWithExtras);
     addToCart({ ...roomWithExtras, type: "room" });
+    addToast({
+      title: "Habitación añadida",
+      description: `${roomWithExtras.name} se ha agregado a tu reserva.`,
+      variant: "flat",
+      color: "success",
+    });
     onClose();
   };
 

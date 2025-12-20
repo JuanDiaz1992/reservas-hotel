@@ -15,11 +15,21 @@ import AddsOnModalContent from "./addsOnModalContent";
 import { useCurrency } from "../../context/currencyContext";
 
 function StandardImage({ src, alt, className }) {
-  return <img src={src} alt={alt} className={className} />;
+  const fallback = "/images/no_picture.webp";
+  const [imgSrc, setImgSrc] = useState(src || fallback);
+
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      className={className}
+      onError={() => setImgSrc(fallback)}
+    />
+  );
 }
 
 export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
-  const { id, name, price, images } = addsOnInfo;
+  const { id, name, price, image } = addsOnInfo;
 
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
@@ -34,14 +44,17 @@ export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
       type: "addon",
       quantity: quantity,
       totalPrice: price * quantity,
-      image: images[0],
+      image: image,
     };
 
-    onAddToCart(itemToAdd);
+    // Verificamos si el padre realmente lo añadió
+    const success = onAddToCart(itemToAdd);
 
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 2000);
-    setQuantity(1);
+    if (success) {
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 2000);
+      setQuantity(1);
+    }
   };
 
   return (
@@ -50,7 +63,7 @@ export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
         <CardBody className="p-0 overflow-hidden flex-grow">
           <div className="relative h-56 w-full flex-shrink-0 overflow-hidden">
             <StandardImage
-              src={images[0]}
+              src={image}
               alt={`Portada de ${name}`}
               className="object-cover w-full h-full rounded-t-2xl transition-transform duration-700 group-hover:scale-105"
             />
@@ -97,7 +110,6 @@ export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
               variant="flat"
               color="gray"
               size="sm"
-
               isDisabled={isInCart}
               className="rounded-r-none h-8 w-8 min-w-8"
               aria-label="Disminuir cantidad"
@@ -109,7 +121,6 @@ export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-
               isDisabled={isInCart}
               className="w-full text-center text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               classNames={{ input: "text-center p-0 h-8" }}

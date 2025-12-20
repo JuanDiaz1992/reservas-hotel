@@ -11,6 +11,7 @@ export default function App(){
         <Route index element={<Home />} />
         <Route path="/loguin" element={<Loguin />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout/details" element={<Checkout />} />
       </Route>
     </Routes>
   );

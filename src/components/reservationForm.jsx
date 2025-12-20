@@ -25,7 +25,6 @@ import { useCart } from "../context/cartContext";
 import { get } from "../../api/get";
 export default function ReservationForm({
   onSearch,
-  setResults,
   isSearching = false,
   setGuests,
 }) {
@@ -60,17 +59,18 @@ export default function ReservationForm({
     }
     setGuestCount(guests);
 
-    const jsData = {
-      guests: guests,
-      checkIn: start
-        ? new Date(start.year, start.month - 1, start.day).toISOString()
-        : undefined,
-      checkOut: end
-        ? new Date(end.year, end.month - 1, end.day).toISOString()
-        : undefined,
+    const formatDateForAPI = (date) => {
+      if (!date) return undefined;
+      const year = date.year;
+      const month = String(date.month).padStart(2, "0");
+      const day = String(date.day).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     };
 
-    const endpoint = `/search-rooms?check_in=${jsData.checkIn}&check_out=${jsData.checkOut}&guests=${jsData.guests}`;
+    const checkIn = formatDateForAPI(start);
+    const checkOut = formatDateForAPI(end);
+
+    const endpoint = `/search-rooms?check_in=${checkIn}&check_out=${checkOut}&guests=${guests}`;
 
     const { data, error } = await get({ endpoint });
 
@@ -79,7 +79,9 @@ export default function ReservationForm({
       await onSearch([]);
       return;
     }
-    setGuests(guests);
+
+    if (setGuests) setGuests(guests);
+
     await onSearch(data.rooms);
   };
 

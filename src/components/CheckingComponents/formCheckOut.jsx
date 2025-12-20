@@ -14,31 +14,36 @@ import {
   Autocomplete,
   AutocompleteItem,
   Avatar,
+  RadioGroup,
+  Radio,
 } from "@heroui/react";
 import {
   User,
   Mail,
   Phone,
-  FileText,
   Users,
   ChevronLeft,
-  PlusCircle,
   Copy,
+  CheckCircle2,
+  CreditCard,
 } from "lucide-react";
 import { useCart } from "../../context/cartContext";
 
-export default function FormCheckOut({ setTitle, navigateViews }) {
-  setTitle("Ingresa tus Datos para la Reserva");
-  const { guestCount } = useCart();
+export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
+  const { cart, guestCount, dateRange } = useCart();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
   const [countries, setCountries] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("transferencia");
+  const additionalGuestsCount = Math.max(0, guestCount - 1);
+
+  useEffect(() => {
+    setTitle("Ingresa tus Datos para la Reserva");
+  }, [setTitle]);
 
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all?fields=name,flags,cca2")
       .then((res) => res.json())
       .then((data) => {
-        // Ordenamos alfabéticamente
         const sortedCountries = data.sort((a, b) =>
           a.name.common.localeCompare(b.name.common)
         );
@@ -62,10 +67,10 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
 
   useEffect(() => {
     setGuests((prev) => {
-      const newGuests = new Array(guestCount).fill(null);
+      const newGuests = new Array(additionalGuestsCount).fill(null);
       return newGuests.map((_, i) => prev[i] || null);
     });
-  }, [guestCount]);
+  }, [additionalGuestsCount]);
 
   const handleMainChange = (e) => {
     const { name, value } = e.target;
@@ -73,7 +78,11 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
   };
 
   const handleMainCountryChange = (key) => {
-    setMainContact((prev) => ({ ...prev, country: key }));
+    const selected = countries.find((c) => c.name.common === key);
+    setMainContact((prev) => ({
+      ...prev,
+      country: selected ? selected.cca2 : key,
+    }));
   };
 
   const openGuestModal = (index) => {
@@ -88,15 +97,6 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
       }
     );
     onOpen();
-  };
-
-  const handleGuestModalChange = (e) => {
-    const { name, value } = e.target;
-    setTempGuestData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleGuestCountryChange = (key) => {
-    setTempGuestData((prev) => ({ ...prev, country: key }));
   };
 
   const saveGuestData = () => {
@@ -116,34 +116,91 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
     });
   };
 
-  const handleSubmit = () => {
-    console.log("Titular:", mainContact);
-    console.log("Huéspedes:", guests);
+  const calculateGrandTotal = () => {
+    return cart.reduce((acc, item) => {
+      if (item.type === "room") {
+        return acc + item.price * (item.nights || 1);
+      }
+      return acc + item.price * (item.quantity || 1);
+    }, 0);
+  };
+
+  const depositAmount = calculateGrandTotal() / 2;
+
+  const formatter = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  });
+
+  const handleSubmitFinal = () => {
+    const roomsInCart = cart.filter((item) => item.type === "room");
+    const addonsInCart = cart.filter((item) => item.type === "addon");
+
+    const formatBackendDate = (dateObj) => {
+      if (!dateObj) return "";
+      const year = dateObj.year;
+      const month = String(dateObj.month).padStart(2, "0");
+      const day = String(dateObj.day).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const finalData = {
+      check_in: formatBackendDate(dateRange?.start),
+      check_out: formatBackendDate(dateRange?.end),
+      special_requests: mainContact.preferences,
+      payment_method: paymentMethod,
+      customer: {
+        first_name: mainContact.firstName,
+        last_name: mainContact.lastName,
+        email: mainContact.email,
+        phone: mainContact.phone,
+        country: mainContact.country,
+      },
+      rooms: roomsInCart.map((room) => ({
+        room_id: room.originalId || room.id,
+        adults: room.adults || 1,
+        children: room.children || 0,
+      })),
+      addons: addonsInCart.map((addon) => ({
+        id: addon.originalId || addon.id,
+        quantity: addon.quantity,
+      })),
+      guests: guests
+        .filter((g) => g !== null && g.firstName)
+        .map((g) => ({
+          first_name: g.firstName,
+          last_name: g.lastName,
+          email: g.email || "",
+          country: g.country || "",
+        })),
+    };
+
+    console.log("JSON FINAL PARA BACKEND:", finalData);
   };
 
   return (
     <div className="animate-appearance-in flex flex-col gap-6 pb-20 max-w-4xl mx-auto w-full">
-      <div className="flex items-center gap-2">
+      {hasAddons && (
         <Button
           size="sm"
           variant="light"
+          className="self-start"
           startContent={<ChevronLeft size={16} />}
           onPress={() => navigateViews(1)}
         >
           Volver a Servicios Adicionales
         </Button>
-      </div>
+      )}
 
       <Card className="shadow-sm border border-gray-100">
         <CardBody className="p-6 gap-6">
           <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
-            <User className="w-5 h-5" /> Datos del Titular
+            <User className="w-5 h-5" /> Datos del Titular (Responsable)
           </h3>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Nombres"
-              placeholder="Ej. Juan"
               name="firstName"
               value={mainContact.firstName}
               onChange={handleMainChange}
@@ -152,23 +209,16 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
             />
             <Input
               label="Apellidos"
-              placeholder="Ej. Pérez"
               name="lastName"
               value={mainContact.lastName}
               onChange={handleMainChange}
               isRequired
               variant="bordered"
             />
-
             <Autocomplete
               label="País de residencia"
-              placeholder="Busca tu país"
               variant="bordered"
-              selectedKey={mainContact.country}
               onSelectionChange={handleMainCountryChange}
-              inputProps={{
-                autoComplete: "new-password",
-              }}
             >
               {countries.map((item) => (
                 <AutocompleteItem
@@ -186,34 +236,24 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
                 </AutocompleteItem>
               ))}
             </Autocomplete>
-
             <Input
               label="Teléfono"
-              placeholder="+57 300 000 0000"
               startContent={<Phone size={16} className="text-gray-400" />}
               name="phone"
               value={mainContact.phone}
               onChange={handleMainChange}
-              type="tel"
               variant="bordered"
             />
             <Input
               label="Correo Electrónico"
-              placeholder="juan@ejemplo.com"
-              startContent={<Mail size={16} className="text-gray-400" />}
               name="email"
               value={mainContact.email}
               onChange={handleMainChange}
-              type="email"
               className="md:col-span-2"
               variant="bordered"
             />
             <Textarea
-              label="Información Adicional / Preferencias"
-              placeholder="Alergias, piso bajo, cama adicional..."
-              startContent={
-                <FileText size={16} className="text-gray-400 mt-1" />
-              }
+              label="Información Adicional"
               name="preferences"
               value={mainContact.preferences}
               onChange={handleMainChange}
@@ -224,140 +264,256 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
         </CardBody>
       </Card>
 
-      <Card className="shadow-sm border border-gray-100">
-        <CardBody className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
-              <Users className="w-5 h-5" /> Registro de Huéspedes
-            </h3>
-            <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
-              Total: {guestCount}
-            </span>
-          </div>
-
-          <p className="text-sm text-gray-500 mb-6">
-            Por regulaciones locales, necesitamos la información básica de todos
-            los huéspedes que se alojarán.
-          </p>
-
-          <div className="space-y-3">
-            {Array.from({ length: guestCount }).map((_, index) => {
-              const guestData = guests[index];
-              const isCompleted = guestData && guestData.firstName;
-
-              return (
-                <div
-                  key={index}
-                  className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
-                    isCompleted
-                      ? "bg-green-50/50 border-green-200"
-                      : "bg-gray-50 border-dashed border-gray-300 hover:border-[#476d15]/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        isCompleted
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-200 text-gray-500"
-                      }`}
-                    >
-                      {index + 1}
-                    </div>
-                    <div>
+      {additionalGuestsCount > 0 && (
+        <Card className="shadow-sm border border-gray-100">
+          <CardBody className="p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
+                <Users className="w-5 h-5" /> Acompañantes Adicionales
+              </h3>
+              <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+                Pendientes: {additionalGuestsCount}
+              </span>
+            </div>
+            <div className="space-y-3">
+              {guests.map((guestData, index) => {
+                const isCompleted = guestData && guestData.firstName;
+                return (
+                  <div
+                    key={index}
+                    className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+                      isCompleted
+                        ? "bg-green-50 border-green-200"
+                        : "bg-gray-50 border-dashed border-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          isCompleted
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-200 text-gray-500"
+                        }`}
+                      >
+                        {index + 1}
+                      </div>
                       <p
-                        className={`font-medium ${isCompleted ? "text-gray-900" : "text-gray-500"}`}
+                        className={`font-medium ${
+                          isCompleted ? "text-gray-900" : "text-gray-500"
+                        }`}
                       >
                         {isCompleted
                           ? `${guestData.firstName} ${guestData.lastName}`
-                          : `Huésped ${index + 1}`}
+                          : `Información Acompañante ${index + 1}`}
                       </p>
-                      <p className="text-xs text-gray-400">
-                        {isCompleted
-                          ? "Información completada"
-                          : "Pendiente de registro"}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={isCompleted ? "flat" : "solid"}
+                      color={isCompleted ? "success" : "default"}
+                      onPress={() => openGuestModal(index)}
+                    >
+                      {isCompleted ? "Editar" : "Agregar"}
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          </CardBody>
+        </Card>
+      )}
+
+      <Card className="shadow-sm border border-gray-100 overflow-hidden">
+        <CardBody className="p-6">
+          <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2 mb-4">
+            <CreditCard className="w-5 h-5" /> Método de Pago
+          </h3>
+          <RadioGroup
+            value={paymentMethod}
+            onValueChange={setPaymentMethod}
+            color="success"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  className={`p-4 border rounded-xl cursor-pointer transition-all ${
+                    paymentMethod === "transferencia"
+                      ? "border-[#476d15] bg-green-50"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() => setPaymentMethod("transferencia")}
+                >
+                  <Radio value="transferencia">
+                    <span className="font-semibold text-gray-800">
+                      Transferencia Bancaria
+                    </span>
+                    <p className="text-xs text-gray-500">
+                      Manual (Ver cuentas abajo)
+                    </p>
+                  </Radio>
+                </div>
+                <div
+                  className={`p-4 border rounded-xl cursor-pointer transition-all ${
+                    paymentMethod === "online"
+                      ? "border-[#476d15] bg-green-50"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() => setPaymentMethod("online")}
+                >
+                  <Radio value="online">
+                    <span className="font-semibold text-gray-800">
+                      Pago seguro con ePayco
+                    </span>
+                    <p className="text-xs text-gray-500">
+                      PSE, Tarjetas, Nequi o Daviplata
+                    </p>
+                  </Radio>
+                </div>
+              </div>
+
+              {paymentMethod === "transferencia" && (
+                <div className="animate-appearance-in bg-gray-50 border border-dashed border-gray-300 rounded-xl p-5 mt-2">
+                  <div className="bg-[#476d15]/10 border border-[#476d15]/20 rounded-lg p-4 mb-6 flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-[#2c4549] font-medium uppercase tracking-wider">
+                        Monto a transferir ahora (50%)
+                      </p>
+                      <p className="text-2xl font-bold text-[#476d15]">
+                        {formatter.format(depositAmount)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-gray-500 italic">
+                        Total reserva: {formatter.format(calculateGrandTotal())}
+                      </p>
+                      <p className="text-[10px] text-gray-500 italic">
+                        El saldo restante se paga al ingresar.
                       </p>
                     </div>
                   </div>
 
-                  <Button
-                    size="sm"
-                    variant={isCompleted ? "flat" : "solid"}
-                    color={isCompleted ? "success" : "default"}
-                    className={!isCompleted ? "bg-[#2c4549] text-white" : ""}
-                    onPress={() => openGuestModal(index)}
-                    startContent={!isCompleted && <PlusCircle size={14} />}
-                  >
-                    {isCompleted ? "Editar" : "Agregar"}
-                  </Button>
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="bg-[#476d15] p-1.5 rounded-full mt-0.5">
+                      <CheckCircle2 className="text-white w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-800">
+                        Paso 1: Registra tu reserva
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        Primero haz clic en el botón verde de "Finalizar Reserva". 
+                        Una vez registrada, realiza el pago a cualquiera de estas cuentas:
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div className="bg-white p-3 rounded-lg border border-gray-200">
+                      <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
+                        Bancolombia
+                      </p>
+                      <p className="text-sm font-bold text-gray-700">
+                        7217 6161 426
+                      </p>
+                      <p className="text-[11px] text-gray-500">
+                        Cuenta Corriente
+                      </p>
+                      <p className="text-[11px] font-medium">
+                        Catleya RoyalClub
+                      </p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-gray-200">
+                      <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
+                        Davivienda
+                      </p>
+                      <p className="text-sm font-bold text-gray-700">
+                        PON_AQUI_TU_NUMERO
+                      </p>
+                      <p className="text-[11px] text-gray-500">
+                        Cuenta de Ahorros
+                      </p>
+                      <p className="text-[11px] font-medium">
+                        Catleya RoyalClub
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 border-l-4 border-blue-400 p-3">
+                    <p className="text-xs text-blue-800 leading-relaxed italic">
+                      <strong>Instrucciones:</strong> Por favor enviar
+                      comprobante por <strong>{formatter.format(depositAmount)}</strong> a{" "}
+                      <strong>reservas@catleyaroyalclub.com</strong> indicando
+                      tu código de reserva.
+                    </p>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              )}
+            </div>
+          </RadioGroup>
         </CardBody>
       </Card>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        placement="center"
-        backdrop="blur"
+
+      <Button
+        className="w-full h-14 bg-[#476d15] text-white text-lg font-bold shadow-xl mt-4"
+        onPress={handleSubmitFinal}
+        startContent={<CheckCircle2 />}
       >
+        Finalizar Reserva
+      </Button>
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                Información del Huésped {currentGuestIndex + 1}
+              <ModalHeader>
+                Información del Acompañante {currentGuestIndex + 1}
               </ModalHeader>
               <ModalBody>
-                <div className="flex justify-end mb-2">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="primary"
-                    startContent={<Copy size={14} />}
-                    onPress={copyMainContactToGuest}
-                  >
-                    Copiar datos del titular
-                  </Button>
-                </div>
-
+                <Button
+                  size="sm"
+                  variant="light"
+                  color="primary"
+                  startContent={<Copy size={14} />}
+                  onPress={copyMainContactToGuest}
+                  className="mb-2"
+                >
+                  Copiar datos del titular
+                </Button>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="Nombres"
-                    placeholder="Nombres"
-                    name="firstName"
                     value={tempGuestData.firstName || ""}
-                    onChange={handleGuestModalChange}
+                    onChange={(e) =>
+                      setTempGuestData({
+                        ...tempGuestData,
+                        firstName: e.target.value,
+                      })
+                    }
                     variant="bordered"
-                    size="sm"
                   />
                   <Input
                     label="Apellidos"
-                    placeholder="Apellidos"
-                    name="lastName"
                     value={tempGuestData.lastName || ""}
-                    onChange={handleGuestModalChange}
+                    onChange={(e) =>
+                      setTempGuestData({
+                        ...tempGuestData,
+                        lastName: e.target.value,
+                      })
+                    }
                     variant="bordered"
-                    size="sm"
                   />
-
                   <Autocomplete
                     label="País"
-                    placeholder="Seleccionar"
                     variant="bordered"
-                    selectedKey={tempGuestData.country}
-                    onSelectionChange={handleGuestCountryChange}
-                    size="sm"
+                    onSelectionChange={(key) =>
+                      setTempGuestData({ ...tempGuestData, country: key })
+                    }
                   >
                     {countries.map((item) => (
                       <AutocompleteItem
-                        key={item.name.common}
+                        key={item.cca2}
                         startContent={
-                          <Avatar
-                            alt={item.name.common}
-                            className="w-5 h-5"
-                            src={item.flags.svg}
-                          />
+                          <Avatar className="w-5 h-5" src={item.flags.svg} />
                         }
                         textValue={item.name.common}
                       >
@@ -365,25 +521,30 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
                       </AutocompleteItem>
                     ))}
                   </Autocomplete>
-
                   <Input
-                    label="Teléfono"
-                    placeholder="Opcional"
-                    name="phone"
+                    label="Teléfono (Opcional)"
                     value={tempGuestData.phone || ""}
-                    onChange={handleGuestModalChange}
+                    onChange={(e) =>
+                      setTempGuestData({
+                        ...tempGuestData,
+                        phone: e.target.value,
+                      })
+                    }
                     variant="bordered"
-                    size="sm"
                   />
                   <Input
-                    label="Correo"
-                    placeholder="Opcional"
-                    name="email"
-                    value={tempGuestData.email || ""}
-                    onChange={handleGuestModalChange}
-                    variant="bordered"
+                    label="Correo Electrónico"
+                    placeholder="ejemplo@correo.com"
                     className="col-span-2"
-                    size="sm"
+                    value={tempGuestData.email || ""}
+                    onChange={(e) =>
+                      setTempGuestData({
+                        ...tempGuestData,
+                        email: e.target.value,
+                      })
+                    }
+                    variant="bordered"
+                    startContent={<Mail size={16} className="text-gray-400" />}
                   />
                 </div>
               </ModalBody>
@@ -395,7 +556,7 @@ export default function FormCheckOut({ setTitle, navigateViews }) {
                   className="bg-[#476d15] text-white"
                   onPress={saveGuestData}
                 >
-                  Guardar Huésped
+                  Guardar
                 </Button>
               </ModalFooter>
             </>
