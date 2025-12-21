@@ -12,6 +12,7 @@ export default function App(){
         <Route path="/loguin" element={<Loguin />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout/details" element={<Checkout />} />
+        <Route path="/checkout/success" element={<Checkout />} />
       </Route>
     </Routes>
   );

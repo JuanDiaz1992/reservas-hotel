@@ -103,63 +103,61 @@ export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
           </div>
         </CardBody>
         <CardFooter className="flex items-center justify-between pt-4 border-t border-gray-100 px-5 pb-5">
-          <div className="flex items-center space-x-0 w-1/3">
+          {/* Contenedor del Selector de Cantidad */}
+          <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
             <Button
               onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
               isIconOnly
-              variant="flat"
-              color="gray"
+              variant="light"
               size="sm"
               isDisabled={isInCart}
-              className="rounded-r-none h-8 w-8 min-w-8"
+              className="h-7 w-7 min-w-7 rounded-md hover:bg-white text-gray-600"
               aria-label="Disminuir cantidad"
             >
-              <Minus className="h-4 w-4" />
+              <Minus className="h-3 w-3" />
             </Button>
-            <Input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-              isDisabled={isInCart}
-              className="w-full text-center text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              classNames={{ input: "text-center p-0 h-8" }}
-              variant="bordered"
-            />
+
+            {/* Reemplazamos el Input por un div/span controlado */}
+            <div className="w-8 flex justify-center items-center">
+              <span className="text-sm font-bold text-gray-800 select-none">
+                {quantity}
+              </span>
+            </div>
+
             <Button
               onClick={() => setQuantity((prev) => prev + 1)}
               isIconOnly
-              variant="flat"
-              color="gray"
+              variant="light"
               size="sm"
               isDisabled={isInCart}
-              className="rounded-l-none h-8 w-8 min-w-8"
+              className="h-7 w-7 min-w-7 rounded-md hover:bg-white text-gray-600"
               aria-label="Aumentar cantidad"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-3 w-3" />
             </Button>
           </div>
 
+          {/* Botón Añadir */}
           <Button
             onClick={handleAddToCart}
             isDisabled={isInCart}
-            className={`flex-grow font-semibold h-9 ml-3 text-white transition-colors duration-300 ${
+            className={`flex-grow font-semibold h-9 ml-3 text-white transition-all duration-300 shadow-sm ${
               isInCart
                 ? "bg-gray-400 opacity-70 cursor-not-allowed"
                 : isAdded
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-[#476d15] hover:bg-[#4a4e38]"
+                  ? "bg-green-600"
+                  : "bg-[#476d15] hover:shadow-md active:scale-95"
             }`}
             variant="solid"
             startContent={
               isInCart ? null : isAdded ? (
-                <Check className="h-5 w-5" />
+                <Check className="h-4 w-4" />
               ) : (
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-4 w-4" />
               )
             }
           >
-            {isInCart ? "En el carrito" : isAdded ? "Agregado" : "Añadir"}
+            {isInCart ? "En carrito" : isAdded ? "Listo" : "Añadir"}
           </Button>
         </CardFooter>
       </Card>

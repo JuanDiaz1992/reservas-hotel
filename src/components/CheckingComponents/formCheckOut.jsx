@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Input,
@@ -28,13 +28,28 @@ import {
   CreditCard,
 } from "lucide-react";
 import { useCart } from "../../context/cartContext";
+import { post } from "../../../api/post";
 
 export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
-  const { cart, guestCount, dateRange } = useCart();
+  const { cart, guestCount, dateRange, setReservationId } = useCart();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [countries, setCountries] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("transferencia");
+  const [paymentMethod, setPaymentMethod] = useState("online");
   const additionalGuestsCount = Math.max(0, guestCount - 1);
+
+  const [mainContact, setMainContact] = useState({
+    firstName: "",
+    lastName: "",
+    country: "",
+    email: "",
+    phone: "",
+    preferences: "",
+  });
+
+  const [guests, setGuests] = useState([]);
+  const [currentGuestIndex, setCurrentGuestIndex] = useState(null);
+  const [tempGuestData, setTempGuestData] = useState({});
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     setTitle("Ingresa tus Datos para la Reserva");
@@ -51,19 +66,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
       })
       .catch((error) => console.error("Error cargando países:", error));
   }, []);
-
-  const [mainContact, setMainContact] = useState({
-    firstName: "",
-    lastName: "",
-    country: "",
-    email: "",
-    phone: "",
-    preferences: "",
-  });
-
-  const [guests, setGuests] = useState([]);
-  const [currentGuestIndex, setCurrentGuestIndex] = useState(null);
-  const [tempGuestData, setTempGuestData] = useState({});
 
   useEffect(() => {
     setGuests((prev) => {
@@ -133,7 +135,36 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     minimumFractionDigits: 0,
   });
 
-  const handleSubmitFinal = () => {
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!mainContact.firstName.trim())
+      newErrors.firstName = "El nombre es obligatorio";
+    if (!mainContact.lastName.trim())
+      newErrors.lastName = "El apellido es obligatorio";
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!mainContact.email.trim()) {
+      newErrors.email = "El correo es obligatorio";
+    } else if (!emailRegex.test(mainContact.email)) {
+      newErrors.email = "Formato de correo inválido";
+    }
+
+    if (!mainContact.phone.trim()) {
+      newErrors.phone = "El teléfono es obligatorio";
+    } else if (mainContact.phone.length < 7) {
+      newErrors.phone = "Teléfono demasiado corto";
+    }
+
+    if (!mainContact.country) newErrors.country = "Selecciona un país";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmitFinal = async () => {
+    if (!validateForm()) return;
+
     const roomsInCart = cart.filter((item) => item.type === "room");
     const addonsInCart = cart.filter((item) => item.type === "addon");
 
@@ -145,11 +176,10 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
       return `${year}-${month}-${day}`;
     };
 
-    const finalData = {
+    const body = {
       check_in: formatBackendDate(dateRange?.start),
       check_out: formatBackendDate(dateRange?.end),
       special_requests: mainContact.preferences,
-      payment_method: paymentMethod,
       customer: {
         first_name: mainContact.firstName,
         last_name: mainContact.lastName,
@@ -175,8 +205,32 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
           country: g.country || "",
         })),
     };
+    console.log(body);
 
-    console.log("JSON FINAL PARA BACKEND:", finalData);
+    const response = await post({
+      endpoint: "/reservations",
+      body: body,
+    });
+    console.log(response);
+    if (
+      response.status >= 200 &&
+      response.status < 300 &&
+      response.data?.status === "success"
+    ) {
+      const uuid = response.data.data.reservation_uuid;
+
+      setReservationId(uuid);
+
+      if (paymentMethod === "transferencia") {
+        await post({
+          endpoint: `/reservations/${uuid}/init-payment`,
+          body: { payment_method: "bank_transfer" },
+        });
+      }
+      navigateViews(3);
+    } else {
+      console.error("Error al procesar la reserva:", response.error);
+    }
   };
 
   return (
@@ -206,6 +260,8 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
               onChange={handleMainChange}
               isRequired
               variant="bordered"
+              isInvalid={!!errors.firstName}
+              errorMessage={errors.firstName}
             />
             <Input
               label="Apellidos"
@@ -214,11 +270,15 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
               onChange={handleMainChange}
               isRequired
               variant="bordered"
+              isInvalid={!!errors.lastName}
+              errorMessage={errors.lastName}
             />
             <Autocomplete
               label="País de residencia"
               variant="bordered"
               onSelectionChange={handleMainCountryChange}
+              isInvalid={!!errors.country}
+              errorMessage={errors.country}
             >
               {countries.map((item) => (
                 <AutocompleteItem
@@ -243,6 +303,8 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
               value={mainContact.phone}
               onChange={handleMainChange}
               variant="bordered"
+              isInvalid={!!errors.phone}
+              errorMessage={errors.phone}
             />
             <Input
               label="Correo Electrónico"
@@ -251,6 +313,8 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
               onChange={handleMainChange}
               className="md:col-span-2"
               variant="bordered"
+              isInvalid={!!errors.email}
+              errorMessage={errors.email}
             />
             <Textarea
               label="Información Adicional"
@@ -337,23 +401,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div
                   className={`p-4 border rounded-xl cursor-pointer transition-all ${
-                    paymentMethod === "transferencia"
-                      ? "border-[#476d15] bg-green-50"
-                      : "border-gray-200"
-                  }`}
-                  onClick={() => setPaymentMethod("transferencia")}
-                >
-                  <Radio value="transferencia">
-                    <span className="font-semibold text-gray-800">
-                      Transferencia Bancaria
-                    </span>
-                    <p className="text-xs text-gray-500">
-                      Manual (Ver cuentas abajo)
-                    </p>
-                  </Radio>
-                </div>
-                <div
-                  className={`p-4 border rounded-xl cursor-pointer transition-all ${
                     paymentMethod === "online"
                       ? "border-[#476d15] bg-green-50"
                       : "border-gray-200"
@@ -369,6 +416,23 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
                     </p>
                   </Radio>
                 </div>
+                <div
+                  className={`p-4 border rounded-xl cursor-pointer transition-all ${
+                    paymentMethod === "transferencia"
+                      ? "border-[#476d15] bg-green-50"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() => setPaymentMethod("transferencia")}
+                >
+                  <Radio value="transferencia">
+                    <span className="font-semibold text-gray-800">
+                      Transferencia Bancaria
+                    </span>
+                    <p className="text-xs text-gray-500">
+                      Manual (Ver cuentas abajo)
+                    </p>
+                  </Radio>
+                </div>
               </div>
 
               {paymentMethod === "transferencia" && (
@@ -379,12 +443,13 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
                         Monto a transferir ahora (50%)
                       </p>
                       <p className="text-2xl font-bold text-[#476d15]">
-                        {formatter.format(depositAmount)}
+                        {formatter.format(depositAmount)} COP
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-[10px] text-gray-500 italic">
-                        Total reserva: {formatter.format(calculateGrandTotal())}
+                        Total reserva: {formatter.format(calculateGrandTotal())}{" "}
+                        COP
                       </p>
                       <p className="text-[10px] text-gray-500 italic">
                         El saldo restante se paga al ingresar.
@@ -401,8 +466,9 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
                         Paso 1: Registra tu reserva
                       </p>
                       <p className="text-xs text-gray-600">
-                        Primero haz clic en el botón verde de "Finalizar Reserva". 
-                        Una vez registrada, realiza el pago a cualquiera de estas cuentas:
+                        Primero haz clic en el botón verde de "Finalizar
+                        Reserva". Una vez registrada, realiza el pago a
+                        cualquiera de estas cuentas:
                       </p>
                     </div>
                   </div>
@@ -441,7 +507,8 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
                   <div className="bg-blue-50 border-l-4 border-blue-400 p-3">
                     <p className="text-xs text-blue-800 leading-relaxed italic">
                       <strong>Instrucciones:</strong> Por favor enviar
-                      comprobante por <strong>{formatter.format(depositAmount)}</strong> a{" "}
+                      comprobante por{" "}
+                      <strong>{formatter.format(depositAmount)}</strong> a{" "}
                       <strong>reservas@catleyaroyalclub.com</strong> indicando
                       tu código de reserva.
                     </p>
