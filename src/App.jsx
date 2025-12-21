@@ -3,6 +3,7 @@ import DefaultLayout from "./layouts/layout";
 import Home from "./pages/home";
 import Loguin from "./pages/loguin";
 import Checkout from "./pages/checkout";
+import CheckReservationPage from "./pages/checkReservation";
 
 export default function App(){
   return (
@@ -13,6 +14,8 @@ export default function App(){
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout/details" element={<Checkout />} />
         <Route path="/checkout/success" element={<Checkout />} />
+        <Route path="/checkout/success/:uuid" element={<Checkout />} />
+        <Route path="/my-reservation/:uuid?" element={<CheckReservationPage />} />
       </Route>
     </Routes>
   );

@@ -5,7 +5,6 @@ import {
   Calendar as CalendarIcon,
   AlertTriangle,
 } from "lucide-react";
-import { sampleRooms } from "../data";
 import {
   Button,
   Input,

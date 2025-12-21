@@ -23,7 +23,9 @@ export const CartProvider = ({ children }) => {
     } catch (error) { return null; }
   });
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(() => {
+    return sessionStorage.getItem("booking_payment_method") || null;
+  });
 
   const [guestCount, setGuestCount] = useState(() => {
     try {
@@ -31,6 +33,8 @@ export const CartProvider = ({ children }) => {
       return savedGuests ? parseInt(savedGuests) : 2;
     } catch (error) { return 2; }
   });
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("booking_cart", JSON.stringify(cart));
@@ -56,7 +60,14 @@ export const CartProvider = ({ children }) => {
     }
   }, [reservationId]);
 
-  // --- Funciones de Lógica ---
+  useEffect(() => {
+    if (selectedPaymentMethod) {
+      sessionStorage.setItem("booking_payment_method", selectedPaymentMethod);
+    } else {
+      sessionStorage.removeItem("booking_payment_method");
+    }
+  }, [selectedPaymentMethod]);
+
   const calculateNights = () => {
     if (!dateRange || !dateRange.start || !dateRange.end) return 1;
     try {
@@ -75,11 +86,7 @@ export const CartProvider = ({ children }) => {
       const existingIndex = prevCart.findIndex((item) => item.id === room.id);
       if (existingIndex >= 0) {
         const updatedCart = [...prevCart];
-        updatedCart[existingIndex] = {
-          ...updatedCart[existingIndex],
-          ...room,
-          quantity: updatedCart[existingIndex].quantity,
-        };
+        updatedCart[existingIndex] = { ...updatedCart[existingIndex], ...room, quantity: updatedCart[existingIndex].quantity };
         return updatedCart;
       }
       return [...prevCart, { ...room, quantity: 1 }];
@@ -95,15 +102,7 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCart([]);
-    setReservationId(null);
     setIsSidebarOpen(false);
-  };
-
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    setCart((prevCart) =>
-      prevCart.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item))
-    );
   };
 
   const finalizeBooking = () => {
@@ -111,6 +110,9 @@ export const CartProvider = ({ children }) => {
     localStorage.removeItem("booking_dates");
     localStorage.removeItem("booking_guests");
     sessionStorage.removeItem("booking_reservation_uuid");
+    sessionStorage.removeItem("booking_payment_method");
+    setReservationId(null);
+    setSelectedPaymentMethod(null);
   };
 
   return (
@@ -125,12 +127,12 @@ export const CartProvider = ({ children }) => {
         dateRange,
         setDateRange,
         totalNights,
-        updateQuantity,
         guestCount,
         setGuestCount,
-
         reservationId,
         setReservationId,
+        selectedPaymentMethod,
+        setSelectedPaymentMethod,
         finalizeBooking
       }}
     >

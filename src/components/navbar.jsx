@@ -64,7 +64,6 @@ export default function Component() {
       </NavbarContent>
 
       <NavbarContent className="hidden md:flex gap-4" justify="center">
-        
         <NavbarItem>
           <Button
             as={Link}
@@ -86,6 +85,19 @@ export default function Component() {
             onClick={handleNavigationClick}
           >
             Habitaciones
+          </Button>
+        </NavbarItem>
+
+        {/* NUEVO ENLACE: MIS RESERVAS (Escritorio) */}
+        <NavbarItem>
+          <Button
+            as={Link}
+            to="/my-reservation"
+            variant="light"
+            className="text-white data-[hover=true]:bg-white/10"
+            onClick={handleNavigationClick}
+          >
+            Mis Reservas
           </Button>
         </NavbarItem>
 
@@ -165,6 +177,16 @@ export default function Component() {
             onClick={handleNavigationClick}
           >
             Habitaciones
+          </Link>
+        </NavbarMenuItem>
+        {/* NUEVO ENLACE: MIS RESERVAS (Móvil) */}
+        <NavbarMenuItem>
+          <Link
+            to="/my-reservation"
+            className="w-full text-lg text-white hover:text-white/80 py-2 block"
+            onClick={handleNavigationClick}
+          >
+            Mis Reservas
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
