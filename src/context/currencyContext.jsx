@@ -11,8 +11,7 @@ export const CurrencyProvider = ({ children }) => {
   useEffect(() => {
     const getRate = async () => {
       try {
-        // --- INTENTO 1: ExchangeRate-API (Open Access) ---
-        // Documentación: https://www.exchangerate-api.com/docs/free
+
         const response1 = await fetch("https://open.er-api.com/v6/latest/USD");
         if (response1.ok) {
           const data = await response1.json();
@@ -31,8 +30,6 @@ export const CurrencyProvider = ({ children }) => {
         console.warn("⚠️ API 1 falló, intentando respaldo...", err1);
 
         try {
-          // --- INTENTO 2: AwesomeAPI (Muy popular en Latam) ---
-          // Documentación: https://docs.awesomeapi.com.br/api-de-moedas
           const response2 = await fetch(
             "https://economia.awesomeapi.com.br/json/last/USD-COP"
           );
@@ -43,7 +40,7 @@ export const CurrencyProvider = ({ children }) => {
               console.log("✅ Tasa obtenida de AwesomeAPI (Backup):", rate);
               setExchangeRate(rate);
               setLoading(false);
-              return; // ¡Éxito!
+              return;
             }
           }
         } catch (err2) {

@@ -30,8 +30,8 @@ export default function CartDropdown() {
       setIsSidebarOpen(false);
     }
   };
-
-  if (!cart || cart.length === 0 || location.pathname === checkoutPath) {
+  const isCheckoutPage = location.pathname.startsWith(checkoutPath);
+  if (!cart || cart.length === 0 || isCheckoutPage) {
     return null;
   }
 

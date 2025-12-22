@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Input, Button, Card, CardBody } from "@heroui/react";
 import { Search, Ticket, ArrowLeft } from "lucide-react";
-import SuccessReservation from "../components/CheckingComponents/successReservation";
+import DetailReservation from "../components/CheckingComponents/detailReservation";
 
 export default function CheckReservationPage() {
   const { uuid } = useParams();
@@ -28,7 +28,7 @@ export default function CheckReservationPage() {
 
   return (
     <>
-      <header className="relative w-full h-64 sm:h-80">
+      <header className="relative w-full min-h-[400px] h-64 sm:h-80">
         <img
           src="/images/home-2.webp"
           alt="Lujo"
@@ -41,7 +41,7 @@ export default function CheckReservationPage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-10 animate-appearance-in">
+      <div className="container mx-auto max-w-[800px] px-4 py-10 animate-appearance-in">
         {uuid ? (
           <div className="flex flex-col gap-4">
             <Button
@@ -52,9 +52,7 @@ export default function CheckReservationPage() {
             >
               Consultar otro código
             </Button>
-            
-            {/* El componente SuccessReservation ya usa useParams internamente */}
-            <SuccessReservation setTitle={setTitle} />
+            <DetailReservation setTitle={setTitle} />
           </div>
         ) : (
           <div className="max-w-md mx-auto">

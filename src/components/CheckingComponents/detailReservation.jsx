@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
@@ -22,26 +22,30 @@ import {
   CreditCard,
   Mail,
   XCircle,
+  PlusCircle,
+  RefreshCcw,
 } from "lucide-react";
 import { useCart } from "../../context/cartContext";
 import { get } from "../../../api/get";
 import { post } from "../../../api/post";
 import { del } from "../../../api/delete";
 import { BANK_ACCOUNTS, TRANSFER_INSTRUCTIONS } from "../../data";
-import { scrollToTopInstant } from "../../utils/scrollToTop"
+import { scrollToTopInstant } from "../../utils/scrollToTop";
+import { useCurrency } from "../../context/currencyContext";
 
-export default function SuccessReservation({ setTitle }) {
+export default function DetailReservation({ setTitle }) {
   const navigate = useNavigate();
   const { uuid } = useParams();
 
-  const { selectedPaymentMethod, finalizeBooking } = useCart();
-
+  const { finalizeBooking } = useCart();
+  const { formatPrice } = useCurrency();
   const [loading, setLoading] = useState(false);
   const [resData, setResData] = useState(null);
   const [error, setError] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isInitializingPayment, setIsInitializingPayment] = useState(false);
+  const [isChangingMethod, setIsChangingMethod] = useState(false);
   const finalizedSent = useRef(false);
 
   const statusConfig = {
@@ -112,12 +116,10 @@ export default function SuccessReservation({ setTitle }) {
     }
   };
 
-  useEffect(() => {
-    setTitle("Detalles de tu Reserva");
-    if (!uuid) return;
-
-    const loadData = async () => {
-      setLoading(true);
+  // Función para cargar los datos (extraída para poder re-llamarla)
+  const loadData = useCallback(
+    async (showSpinner = true) => {
+      if (showSpinner) setLoading(true);
       setError(false);
       const response = await get({
         endpoint: `/reservations/${uuid}`,
@@ -135,10 +137,49 @@ export default function SuccessReservation({ setTitle }) {
         setError(true);
       }
       setLoading(false);
-    };
+    },
+    [uuid, finalizeBooking]
+  );
 
+  const handleTogglePaymentMethod = async () => {
+    try {
+      setIsChangingMethod(true);
+      const newMethod =
+        resData.payment_method_selected === "epayco"
+          ? "bank_transfer"
+          : "epayco";
+
+      const response = await post({
+        endpoint: `/reservations/${uuid}/init-payment`,
+        body: { payment_method: newMethod },
+      });
+
+      if (!response.error) {
+        addToast({
+          title: "Método actualizado",
+          description: `Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`,
+          color: "success",
+        });
+        await loadData(false);
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      addToast({
+        title: "Error",
+        description: "No se pudo cambiar el método de pago.",
+        color: "danger",
+      });
+    } finally {
+      setIsChangingMethod(false);
+    }
+  };
+
+  useEffect(() => {
+    setTitle("Detalles de tu Reserva");
+    if (!uuid) return;
     loadData();
-  }, [uuid]);
+  }, [uuid, loadData, setTitle]);
 
   const handleCopy = (text, id) => {
     navigator.clipboard.writeText(text);
@@ -164,7 +205,7 @@ export default function SuccessReservation({ setTitle }) {
 
       setTimeout(() => {
         navigate("/");
-        scrollToTopInstant()
+        scrollToTopInstant();
       }, 1500);
     } else {
       setIsCancelling(false);
@@ -200,9 +241,11 @@ export default function SuccessReservation({ setTitle }) {
   const isOnlinePayment = resData.payment_method_selected === "epayco";
 
   const currentStatus = statusConfig[resData.status] || statusConfig.pending;
+  const formatDate = (dateStr) => (dateStr ? dateStr.split("T")[0] : "");
 
   return (
-    <div className="animate-appearance-in flex flex-col gap-6 max-w-2xl mx-auto pb-10">
+    <div className="animate-appearance-in flex flex-col gap-6 pb-10">
+      {/* HEADER DE ESTADO */}
       <div className="flex flex-col items-center text-center gap-2">
         <div
           className={`w-16 h-16 rounded-full flex items-center justify-center mb-2 ${
@@ -228,6 +271,26 @@ export default function SuccessReservation({ setTitle }) {
         </Chip>
       </div>
 
+      {/* BOTÓN PARA CAMBIAR MÉTODO DE PAGO (TOGGLE) */}
+      {isPaymentRequired && (
+        <div className="flex justify-center">
+          <Button
+            size="sm"
+            variant="flat"
+            color="default"
+            radius="full"
+            onPress={handleTogglePaymentMethod}
+            isLoading={isChangingMethod}
+            startContent={!isChangingMethod && <RefreshCcw size={14} />}
+            className="text-gray-600 font-medium"
+          >
+            Cambiar a{" "}
+            {isBankTransfer ? "Pago Online" : "Transferencia Bancaria"}
+          </Button>
+        </div>
+      )}
+
+      {/* CARD DE TRANSFERENCIA BANCARIA */}
       {isPaymentRequired && isBankTransfer && (
         <Card className="bg-amber-50 border-none shadow-sm border-l-4 border-l-amber-500">
           <CardBody className="p-6">
@@ -281,7 +344,8 @@ export default function SuccessReservation({ setTitle }) {
                       <strong>{TRANSFER_INSTRUCTIONS.email}</strong>
                     </p>
                     <p className="text-xs mt-1 italic">
-                      Monto: ${Number(resData.deposit_required).toLocaleString()}
+                      Monto: $
+                      {Number(resData.deposit_required).toLocaleString()} COP
                     </p>
                   </div>
                 </div>
@@ -291,6 +355,7 @@ export default function SuccessReservation({ setTitle }) {
         </Card>
       )}
 
+      {/* CARD DE PAGO ONLINE EPAYCO */}
       {isPaymentRequired && isOnlinePayment && (
         <Card className="bg-blue-50 border-l-4 border-l-blue-500 shadow-sm">
           <CardBody className="p-6 flex flex-row items-center justify-between gap-4">
@@ -301,8 +366,7 @@ export default function SuccessReservation({ setTitle }) {
                   Pago en línea pendiente
                 </p>
                 <p className="text-xs text-blue-800">
-                  Depósito: $
-                  {Number(resData.deposit_required).toLocaleString()}
+                  Depósito: {formatPrice(resData.deposit_required)}
                 </p>
               </div>
             </div>
@@ -319,6 +383,7 @@ export default function SuccessReservation({ setTitle }) {
         </Card>
       )}
 
+      {/* AVISO DE PAGO YA PROCESADO */}
       {!isPaymentRequired && resData.payment_status === "paid" && (
         <Card className="bg-green-50 border-none shadow-sm">
           <CardBody className="p-4 flex flex-row items-center gap-3 text-green-800 font-medium">
@@ -328,6 +393,7 @@ export default function SuccessReservation({ setTitle }) {
         </Card>
       )}
 
+      {/* RESUMEN DETALLADO */}
       <Card
         className={`border-none shadow-md ${
           resData.status === "cancelled" ? "opacity-60" : ""
@@ -338,15 +404,16 @@ export default function SuccessReservation({ setTitle }) {
             <div className="flex items-center gap-2">
               <Calendar size={18} />
               <span className="text-sm font-medium">
-                {resData.check_in} — {resData.check_out}
+                {formatDate(resData.check_in)} — {formatDate(resData.check_out)}
               </span>
             </div>
             <span className="text-xs font-bold bg-gray-100 px-2 py-1 rounded uppercase tracking-tighter">
-              {resData.nights} noches
+              {resData.nights} {resData.nights === 1 ? "noche" : "noches"}
             </span>
           </div>
           <Divider />
-          <div className="space-y-3">
+
+          <div className="space-y-4">
             <div>
               <p className="text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">
                 Alojamiento
@@ -354,28 +421,55 @@ export default function SuccessReservation({ setTitle }) {
               {resData.rooms?.map((room, i) => (
                 <div key={i} className="flex justify-between text-sm py-0.5">
                   <span className="text-gray-700">
-                    {room.room_name} (x{room.adults} Ad)
+                    {room.room_name} (x{room.adults || 1} Ad)
                   </span>
-                  <span className="font-semibold">
-                    ${Number(room.price).toLocaleString()}
+                  <span className="font-semibold text-gray-900">
+                    {formatPrice(room.price)}
                   </span>
                 </div>
               ))}
             </div>
+
+            {resData.addons && resData.addons.length > 0 && (
+              <div>
+                <p className="text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest flex items-center gap-1">
+                  <PlusCircle size={10} /> Servicios Adicionales
+                </p>
+                {resData.addons.map((addon, i) => (
+                  <div key={i} className="flex justify-between text-sm py-0.5">
+                    <span className="text-gray-700">
+                      {addon.name}{" "}
+                      {addon.quantity >= 1 ? `(x${addon.quantity})` : ""}
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {formatPrice(addon.total)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
           <Divider />
+
           <div className="space-y-2 pt-2">
             <div className="flex justify-between text-gray-500 text-sm">
               <span>Total de la estancia</span>
-              <span>
-                ${Number(resData.total_price).toLocaleString()}{" "}
-                {resData.currency}
+              <span className="text-gray-900">
+                {formatPrice(resData.total_price)}
               </span>
             </div>
             <div className="flex justify-between text-xl font-bold text-[#476d15]">
               <span>Monto Depósito (50%)</span>
-              <span>${Number(resData.deposit_required).toLocaleString()}</span>
+              <span>{formatPrice(resData.deposit_required)}</span>
             </div>
+            {resData.payment_status !== "paid" &&
+              resData.status !== "cancelled" && (
+                <div className="flex justify-between text-xs text-gray-400 italic">
+                  <span>Saldo pendiente al llegar</span>
+                  <span>{formatPrice(resData.balance_due)}</span>
+                </div>
+              )}
           </div>
         </CardBody>
       </Card>
@@ -383,13 +477,17 @@ export default function SuccessReservation({ setTitle }) {
       <div className="flex flex-col sm:flex-row gap-3">
         <Button
           className="flex-1 bg-[#476d15] text-white h-12 font-bold shadow-lg"
-          onPress={() => navigate("/")}
+          onPress={() => {
+            navigate("/");
+            scrollToTopInstant();
+          }}
           startContent={<Home size={18} />}
         >
           Volver al Inicio
         </Button>
 
-        {(resData.status === "pending" || resData.status === "awaiting_payment") && (
+        {(resData.status === "pending" ||
+          resData.status === "awaiting_payment") && (
           <Button
             variant="light"
             color="danger"

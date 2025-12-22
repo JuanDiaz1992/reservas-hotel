@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   User,
   Search,
@@ -22,6 +23,7 @@ import {
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { useCart } from "../context/cartContext";
 import { get } from "../../api/get";
+
 export default function ReservationForm({
   onSearch,
   isSearching = false,
@@ -48,29 +50,16 @@ export default function ReservationForm({
 
   const executeSearch = async () => {
     const { start, end } = dateRange || {};
-
-    if (cart.length > 0) {
-      clearCart();
-    }
-
-    if (dateRange) {
-      setGlobalDateRange(dateRange);
-    }
+    if (cart.length > 0) clearCart();
+    if (dateRange) setGlobalDateRange(dateRange);
     setGuestCount(guests);
 
     const formatDateForAPI = (date) => {
       if (!date) return undefined;
-      const year = date.year;
-      const month = String(date.month).padStart(2, "0");
-      const day = String(date.day).padStart(2, "0");
-      return `${year}-${month}-${day}`;
+      return `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
     };
 
-    const checkIn = formatDateForAPI(start);
-    const checkOut = formatDateForAPI(end);
-
-    const endpoint = `/search-rooms?check_in=${checkIn}&check_out=${checkOut}&guests=${guests}`;
-
+    const endpoint = `/search-rooms?check_in=${formatDateForAPI(start)}&check_out=${formatDateForAPI(end)}&guests=${guests}`;
     const { data, error } = await get({ endpoint });
 
     if (error) {
@@ -78,53 +67,54 @@ export default function ReservationForm({
       await onSearch([]);
       return;
     }
-
     if (setGuests) setGuests(guests);
-
     await onSearch(data.rooms);
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-
-    if (cart.length > 0) {
-      onWarningOpen();
-    } else {
-      executeSearch();
-    }
+    if (cart.length > 0) onWarningOpen();
+    else executeSearch();
   };
 
   const formatDate = (date) => {
     if (!date) return "Seleccionar";
     return new Date(date.year, date.month - 1, date.day).toLocaleDateString(
-      "es-ES",
-      {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }
+      "es-ES", { day: "numeric", month: "short", year: "numeric" }
     );
   };
 
   return (
     <>
       <div className="w-full mx-auto max-w-[900px]">
-        <div
+        {/* Cambiamos el div por motion.div */}
+        <motion.div
+          initial={{ boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.25)", borderColor: "rgba(200, 200, 200, 0.5)" }}
+          whileInView={{
+            boxShadow: [
+              "0px 4px 8px rgba(0, 0, 0, 0.25)", // Estado inicial
+              "0px 0px 25px 5px rgba(59, 130, 246, 0.6)", // Brillo azul
+              "0px 4px 8px rgba(0, 0, 0, 0.25)"  // Vuelve a la normalidad
+            ],
+            borderColor: [
+              "rgba(200, 200, 200, 0.5)",
+              "rgba(59, 130, 246, 1)", // Borde azul intenso
+              "rgba(200, 200, 200, 0.5)"
+            ]
+          }}
+          viewport={{ once: false, amount: 0.5 }} // Se repite siempre, cuando se vea el 50% del form
+          transition={{ duration: 2, ease: "easeInOut" }}
           style={{
             borderRadius: "80px",
             padding: "24px",
             width: "auto",
-            border: "1px solid rgba(200, 200, 200, 0.5)",
-            background:
-              "linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.64) 100%), rgba(255, 255, 255, 0.48)",
-            boxShadow: "rgba(0, 0, 0, 0.25) 0px 4px 8px 0px",
+            background: "linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.64) 100%), rgba(255, 255, 255, 0.48)",
             backdropFilter: "blur(8px)",
+            border: "1px solid", // La propiedad se anima arriba
           }}
-          className="transition-all"
         >
           <form onSubmit={handleFormSubmit} className="space-y-2 lg:space-y-0">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-center">
-              {/* SECCIÓN FECHAS */}
               <div className="lg:col-span-2">
                 <Popover
                   placement="bottom"
@@ -143,38 +133,24 @@ export default function ReservationForm({
                         </span>
                         <div className="flex items-center gap-2 text-[#2c4549]">
                           <CalendarIcon className="w-4 h-4 text-[#476d15]" />
-                          <span
-                            className={`text-sm ${
-                              !dateRange?.start
-                                ? "text-gray-500 italic"
-                                : "font-medium"
-                            }`}
-                          >
+                          <span className={`text-sm ${!dateRange?.start ? "text-gray-500 italic" : "font-medium"}`}>
                             {formatDate(dateRange?.start)}
                           </span>
                         </div>
                       </div>
-
                       <div className="flex-1 flex flex-col items-start justify-center h-full pl-6">
                         <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-0.5">
                           Salida
                         </span>
                         <div className="flex items-center gap-2 text-[#2c4549]">
                           <CalendarIcon className="w-4 h-4 text-[#476d15]" />
-                          <span
-                            className={`text-sm ${
-                              !dateRange?.end
-                                ? "text-gray-500 italic"
-                                : "font-medium"
-                            }`}
-                          >
+                          <span className={`text-sm ${!dateRange?.end ? "text-gray-500 italic" : "font-medium"}`}>
                             {formatDate(dateRange?.end)}
                           </span>
                         </div>
                       </div>
                     </Button>
                   </PopoverTrigger>
-
                   <PopoverContent className="p-0 bg-white/95 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl">
                     <RangeCalendar
                       aria-label="Seleccionar rango"
@@ -188,37 +164,26 @@ export default function ReservationForm({
                 </Popover>
               </div>
 
-              {/* SECCIÓN HUÉSPEDES */}
               <div>
                 <Input
                   type="number"
                   min="1"
                   max="8"
                   value={guests.toString()}
-                  onValueChange={(value) =>
-                    setGuestsLocal(parseInt(value) || 1)
-                  }
+                  onValueChange={(value) => setGuestsLocal(parseInt(value) || 1)}
                   startContent={<User className="h-5 w-5 text-[#476d15]" />}
                   className="max-w-full"
                   classNames={{
-                    input: [
-                      "!text-[#2c4549] text-base placeholder:text-gray-500 font-medium",
-                      "[appearance:textfield]",
-                      "[&::-webkit-inner-spin-button]:appearance-none",
-                      "[&::-webkit-outer-spin-button]:appearance-none",
-                    ].join(" "),
-                    inputWrapper:
-                      "h-14 bg-white/40 border border-white/60 hover:bg-white/60 hover:border-white/80 rounded-full px-6 shadow-sm",
+                    input: "!text-[#2c4549] text-base placeholder:text-gray-500 font-medium",
+                    inputWrapper: "h-14 bg-white/40 border border-white/60 hover:bg-white/60 hover:border-white/80 rounded-full px-6 shadow-sm",
                   }}
                   placeholder="Huéspedes"
                 />
               </div>
 
-              {/* BOTÓN BUSCAR */}
               <Button
                 type="submit"
                 className="h-14 w-full bg-[#476d15] text-white text-lg font-medium shadow-lg hover:bg-[#4a4e38] transition-all duration-300 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
-                // Aquí aplicamos la lógica: Si está buscando O NO hay fechas seleccionadas -> Deshabilitado
                 isDisabled={isSearching || !isDateSelected}
                 startContent={<Search className="h-5 w-5" />}
               >
@@ -226,15 +191,10 @@ export default function ReservationForm({
               </Button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
 
-      {/* MODAL DE ADVERTENCIA */}
-      <Modal
-        isOpen={isWarningOpen}
-        onOpenChange={onWarningOpenChange}
-        backdrop="blur"
-      >
+      <Modal isOpen={isWarningOpen} onOpenChange={onWarningOpenChange} backdrop="blur">
         <ModalContent>
           {(onClose) => (
             <>
@@ -243,24 +203,11 @@ export default function ReservationForm({
                 Cambio de Fechas detectado
               </ModalHeader>
               <ModalBody className="text-center text-gray-600">
-                <p>
-                  Tienes habitaciones seleccionadas en tu carrito. Si realizas
-                  una nueva búsqueda con fechas diferentes,
-                  <strong> se perderá tu selección actual</strong>.
-                </p>
-                <p>¿Deseas continuar y vaciar el carrito?</p>
+                <p>Tienes habitaciones seleccionadas en tu carrito. Se perderá tu selección si continúas.</p>
               </ModalBody>
               <ModalFooter className="justify-center pb-6">
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cancelar
-                </Button>
-                <Button
-                  className="bg-[#476d15] text-white"
-                  onPress={() => {
-                    executeSearch();
-                    onClose();
-                  }}
-                >
+                <Button color="danger" variant="light" onPress={onClose}>Cancelar</Button>
+                <Button className="bg-[#476d15] text-white" onPress={() => { executeSearch(); onClose(); }}>
                   Sí, buscar de todas formas
                 </Button>
               </ModalFooter>

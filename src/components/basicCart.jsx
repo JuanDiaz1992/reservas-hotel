@@ -231,7 +231,7 @@ export default function BasicCart({
                             variant="light"
                             className="h-6 w-6 min-w-6"
                             isDisabled={
-                              item.inventory && item.quantity >= item.inventory
+                              item.available_stock && item.quantity >= item.available_stock
                             }
                             onPress={() =>
                               updateQuantity(item.id, item.quantity + 1)
@@ -273,8 +273,8 @@ export default function BasicCart({
                 !isCapacitySufficient
                   ? "text-red-600 font-bold"
                   : isOverCapacity
-                    ? "text-blue-600 font-bold"
-                    : "text-green-600"
+                  ? "text-blue-600 font-bold"
+                  : "text-green-600"
               }`}
             >
               <span>Capacidad actual</span>
@@ -286,7 +286,7 @@ export default function BasicCart({
                 <span className="text-gray-900 font-bold text-lg">Total</span>
                 {totalNights > 1 && (
                   <span className="text-[10px] text-gray-500 font-normal">
-                    Incluye impuestos y addons
+                    Incluye impuestos y {cart.some(i => i.type === 'addon') ? 'servicios extra' : 'estancia'}
                   </span>
                 )}
               </div>

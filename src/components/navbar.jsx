@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Navbar,
   NavbarBrand,
@@ -13,11 +13,12 @@ import { useEffect, useState } from "react";
 import CurrencySelector from "./currencySelector";
 import CartDropdown from "./cartDropdown";
 
-import { scrollToTopInstant } from "../utils/scrollToTop";
+import { scrollToTopInstant, scrollToTop } from "../utils/scrollToTop";
 
 export default function Component() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,7 +33,11 @@ export default function Component() {
 
   const handleNavigationClick = () => {
     setIsMenuOpen(false);
-    scrollToTopInstant();
+    if (location.pathname === "/") {
+      scrollToTop();
+    } else {
+      scrollToTopInstant();
+    }
   };
 
   return (
@@ -73,18 +78,6 @@ export default function Component() {
             onClick={handleNavigationClick}
           >
             Inicio
-          </Button>
-        </NavbarItem>
-
-        <NavbarItem>
-          <Button
-            as={Link}
-            to="/habitaciones"
-            variant="light"
-            className="text-white data-[hover=true]:bg-white/10"
-            onClick={handleNavigationClick}
-          >
-            Habitaciones
           </Button>
         </NavbarItem>
 
@@ -129,6 +122,8 @@ export default function Component() {
       <NavbarContent justify="end">
         <div className="hidden md:flex items-center space-x-2">
           <Button
+            as={Link}
+            to="/"
             variant="bordered"
             className="border-white hover:bg-[#5C6046]/20 text-white hover:border-[#5C6046]"
             onClick={handleNavigationClick}
@@ -170,16 +165,6 @@ export default function Component() {
             Inicio
           </Link>
         </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            to="/habitaciones"
-            className="w-full text-lg text-white hover:text-white/80 py-2 block"
-            onClick={handleNavigationClick}
-          >
-            Habitaciones
-          </Link>
-        </NavbarMenuItem>
-        {/* NUEVO ENLACE: MIS RESERVAS (Móvil) */}
         <NavbarMenuItem>
           <Link
             to="/my-reservation"

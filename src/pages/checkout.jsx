@@ -4,7 +4,7 @@ import AddsOnListing from "../components/CheckingComponents/addsOnListing";
 import CheckOutCart from "../components/CheckingComponents/cartCheckOut";
 import { scrollToTop } from "../utils/scrollToTop";
 import FormCheckOut from "../components/CheckingComponents/formCheckOut";
-import SuccessReservation from "../components/CheckingComponents/successReservation";
+import DetailReservation from "../components/CheckingComponents/detailReservation";
 
 export default function Checkout() {
   const { uuid } = useParams();
@@ -87,8 +87,14 @@ export default function Checkout() {
                 hasAddons={hasAddons}
               />
             )}
-            {/* SuccessReservation ya leerá el UUID internamente con useParams */}
-            {view === 3 && <SuccessReservation setTitle={setTitle} />}
+
+            {view === 3 && (
+              <>
+                <div div className="container mx-auto max-w-[800px]">
+                  <DetailReservation setTitle={setTitle} />
+                </div>
+              </>
+            )}
           </div>
           {view !== 3 && (
             <div className="w-full lg:w-4/12">

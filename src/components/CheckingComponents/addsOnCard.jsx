@@ -36,26 +36,25 @@ export default function AddsOnCard({ addsOnInfo, onAddToCart, isInCart }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { formatPrice } = useCurrency();
 
-  const handleAddToCart = () => {
-    const itemToAdd = {
-      ...addsOnInfo,
-      id: `${id}-${Date.now()}`,
-      originalId: id,
-      type: "addon",
-      quantity: quantity,
-      totalPrice: price * quantity,
-      image: image,
-    };
-
-    // Verificamos si el padre realmente lo añadió
-    const success = onAddToCart(itemToAdd);
-
-    if (success) {
-      setIsAdded(true);
-      setTimeout(() => setIsAdded(false), 2000);
-      setQuantity(1);
-    }
+const handleAddToCart = () => {
+  const itemToAdd = {
+    ...addsOnInfo,
+    id: `${id}-${Date.now()}`,
+    originalId: id,
+    type: "addon",
+    quantity: quantity,
+    totalPrice: price * quantity,
+    image: image,
   };
+
+  const success = onAddToCart(itemToAdd);
+
+  if (success) {
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+    setQuantity(1);
+  }
+};
 
   return (
     <>
