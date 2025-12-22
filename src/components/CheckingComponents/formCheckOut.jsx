@@ -18,7 +18,7 @@ import {
 import { useCart } from "../../context/cartContext";
 import { post } from "../../../api/post";
 import { BANK_ACCOUNTS, TRANSFER_INSTRUCTIONS } from "../../data";
-import GuestInformation from "./Subcomponents/GuestInformation";
+import GuestInformation from "./SubComponents/guestInformation";
 
 export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
   const {
