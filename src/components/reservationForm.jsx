@@ -87,22 +87,21 @@ export default function ReservationForm({
   return (
     <>
       <div className="w-full mx-auto max-w-[900px]">
-        {/* Cambiamos el div por motion.div */}
         <motion.div
           initial={{ boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.25)", borderColor: "rgba(200, 200, 200, 0.5)" }}
           whileInView={{
             boxShadow: [
-              "0px 4px 8px rgba(0, 0, 0, 0.25)", // Estado inicial
-              "0px 0px 25px 5px rgba(59, 130, 246, 0.6)", // Brillo azul
-              "0px 4px 8px rgba(0, 0, 0, 0.25)"  // Vuelve a la normalidad
+              "0px 4px 8px rgba(0, 0, 0, 0.25)",
+              "0px 0px 25px 5px rgba(59, 130, 246, 0.6)",
+              "0px 4px 8px rgba(0, 0, 0, 0.25)"
             ],
             borderColor: [
               "rgba(200, 200, 200, 0.5)",
-              "rgba(59, 130, 246, 1)", // Borde azul intenso
+              "rgba(59, 130, 246, 1)",
               "rgba(200, 200, 200, 0.5)"
             ]
           }}
-          viewport={{ once: false, amount: 0.5 }} // Se repite siempre, cuando se vea el 50% del form
+          viewport={{ once: false, amount: 0.5 }}
           transition={{ duration: 2, ease: "easeInOut" }}
           style={{
             borderRadius: "80px",
@@ -110,7 +109,7 @@ export default function ReservationForm({
             width: "auto",
             background: "linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.64) 100%), rgba(255, 255, 255, 0.48)",
             backdropFilter: "blur(8px)",
-            border: "1px solid", // La propiedad se anima arriba
+            border: "1px solid",
           }}
         >
           <form onSubmit={handleFormSubmit} className="space-y-2 lg:space-y-0">

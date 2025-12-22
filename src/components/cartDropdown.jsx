@@ -26,13 +26,14 @@ export default function CartDropdown() {
 
   const handleOpenChange = (open) => {
     setIsOpen(open);
-    if (open) {
-      setIsSidebarOpen(false);
-    }
+    if (open) setIsSidebarOpen(false);
   };
+
   const isCheckoutPage = location.pathname.startsWith(checkoutPath);
-  if (!cart || cart.length === 0 || isCheckoutPage) {
-    return null;
+  const shouldHide = !cart || cart.length === 0 || isCheckoutPage;
+
+  if (shouldHide) {
+    return <div className="w-10 h-10" aria-hidden="true" />;
   }
 
   return (
