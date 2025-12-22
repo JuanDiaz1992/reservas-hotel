@@ -4,7 +4,7 @@ import AddsOnListing from "../components/CheckingComponents/addsOnListing";
 import CheckOutCart from "../components/CheckingComponents/cartCheckOut";
 import { scrollToTop } from "../utils/scrollToTop";
 import FormCheckOut from "../components/CheckingComponents/formCheckOut";
-import SuccessReservation from "../components/CheckingComponents/SuccessReservation";
+import SuccessReservation from "../components/CheckingComponents/successReservation";
 
 export default function Checkout() {
   const { uuid } = useParams();
