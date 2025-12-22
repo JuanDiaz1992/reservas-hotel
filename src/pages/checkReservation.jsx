@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Input, Button, Card, CardBody } from "@heroui/react";
 import { Search, Ticket, ArrowLeft } from "lucide-react";
-import SuccessReservation from "../components/CheckingComponents/SuccessReservation";
+import SuccessReservation from "../components/CheckingComponents/successReservation";
 
 export default function CheckReservationPage() {
   const { uuid } = useParams();
