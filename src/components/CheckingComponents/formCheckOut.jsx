@@ -31,6 +31,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     cart,
     guestCount,
     dateRange,
+    totalNights, // Extraído del contexto para el cálculo correcto
     setReservationId,
     setSelectedPaymentMethod,
   } = useCart();
@@ -52,14 +53,15 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     phone: "",
     preferences: "",
   });
+
   const [guests, setGuests] = useState([]);
   const [currentGuestIndex, setCurrentGuestIndex] = useState(null);
   const [tempGuestData, setTempGuestData] = useState({});
   const [errors, setErrors] = useState({});
 
-  useEffect(() => setTitle("Ingresa tus Datos para la Reserva"), [setTitle]);
-
-
+  useEffect(() => {
+    setTitle("Ingresa tus Datos para la Reserva");
+  }, [setTitle]);
 
   useEffect(() => {
     setGuests((prev) =>
@@ -67,15 +69,22 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     );
   }, [additionalGuestsCount]);
 
+  // CORRECCIÓN: Cálculo unificado del Total
+  const calculateGrandTotal = () => {
+    return cart.reduce((acc, item) => {
+      const price = Number(item.price) || 0;
+      const qty = Number(item.quantity) || 1;
+      const nights = Number(totalNights) || 1;
 
-  const calculateGrandTotal = () =>
-    cart.reduce(
-      (acc, item) =>
-        acc +
-        item.price *
-          (item.type === "room" ? item.nights || 1 : item.quantity || 1),
-      0
-    );
+      if (item.type === "room") {
+        // Habitación: (Precio unitario con extras) * Cantidad * Noches
+        return acc + (price * qty * nights);
+      } else {
+        // Addon: Precio * Cantidad (Suele ser pago único)
+        return acc + (price * qty);
+      }
+    }, 0);
+  };
     
   const total = calculateGrandTotal();
   const depositAmount = total / 2;
@@ -115,10 +124,14 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
             room_id: r.originalId || r.id,
             adults: r.adults || 1,
             children: r.children || 0,
+            quantity: r.quantity || 1,
           })),
         addons: cart
           .filter((i) => i.type === "addon")
-          .map((a) => ({ id: a.originalId || a.id, quantity: a.quantity })),
+          .map((a) => ({ 
+            id: a.originalId || a.id, 
+            quantity: a.quantity 
+          })),
         guests: guests
           .filter((g) => g?.firstName)
           .map((g) => ({
@@ -157,7 +170,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     }
   };
 
-  // Contenido del Modal de Pago Seguro
   const SecurePaymentContent = () => (
     <div className="flex flex-col gap-4 text-center py-4">
       <div className="flex justify-center">
@@ -194,7 +206,8 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-green-400" />
             <span className="text-sm">
-              {dateRange?.start.day}/{dateRange?.start.month} - {dateRange?.end.day}/{dateRange?.end.month}
+              {dateRange?.start.day}/{dateRange?.start.month} - {dateRange?.end.day}/{dateRange?.end.month} 
+              <span className="ml-1 opacity-70">({totalNights} {totalNights === 1 ? 'noche' : 'noches'})</span>
             </span>
           </div>
           <div className="flex items-center gap-2">

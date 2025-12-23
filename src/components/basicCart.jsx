@@ -231,7 +231,8 @@ export default function BasicCart({
                             variant="light"
                             className="h-6 w-6 min-w-6"
                             isDisabled={
-                              item.available_stock && item.quantity >= item.available_stock
+                              item.available_stock &&
+                              item.quantity >= item.available_stock
                             }
                             onPress={() =>
                               updateQuantity(item.id, item.quantity + 1)
@@ -273,8 +274,8 @@ export default function BasicCart({
                 !isCapacitySufficient
                   ? "text-red-600 font-bold"
                   : isOverCapacity
-                  ? "text-blue-600 font-bold"
-                  : "text-green-600"
+                    ? "text-blue-600 font-bold"
+                    : "text-green-600"
               }`}
             >
               <span>Capacidad actual</span>
@@ -285,9 +286,19 @@ export default function BasicCart({
               <div className="flex flex-col">
                 <span className="text-gray-900 font-bold text-lg">Total</span>
                 {totalNights > 1 && (
-                  <span className="text-[10px] text-gray-500 font-normal">
-                    Incluye impuestos y {cart.some(i => i.type === 'addon') ? 'servicios extra' : 'estancia'}
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] text-green-700 font-semibold uppercase tracking-wider">
+                      Anticipo del 50% para reservar
+                    </span>
+                    <span className="text-[10px] text-gray-500 font-normal leading-tight">
+                      Pago hoy: 50% del valor base.{" "}
+                      {cart.some((i) => i.type === "addon")
+                        ? "Incluye extras."
+                        : ""}
+                      <br />
+                      Los impuestos (IVA) se cancelan directamente en el hotel.
+                    </span>
+                  </div>
                 )}
               </div>
               <span className="text-xl font-bold text-[#476d15]">
