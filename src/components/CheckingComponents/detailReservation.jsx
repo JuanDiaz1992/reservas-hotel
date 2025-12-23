@@ -35,13 +35,12 @@ import { useCurrency } from "../../context/currencyContext";
 
 export default function DetailReservation({ setTitle }) {
   const navigate = useNavigate();
-  const { uuid: routeParam } = useParams(); // Puede ser Código o UUID
+  const { uuid } = useParams();
 
   const { finalizeBooking } = useCart();
   const { formatPrice } = useCurrency();
   const [loading, setLoading] = useState(false);
   const [resData, setResData] = useState(null);
-  const [internalUuid, setInternalUuid] = useState(null); // UUID real para el Back
   const [error, setError] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -96,9 +95,8 @@ export default function DetailReservation({ setTitle }) {
 
     try {
       setIsInitializingPayment(true);
-      // Usamos internalUuid porque el back solo recibe UUID en esta ruta
       const payRes = await post({
-        endpoint: `/reservations/${internalUuid}/init-payment`,
+        endpoint: `/reservations/${uuid}/init-payment`,
         body: { payment_method: "epayco" },
       });
 
@@ -118,21 +116,18 @@ export default function DetailReservation({ setTitle }) {
     }
   };
 
+  // Función para cargar los datos (extraída para poder re-llamarla)
   const loadData = useCallback(
     async (showSpinner = true) => {
       if (showSpinner) setLoading(true);
       setError(false);
-      
-      // El GET inicial sí acepta código o uuid
       const response = await get({
-        endpoint: `/reservations/${routeParam}`,
+        endpoint: `/reservations/${uuid}`,
       });
 
       if (!response.error && response.data?.status === "success") {
         const data = response.data.data;
-        console.log(data)
         setResData(data);
-        setInternalUuid(data.uuid); // Sincronizamos el UUID real para las demás peticiones
 
         if (!finalizedSent.current) {
           finalizedSent.current = true;
@@ -143,7 +138,7 @@ export default function DetailReservation({ setTitle }) {
       }
       setLoading(false);
     },
-    [routeParam, finalizeBooking]
+    [uuid, finalizeBooking]
   );
 
   const handleTogglePaymentMethod = async () => {
@@ -153,9 +148,9 @@ export default function DetailReservation({ setTitle }) {
         resData.payment_method_selected === "epayco"
           ? "bank_transfer"
           : "epayco";
-      console.log(internalUuid)
+
       const response = await post({
-        endpoint: `/reservations/${internalUuid}/init-payment`,
+        endpoint: `/reservations/${uuid}/init-payment`,
         body: { payment_method: newMethod },
       });
 
@@ -182,9 +177,9 @@ export default function DetailReservation({ setTitle }) {
 
   useEffect(() => {
     setTitle("Detalles de tu Reserva");
-    if (!routeParam) return;
+    if (!uuid) return;
     loadData();
-  }, [routeParam, loadData, setTitle]);
+  }, [uuid, loadData, setTitle]);
 
   const handleCopy = (text, id) => {
     navigator.clipboard.writeText(text);
@@ -198,7 +193,7 @@ export default function DetailReservation({ setTitle }) {
     setIsCancelling(true);
 
     const response = await del({
-      endpoint: `/reservations/${internalUuid}`,
+      endpoint: `/reservations/${uuid}`,
     });
 
     if (!response.error) {
@@ -276,6 +271,7 @@ export default function DetailReservation({ setTitle }) {
         </Chip>
       </div>
 
+      {/* BOTÓN PARA CAMBIAR MÉTODO DE PAGO (TOGGLE) */}
       {isPaymentRequired && (
         <div className="flex justify-center">
           <Button
@@ -294,6 +290,7 @@ export default function DetailReservation({ setTitle }) {
         </div>
       )}
 
+      {/* CARD DE TRANSFERENCIA BANCARIA */}
       {isPaymentRequired && isBankTransfer && (
         <Card className="bg-amber-50 border-none shadow-sm border-l-4 border-l-amber-500">
           <CardBody className="p-6">
@@ -358,6 +355,7 @@ export default function DetailReservation({ setTitle }) {
         </Card>
       )}
 
+      {/* CARD DE PAGO ONLINE EPAYCO */}
       {isPaymentRequired && isOnlinePayment && (
         <Card className="bg-blue-50 border-l-4 border-l-blue-500 shadow-sm">
           <CardBody className="p-6 flex flex-row items-center justify-between gap-4">
@@ -385,6 +383,7 @@ export default function DetailReservation({ setTitle }) {
         </Card>
       )}
 
+      {/* AVISO DE PAGO YA PROCESADO */}
       {!isPaymentRequired && resData.payment_status === "paid" && (
         <Card className="bg-green-50 border-none shadow-sm">
           <CardBody className="p-4 flex flex-row items-center gap-3 text-green-800 font-medium">
@@ -394,6 +393,7 @@ export default function DetailReservation({ setTitle }) {
         </Card>
       )}
 
+      {/* RESUMEN DETALLADO */}
       <Card
         className={`border-none shadow-md ${
           resData.status === "cancelled" ? "opacity-60" : ""
