@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Button,
   Card,
@@ -6,19 +6,25 @@ import {
   RadioGroup,
   Radio,
   addToast,
+  Divider,
+  useDisclosure,
 } from "@heroui/react";
 import {
   ChevronLeft,
   CheckCircle2,
   CreditCard,
-  Info,
   Landmark,
   Mail,
+  Calendar,
+  Users as UsersIcon,
+  ShieldCheck,
 } from "lucide-react";
 import { useCart } from "../../context/cartContext";
 import { post } from "../../../api/post";
-import { BANK_ACCOUNTS, TRANSFER_INSTRUCTIONS } from "../../data";
+import { BANK_ACCOUNTS, TRANSFER_INSTRUCTIONS, SECURE_PAYMENT_INFO } from "../../data";
 import GuestInformation from "./SubComponents/guestInformation";
+import { useCurrency } from "../../context/currencyContext";
+import BasicModal from "../basicModal";
 
 export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
   const {
@@ -28,10 +34,15 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     setReservationId,
     setSelectedPaymentMethod,
   } = useCart();
+  
+  const guestInfoRef = useRef();
   const [countries, setCountries] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("online");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const additionalGuestsCount = Math.max(0, guestCount - 1);
+  const { formatPrice } = useCurrency();
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [mainContact, setMainContact] = useState({
     firstName: "",
@@ -65,23 +76,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     );
   }, [additionalGuestsCount]);
 
-  const validateForm = () => {
-    let newErrors = {};
-    if (!mainContact.firstName.trim())
-      newErrors.firstName = "El nombre es obligatorio";
-    if (!mainContact.lastName.trim())
-      newErrors.lastName = "El apellido es obligatorio";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!mainContact.email.trim()) newErrors.email = "El correo es obligatorio";
-    else if (!emailRegex.test(mainContact.email))
-      newErrors.email = "Formato inválido";
-    if (!mainContact.phone.trim())
-      newErrors.phone = "El teléfono es obligatorio";
-    if (!mainContact.country) newErrors.country = "Selecciona un país";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const calculateGrandTotal = () =>
     cart.reduce(
@@ -91,29 +85,27 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
           (item.type === "room" ? item.nights || 1 : item.quantity || 1),
       0
     );
-  const depositAmount = calculateGrandTotal() / 2;
-  const formatter = new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  });
+    
+  const total = calculateGrandTotal();
+  const depositAmount = total / 2;
 
   const handleSubmitFinal = async () => {
-    if (!validateForm()) {
-      addToast({
-        title: "Atención",
-        description: "Completa los campos obligatorios",
-        color: "warning",
-      });
-      return;
+    if (guestInfoRef.current) {
+      const validation = guestInfoRef.current.validate();
+      if (!validation.isValid) {
+        addToast({
+          title: "Información incompleta",
+          description: validation.message,
+          color: "warning",
+        });
+        return;
+      }
     }
 
     try {
       setIsSubmitting(true);
       const formatBackendDate = (d) =>
-        d
-          ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`
-          : "";
+        d ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}` : "";
 
       const body = {
         check_in: formatBackendDate(dateRange?.start),
@@ -148,28 +140,25 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
 
       const response = await post({ endpoint: "/reservations", body });
 
-      if (
-        response.status >= 200 &&
-        response.status < 300 &&
-        response.data?.status === "success"
-      ) {
+      if (response.status >= 200 && response.status < 300 && response.data?.status === "success") {
         const uuid = response.data.data.reservation_uuid;
-        const methodForBack =
-          paymentMethod === "transferencia" ? "bank_transfer" : "epayco";
+        const methodForBack = paymentMethod === "transferencia" ? "bank_transfer" : "epayco";
+        
         await post({
           endpoint: `/reservations/${uuid}/init-payment`,
           body: { payment_method: methodForBack },
         });
+
         setReservationId(uuid);
         setSelectedPaymentMethod(methodForBack);
         navigateViews(3, uuid);
       } else {
-        throw new Error(response.error || "Error en la respuesta del servidor");
+        throw new Error(response.error || "Error en el servidor");
       }
     } catch (error) {
       addToast({
         title: "Error",
-        description: "No se pudo procesar la reserva.",
+        description: "No se pudo procesar la reserva. Intenta de nuevo.",
         color: "danger",
       });
     } finally {
@@ -177,12 +166,29 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     }
   };
 
+  // Contenido del Modal de Pago Seguro
+  const SecurePaymentContent = () => (
+    <div className="flex flex-col gap-4 text-center py-4">
+      <div className="flex justify-center">
+        <div className="bg-green-50 p-4 rounded-full">
+          <ShieldCheck size={40} className="text-[#476d15]" />
+        </div>
+      </div>
+      <h3 className="text-xl font-bold text-gray-800">Pago seguro online</h3>
+      <div 
+        className="text-sm text-gray-600 leading-relaxed text-left"
+        dangerouslySetInnerHTML={{ __html: SECURE_PAYMENT_INFO }} 
+      />
+    </div>
+  );
+
   return (
     <div className="animate-appearance-in flex flex-col gap-6 pb-20 max-w-4xl mx-auto w-full">
       {hasAddons && (
         <Button
           size="sm"
           variant="light"
+          className="w-fit"
           startContent={<ChevronLeft size={16} />}
           onPress={() => navigateViews(1)}
           isDisabled={isSubmitting}
@@ -191,7 +197,29 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         </Button>
       )}
 
+      {/* Resumen de Estancia Rápido */}
+      <Card className="bg-[#2c4549] text-white shadow-none">
+        <CardBody className="flex flex-row flex-wrap justify-around gap-4 py-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-green-400" />
+            <span className="text-sm">
+              {dateRange?.start.day}/{dateRange?.start.month} - {dateRange?.end.day}/{dateRange?.end.month}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <UsersIcon className="w-4 h-4 text-green-400" />
+            <span className="text-sm">{guestCount} Persona(s)</span>
+          </div>
+          <div className="flex items-center gap-2 font-bold">
+            <span className="text-sm text-gray-300">Total:</span>
+            <span className="text-lg">{formatPrice(total)}</span>
+          </div>
+        </CardBody>
+      </Card>
+
+      {/* Formulario de Información de Huéspedes */}
       <GuestInformation
+        ref={guestInfoRef}
         mainContact={mainContact}
         setMainContact={setMainContact}
         countries={countries}
@@ -207,115 +235,116 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         setCurrentGuestIndex={setCurrentGuestIndex}
       />
 
-      <Card className="shadow-sm border border-gray-100 overflow-hidden">
+      {/* Sección de Pago */}
+      <Card className="shadow-sm border border-gray-100">
         <CardBody className="p-6">
-          <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2 mb-4">
+          <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2 mb-6">
             <CreditCard className="w-5 h-5" /> Método de Pago
           </h3>
+          
           <RadioGroup
             value={paymentMethod}
             onValueChange={setPaymentMethod}
             color="success"
             isDisabled={isSubmitting}
           >
-            <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div
-                  className={`p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === "online" ? "border-[#476d15] bg-green-50" : "border-gray-200"}`}
-                  onClick={() => !isSubmitting && setPaymentMethod("online")}
-                >
-                  <Radio value="online">
-                    <span className="font-semibold text-gray-800">
-                      Pago seguro ePayco
-                    </span>
-                    <p className="text-xs text-gray-500">
-                      PSE, Tarjetas, Nequi
-                    </p>
-                  </Radio>
-                </div>
-                <div
-                  className={`p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === "transferencia" ? "border-[#476d15] bg-green-50" : "border-gray-200"}`}
-                  onClick={() =>
-                    !isSubmitting && setPaymentMethod("transferencia")
-                  }
-                >
-                  <Radio value="transferencia">
-                    <span className="font-semibold text-gray-800">
-                      Transferencia Bancaria
-                    </span>
-                    <p className="text-xs text-gray-500">
-                      Manual (Ver cuentas)
-                    </p>
-                  </Radio>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div
+                className={`p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === "online" ? "border-[#476d15] bg-green-50" : "border-gray-200"}`}
+                onClick={() => !isSubmitting && setPaymentMethod("online")}
+              >
+                <Radio value="online">
+                  <div className="ml-2">
+                    <p className="font-semibold text-gray-800">Pago en línea (ePayco)</p>
+                    <p className="text-xs text-gray-500">Tarjetas, PSE, Nequi, Daviplata</p>
+                  </div>
+                </Radio>
               </div>
 
-              {paymentMethod === "transferencia" && (
-                <div className="animate-appearance-in flex flex-col gap-4">
-                  <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-5">
-                    <div className="bg-[#476d15]/10 border border-[#476d15]/20 rounded-lg p-4 mb-6 flex justify-between items-center">
-                      <div>
-                        <p className="text-xs text-[#2c4549] font-medium uppercase">
-                          Monto a transferir ({TRANSFER_INSTRUCTIONS.percentage}
-                          %)
-                        </p>
-                        <p className="text-2xl font-bold text-[#476d15]">
-                          {formatter.format(depositAmount)} COP
-                        </p>
-                      </div>
-                      <div className="text-right text-[10px] text-gray-500 italic">
-                        <p>
-                          Total: {formatter.format(calculateGrandTotal())} COP
-                        </p>
-                        <p>El saldo restante se paga al ingresar.</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                      {BANK_ACCOUNTS.map((acc, i) => (
-                        <div
-                          key={i}
-                          className="bg-white p-3 rounded-lg border border-gray-200"
-                        >
-                          <p className="text-[10px] uppercase text-gray-400 font-bold flex items-center gap-1">
-                            <Landmark size={10} /> {acc.bank}
-                          </p>
-                          <p className="text-sm font-bold text-gray-700">
-                            {acc.number}
-                          </p>
-                          <p className="text-[10px] text-gray-500 leading-tight">
-                            {acc.type}
-                            <br />
-                            {acc.titular || "Catleya RoyalClub"}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center gap-2 text-xs text-gray-600 border-t border-gray-200 pt-3">
-                      <Mail size={14} className="text-gray-400" />
-                      <p>
-                        Instrucciones: Enviar comprobante a{" "}
-                        <strong>{TRANSFER_INSTRUCTIONS.email}</strong>
-                      </p>
-                    </div>
+              <div
+                className={`p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === "transferencia" ? "border-[#476d15] bg-green-50" : "border-gray-200"}`}
+                onClick={() => !isSubmitting && setPaymentMethod("transferencia")}
+              >
+                <Radio value="transferencia">
+                  <div className="ml-2">
+                    <p className="font-semibold text-gray-800">Transferencia Bancaria</p>
+                    <p className="text-xs text-gray-500">Aprobación manual</p>
                   </div>
-                </div>
-              )}
+                </Radio>
+              </div>
             </div>
           </RadioGroup>
+
+          {paymentMethod === "transferencia" && (
+            <div className="mt-6 animate-appearance-in">
+              <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-5">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Monto a consignar (50%)</p>
+                    <p className="text-2xl font-bold text-[#476d15]">{formatPrice(depositAmount)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-gray-400">Total reserva</p>
+                    <p className="text-xs font-semibold text-gray-600">{formatPrice(total)}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  {BANK_ACCOUNTS.map((acc, i) => (
+                    <div key={i} className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Landmark size={12} className="text-[#476d15]" />
+                        <p className="text-[10px] font-bold uppercase text-gray-700">{acc.bank}</p>
+                      </div>
+                      <p className="text-sm font-mono font-bold text-gray-800">{acc.number}</p>
+                      <p className="text-[10px] text-gray-500">{acc.type} - {acc.titular}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <Divider className="my-4" />
+                <div className="flex items-start gap-3 text-xs text-gray-600 italic">
+                  <Mail size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                  <p>Para confirmar, envía tu comprobante a <span className="font-bold text-[#476d15]">{TRANSFER_INSTRUCTIONS.email}</span> o vía WhatsApp.</p>
+                </div>
+              </div>
+            </div>
+          )}
         </CardBody>
       </Card>
 
-      <Button
-        className="w-full h-14 bg-[#476d15] text-white text-lg font-bold shadow-xl mt-4"
-        onPress={handleSubmitFinal}
-        startContent={!isSubmitting && <CheckCircle2 />}
-        isLoading={isSubmitting}
-        isDisabled={isSubmitting}
-      >
-        {isSubmitting ? "Procesando..." : "Finalizar Reserva"}
-      </Button>
+      {/* Botón de Acción Final */}
+      <div>
+        <Button
+          className="w-full h-16 bg-[#476d15] text-white text-lg font-bold shadow-2xl"
+          onPress={handleSubmitFinal}
+          startContent={!isSubmitting && <CheckCircle2 />}
+          isLoading={isSubmitting}
+          isDisabled={isSubmitting}
+        >
+          {isSubmitting ? "Procesando..." : `Confirmar y Reservar por ${formatPrice(paymentMethod === 'online' ? total : depositAmount)}`}
+        </Button>
+        <div className="flex flex-col items-center gap-2 mt-3">
+          <p className="text-center text-[10px] text-gray-400">
+            Al confirmar, aceptas nuestras políticas de reserva y cancelación.
+          </p>
+          <button
+            type="button"
+            onClick={onOpen}
+            className="text-xs text-gray-500 hover:text-gray-800 underline flex items-center gap-1.5 transition-colors"
+          >
+            <ShieldCheck size={14} />
+            Pago seguro online, más información
+          </button>
+        </div>
+      </div>
+
+      <BasicModal 
+        isOpen={isOpen} 
+        onOpenChange={onOpenChange} 
+        Content={SecurePaymentContent} 
+        size="md"
+      />
     </div>
   );
 }

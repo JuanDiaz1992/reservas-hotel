@@ -1,3 +1,4 @@
+import { forwardRef, useImperativeHandle, useState } from "react";
 import {
   Input,
   Textarea,
@@ -13,312 +14,435 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Checkbox,
 } from "@heroui/react";
-import { User, Users, Phone, Mail, Copy } from "lucide-react";
+import { User, Users, Phone, Mail, FileText } from "lucide-react";
+import BasicModal from "../../basicModal";
+import { TERMS_AND_CONDITIONS } from "../../../data";
 
-export default function GuestInformation({
-  mainContact,
-  setMainContact,
-  countries,
-  errors,
-  setErrors,
-  isSubmitting,
-  guests,
-  setGuests,
-  additionalGuestsCount,
-  tempGuestData,
-  setTempGuestData,
-  currentGuestIndex,
-  setCurrentGuestIndex,
-}) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+const GuestInformation = forwardRef(
+  (
+    {
+      mainContact,
+      setMainContact,
+      countries,
+      errors,
+      setErrors,
+      isSubmitting,
+      guests,
+      setGuests,
+      additionalGuestsCount,
+      tempGuestData,
+      setTempGuestData,
+      currentGuestIndex,
+      setCurrentGuestIndex,
+    },
+    ref
+  ) => {
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    // Disclosure para el modal de términos y condiciones
+    const {
+      isOpen: isTermsOpen,
+      onOpen: onTermsOpen,
+      onOpenChange: onTermsOpenChange,
+    } = useDisclosure();
 
-  const handleMainChange = (e) => {
-    const { name, value } = e.target;
-    setMainContact((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: null }));
-    }
-  };
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  const handleMainCountryChange = (key) => {
-    const selected = countries.find((c) => c.name.common === key);
-    setMainContact((prev) => ({
-      ...prev,
-      country: selected ? selected.cca2 : key,
+    useImperativeHandle(ref, () => ({
+      validate: () => {
+        let newErrors = {};
+
+        if (!mainContact.firstName?.trim())
+          newErrors.firstName = "El nombre es obligatorio";
+        if (!mainContact.lastName?.trim())
+          newErrors.lastName = "El apellido es obligatorio";
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!mainContact.email?.trim()) {
+          newErrors.email = "El correo es obligatorio";
+        } else if (!emailRegex.test(mainContact.email)) {
+          newErrors.email = "Formato inválido";
+        }
+
+        if (!mainContact.phone?.trim())
+          newErrors.phone = "El teléfono es obligatorio";
+        if (!mainContact.country) newErrors.country = "Selecciona un país";
+
+        if (!acceptedTerms) newErrors.terms = "Debes aceptar los términos";
+
+        let guestsValid = true;
+        if (additionalGuestsCount > 0) {
+          const completedGuests = guests.filter(
+            (g) => g?.firstName?.trim() && g?.lastName?.trim() && g?.country
+          );
+
+          if (completedGuests.length < additionalGuestsCount) {
+            guestsValid = false;
+          }
+        }
+
+        setErrors(newErrors);
+
+        const mainValid = Object.keys(newErrors).length === 0;
+
+        return {
+          isValid: mainValid && guestsValid,
+          message: !mainValid
+            ? newErrors.terms
+              ? newErrors.terms
+              : "Por favor completa los datos del titular."
+            : !guestsValid
+              ? `Falta información de ${additionalGuestsCount - guests.filter((g) => g?.firstName).length} acompañante(s).`
+              : "",
+        };
+      },
     }));
-    if (errors.country) setErrors((prev) => ({ ...prev, country: null }));
-  };
 
-  const openGuestModal = (index) => {
-    setCurrentGuestIndex(index);
-    setTempGuestData(
-      guests[index] || {
-        firstName: "",
-        lastName: "",
-        country: "",
-        email: "",
-        phone: "",
+    const handleMainChange = (e) => {
+      const { name, value } = e.target;
+      setMainContact((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: null }));
       }
+    };
+
+    const handleMainCountryChange = (key) => {
+      const selected = countries.find((c) => c.name.common === key);
+      setMainContact((prev) => ({
+        ...prev,
+        country: selected ? selected.cca2 : key,
+      }));
+      if (errors.country) setErrors((prev) => ({ ...prev, country: null }));
+    };
+
+    const openGuestModal = (index) => {
+      setCurrentGuestIndex(index);
+      setTempGuestData(
+        guests[index] || {
+          firstName: "",
+          lastName: "",
+          country: "",
+          email: "",
+          phone: "",
+        }
+      );
+      onOpen();
+    };
+
+    const saveGuestData = () => {
+      const updatedGuests = [...guests];
+      updatedGuests[currentGuestIndex] = tempGuestData;
+      setGuests(updatedGuests);
+      onOpenChange(false);
+    };
+
+    const TermsContent = () => (
+      <div
+        className="prose prose-sm max-w-none py-2"
+        dangerouslySetInnerHTML={{ __html: TERMS_AND_CONDITIONS }}
+      />
     );
-    onOpen();
-  };
 
-  const saveGuestData = () => {
-    const updatedGuests = [...guests];
-    updatedGuests[currentGuestIndex] = tempGuestData;
-    setGuests(updatedGuests);
-    onOpenChange(false);
-  };
-
-  const copyMainContactToGuest = () => {
-    setTempGuestData({
-      firstName: mainContact.firstName,
-      lastName: mainContact.lastName,
-      country: mainContact.country,
-      email: mainContact.email,
-      phone: mainContact.phone,
-    });
-  };
-
-  return (
-    <>
-      <Card className="shadow-sm border border-gray-100">
-        <CardBody className="p-6 gap-6">
-          <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
-            <User className="w-5 h-5" /> Datos del Titular (Responsable)
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Nombres"
-              name="firstName"
-              value={mainContact.firstName}
-              onChange={handleMainChange}
-              isRequired
-              variant="bordered"
-              isInvalid={!!errors.firstName}
-              errorMessage={errors.firstName}
-              isDisabled={isSubmitting}
-            />
-            <Input
-              label="Apellidos"
-              name="lastName"
-              value={mainContact.lastName}
-              onChange={handleMainChange}
-              isRequired
-              variant="bordered"
-              isInvalid={!!errors.lastName}
-              errorMessage={errors.lastName}
-              isDisabled={isSubmitting}
-            />
-            <Autocomplete
-              label="País de residencia"
-              variant="bordered"
-              onSelectionChange={handleMainCountryChange}
-              isInvalid={!!errors.country}
-              errorMessage={errors.country}
-              isDisabled={isSubmitting}
-            >
-              {countries.map((item) => (
-                <AutocompleteItem
-                  key={item.name.common}
-                  startContent={
-                    <Avatar
-                      alt={item.name.common}
-                      className="w-6 h-6"
-                      src={item.flags.svg}
-                    />
-                  }
-                  textValue={item.name.common}
-                >
-                  {item.name.common}
-                </AutocompleteItem>
-              ))}
-            </Autocomplete>
-            <Input
-              label="Teléfono"
-              startContent={<Phone size={16} className="text-gray-400" />}
-              name="phone"
-              value={mainContact.phone}
-              onChange={handleMainChange}
-              variant="bordered"
-              isInvalid={!!errors.phone}
-              errorMessage={errors.phone}
-              isDisabled={isSubmitting}
-            />
-            <Input
-              label="Correo Electrónico"
-              name="email"
-              value={mainContact.email}
-              onChange={handleMainChange}
-              className="md:col-span-2"
-              variant="bordered"
-              isInvalid={!!errors.email}
-              errorMessage={errors.email}
-              isDisabled={isSubmitting}
-            />
-            <Textarea
-              label="Información Adicional"
-              name="preferences"
-              value={mainContact.preferences}
-              onChange={handleMainChange}
-              className="md:col-span-2"
-              variant="bordered"
-              isDisabled={isSubmitting}
-            />
-          </div>
-        </CardBody>
-      </Card>
-
-      {additionalGuestsCount > 0 && (
+    return (
+      <>
         <Card className="shadow-sm border border-gray-100">
-          <CardBody className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
-                <Users className="w-5 h-5" /> Acompañantes Adicionales
-              </h3>
-              <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
-                Pendientes: {additionalGuestsCount}
-              </span>
-            </div>
-            <div className="space-y-3">
-              {guests.map((guestData, index) => {
-                const isCompleted = guestData && guestData.firstName;
-                return (
-                  <div
-                    key={index}
-                    className={`flex items-center justify-between p-4 rounded-xl border transition-all ${isCompleted ? "bg-green-50 border-green-200" : "bg-gray-50 border-dashed border-gray-300"}`}
+          <CardBody className="p-6 gap-6">
+            <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
+              <User className="w-5 h-5" /> Datos del Titular (Responsable)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Nombres"
+                name="firstName"
+                value={mainContact.firstName}
+                onChange={handleMainChange}
+                isRequired
+                variant="bordered"
+                isInvalid={!!errors.firstName}
+                errorMessage={errors.firstName}
+                isDisabled={isSubmitting}
+              />
+              <Input
+                label="Apellidos"
+                name="lastName"
+                value={mainContact.lastName}
+                onChange={handleMainChange}
+                isRequired
+                variant="bordered"
+                isInvalid={!!errors.lastName}
+                errorMessage={errors.lastName}
+                isDisabled={isSubmitting}
+              />
+              <Autocomplete
+                label="País de residencia"
+                variant="bordered"
+                onSelectionChange={handleMainCountryChange}
+                isInvalid={!!errors.country}
+                errorMessage={errors.country}
+                isDisabled={isSubmitting}
+                selectedKey={
+                  countries.find((c) => c.cca2 === mainContact.country)?.name
+                    .common || null
+                }
+              >
+                {countries.map((item) => (
+                  <AutocompleteItem
+                    key={item.name.common}
+                    startContent={
+                      <Avatar
+                        alt={item.name.common}
+                        className="w-6 h-6"
+                        src={item.flags.svg}
+                      />
+                    }
+                    textValue={item.name.common}
                   >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${isCompleted ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-500"}`}
-                      >
-                        {index + 1}
-                      </div>
-                      <p
-                        className={`font-medium ${isCompleted ? "text-gray-900" : "text-gray-500"}`}
-                      >
-                        {isCompleted
-                          ? `${guestData.firstName} ${guestData.lastName}`
-                          : `Información Acompañante ${index + 1}`}
-                      </p>
-                    </div>
-                    <Button
+                    {item.name.common}
+                  </AutocompleteItem>
+                ))}
+              </Autocomplete>
+              <Input
+                label="Teléfono"
+                startContent={<Phone size={16} className="text-gray-400" />}
+                name="phone"
+                value={mainContact.phone}
+                onChange={handleMainChange}
+                variant="bordered"
+                isInvalid={!!errors.phone}
+                errorMessage={errors.phone}
+                isDisabled={isSubmitting}
+              />
+              <Input
+                label="Correo Electrónico"
+                name="email"
+                value={mainContact.email}
+                onChange={handleMainChange}
+                className="md:col-span-2"
+                variant="bordered"
+                isInvalid={!!errors.email}
+                errorMessage={errors.email}
+                isDisabled={isSubmitting}
+              />
+              <Textarea
+                label="Información Adicional"
+                name="preferences"
+                value={mainContact.preferences}
+                onChange={handleMainChange}
+                className="md:col-span-2"
+                variant="bordered"
+                isDisabled={isSubmitting}
+              />
+
+              {/* Sección de Términos y Condiciones */}
+              <div className="md:col-span-2 mt-2">
+                <div className="flex flex-col gap-1">
+                  <div>
+                    <Checkbox
+                      isSelected={acceptedTerms}
+                      onValueChange={(value) => {
+                        setAcceptedTerms(value);
+                        if (errors.terms)
+                          setErrors((prev) => ({ ...prev, terms: null }));
+                      }}
+                      color="success"
                       size="sm"
-                      variant={isCompleted ? "flat" : "solid"}
-                      color={isCompleted ? "success" : "default"}
-                      onPress={() => openGuestModal(index)}
-                      isDisabled={isSubmitting}
+                      isInvalid={!!errors.terms}
                     >
-                      {isCompleted ? "Editar" : "Agregar"}
-                    </Button>
+                      <p className="text-sm text-gray-600">
+                        He leído y acepto los{" "}
+                      </p>
+                    </Checkbox>
+                    <span>
+                      {" "}
+                      <button
+                        type="button"
+                        onClick={onTermsOpen}
+                        className="text-[#476d15] font-bold underline hover:text-[#2c4549] transition-colors cursor-pointer"
+                      >
+                        términos y condiciones
+                      </button>
+                    </span>
                   </div>
-                );
-              })}
+                  {errors.terms && (
+                    <p className="text-xs text-danger ml-2">{errors.terms}</p>
+                  )}
+                </div>
+              </div>
             </div>
           </CardBody>
         </Card>
-      )}
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Acompañante {currentGuestIndex + 1}</ModalHeader>
-              <ModalBody>
-                <Button
-                  size="sm"
-                  variant="light"
-                  color="primary"
-                  startContent={<Copy size={14} />}
-                  onPress={copyMainContactToGuest}
-                  className="mb-2"
-                >
-                  Copiar datos del titular
-                </Button>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label="Nombres"
-                    value={tempGuestData.firstName || ""}
-                    onChange={(e) =>
-                      setTempGuestData({
-                        ...tempGuestData,
-                        firstName: e.target.value,
-                      })
-                    }
-                    variant="bordered"
-                  />
-                  <Input
-                    label="Apellidos"
-                    value={tempGuestData.lastName || ""}
-                    onChange={(e) =>
-                      setTempGuestData({
-                        ...tempGuestData,
-                        lastName: e.target.value,
-                      })
-                    }
-                    variant="bordered"
-                  />
-                  <Autocomplete
-                    label="País"
-                    variant="bordered"
-                    onSelectionChange={(key) =>
-                      setTempGuestData({ ...tempGuestData, country: key })
-                    }
-                  >
-                    {countries.map((item) => (
-                      <AutocompleteItem
-                        key={item.cca2}
-                        startContent={
-                          <Avatar className="w-5 h-5" src={item.flags.svg} />
-                        }
-                        textValue={item.name.common}
+        {additionalGuestsCount > 0 && (
+          <Card className="shadow-sm border border-gray-100">
+            <CardBody className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
+                  <Users className="w-5 h-5" /> Acompañantes Adicionales
+                </h3>
+                <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+                  Requeridos: {additionalGuestsCount}
+                </span>
+              </div>
+              <div className="space-y-3">
+                {Array.from({ length: additionalGuestsCount }).map(
+                  (_, index) => {
+                    const guestData = guests[index];
+                    const isCompleted =
+                      guestData &&
+                      guestData.firstName &&
+                      guestData.lastName &&
+                      guestData.country;
+                    return (
+                      <div
+                        key={index}
+                        className={`flex items-center justify-between p-4 rounded-xl border transition-all ${isCompleted ? "bg-green-50 border-green-200" : "bg-gray-50 border-dashed border-gray-300"}`}
                       >
-                        {item.name.common}
-                      </AutocompleteItem>
-                    ))}
-                  </Autocomplete>
-                  <Input
-                    label="Teléfono"
-                    value={tempGuestData.phone || ""}
-                    onChange={(e) =>
-                      setTempGuestData({
-                        ...tempGuestData,
-                        phone: e.target.value,
-                      })
-                    }
-                    variant="bordered"
-                  />
-                  <Input
-                    label="Correo"
-                    className="col-span-2"
-                    value={tempGuestData.email || ""}
-                    onChange={(e) =>
-                      setTempGuestData({
-                        ...tempGuestData,
-                        email: e.target.value,
-                      })
-                    }
-                    variant="bordered"
-                    startContent={<Mail size={16} className="text-gray-400" />}
-                  />
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cancelar
-                </Button>
-                <Button
-                  className="bg-[#476d15] text-white"
-                  onPress={saveGuestData}
-                >
-                  Guardar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
-  );
-}
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${isCompleted ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-500"}`}
+                          >
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p
+                              className={`font-medium ${isCompleted ? "text-gray-900" : "text-gray-500"}`}
+                            >
+                              {isCompleted
+                                ? `${guestData.firstName} ${guestData.lastName}`
+                                : `Información Acompañante ${index + 1}`}
+                            </p>
+                            {!isCompleted && (
+                              <p className="text-[10px] text-red-400">
+                                Pendiente completar
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant={isCompleted ? "flat" : "solid"}
+                          color={isCompleted ? "success" : "default"}
+                          onPress={() => openGuestModal(index)}
+                          isDisabled={isSubmitting}
+                        >
+                          {isCompleted ? "Editar" : "Agregar datos"}
+                        </Button>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            </CardBody>
+          </Card>
+        )}
+
+        {/* Modal de Acompañantes (Original) */}
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader>Acompañante {currentGuestIndex + 1}</ModalHeader>
+                <ModalBody>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      label="Nombres"
+                      isRequired
+                      value={tempGuestData.firstName || ""}
+                      onChange={(e) =>
+                        setTempGuestData({
+                          ...tempGuestData,
+                          firstName: e.target.value,
+                        })
+                      }
+                      variant="bordered"
+                    />
+                    <Input
+                      label="Apellidos"
+                      isRequired
+                      value={tempGuestData.lastName || ""}
+                      onChange={(e) =>
+                        setTempGuestData({
+                          ...tempGuestData,
+                          lastName: e.target.value,
+                        })
+                      }
+                      variant="bordered"
+                    />
+                    <Autocomplete
+                      label="País"
+                      isRequired
+                      variant="bordered"
+                      onSelectionChange={(key) =>
+                        setTempGuestData({ ...tempGuestData, country: key })
+                      }
+                      selectedKey={tempGuestData.country || null}
+                    >
+                      {countries.map((item) => (
+                        <AutocompleteItem
+                          key={item.cca2}
+                          startContent={
+                            <Avatar className="w-5 h-5" src={item.flags.svg} />
+                          }
+                          textValue={item.name.common}
+                        >
+                          {item.name.common}
+                        </AutocompleteItem>
+                      ))}
+                    </Autocomplete>
+                    <Input
+                      label="Teléfono (Opcional)"
+                      value={tempGuestData.phone || ""}
+                      onChange={(e) =>
+                        setTempGuestData({
+                          ...tempGuestData,
+                          phone: e.target.value,
+                        })
+                      }
+                      variant="bordered"
+                    />
+                    <Input
+                      label="Correo (Opcional)"
+                      className="col-span-2"
+                      value={tempGuestData.email || ""}
+                      onChange={(e) =>
+                        setTempGuestData({
+                          ...tempGuestData,
+                          email: e.target.value,
+                        })
+                      }
+                      variant="bordered"
+                      startContent={
+                        <Mail size={16} className="text-gray-400" />
+                      }
+                    />
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    className="bg-[#476d15] text-white"
+                    onPress={saveGuestData}
+                  >
+                    Guardar
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+        <BasicModal
+          isOpen={isTermsOpen}
+          onOpenChange={onTermsOpenChange}
+          Content={TermsContent}
+          size="2xl"
+          scrollBehavior="inside"
+        />
+      </>
+    );
+  }
+);
+
+export default GuestInformation;
