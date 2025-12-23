@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState, useEffect } from "react";
 import {
   Input,
   Textarea,
@@ -16,7 +16,7 @@ import {
   useDisclosure,
   Checkbox,
 } from "@heroui/react";
-import { User, Users, Phone, Mail, FileText } from "lucide-react";
+import { User, Users, Phone, Mail } from "lucide-react";
 import BasicModal from "../../basicModal";
 import { TERMS_AND_CONDITIONS } from "../../../data";
 
@@ -25,7 +25,6 @@ const GuestInformation = forwardRef(
     {
       mainContact,
       setMainContact,
-      countries,
       errors,
       setErrors,
       isSubmitting,
@@ -40,14 +39,39 @@ const GuestInformation = forwardRef(
     ref
   ) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    // Disclosure para el modal de términos y condiciones
     const {
       isOpen: isTermsOpen,
       onOpen: onTermsOpen,
       onOpenChange: onTermsOpenChange,
     } = useDisclosure();
-
+    const [countries, setCountries] = useState([]);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
+    const [guestModalErrors, setGuestModalErrors] = useState({});
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Cargar países y establecer Colombia por defecto
+    useEffect(() => {
+      fetch("https://restcountries.com/v3.1/all?fields=name,flags,cca2")
+        .then((res) => res.json())
+        .then((data) => {
+          const sortedCountries = data.sort((a, b) =>
+            a.name.common.localeCompare(b.name.common)
+          );
+          setCountries(sortedCountries);
+
+          // Si el titular no tiene país seleccionado, poner Colombia (CO) por defecto
+          if (!mainContact.country) {
+            const defaultCountry = sortedCountries.find((c) => c.cca2 === "CO");
+            if (defaultCountry) {
+              setMainContact((prev) => ({
+                ...prev,
+                country: "CO",
+              }));
+            }
+          }
+        })
+        .catch((err) => console.error("Error países:", err));
+    }, []);
 
     useImperativeHandle(ref, () => ({
       validate: () => {
@@ -58,11 +82,11 @@ const GuestInformation = forwardRef(
         if (!mainContact.lastName?.trim())
           newErrors.lastName = "El apellido es obligatorio";
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!mainContact.email?.trim()) {
           newErrors.email = "El correo es obligatorio";
         } else if (!emailRegex.test(mainContact.email)) {
-          newErrors.email = "Formato inválido";
+          newErrors.email =
+            "El formato del correo es inválido (ej: usuario@correo.com)";
         }
 
         if (!mainContact.phone?.trim())
@@ -91,10 +115,10 @@ const GuestInformation = forwardRef(
           message: !mainValid
             ? newErrors.terms
               ? newErrors.terms
-              : "Por favor completa los datos del titular."
+              : "Por favor revisa los datos marcados en rojo."
             : !guestsValid
-              ? `Falta información de ${additionalGuestsCount - guests.filter((g) => g?.firstName).length} acompañante(s).`
-              : "",
+            ? `Falta completar información de acompañantes.`
+            : "",
         };
       },
     }));
@@ -108,21 +132,22 @@ const GuestInformation = forwardRef(
     };
 
     const handleMainCountryChange = (key) => {
-      const selected = countries.find((c) => c.name.common === key);
+      // key suele ser el cca2 del AutocompleteItem
       setMainContact((prev) => ({
         ...prev,
-        country: selected ? selected.cca2 : key,
+        country: key,
       }));
       if (errors.country) setErrors((prev) => ({ ...prev, country: null }));
     };
 
     const openGuestModal = (index) => {
       setCurrentGuestIndex(index);
+      setGuestModalErrors({});
       setTempGuestData(
         guests[index] || {
           firstName: "",
           lastName: "",
-          country: "",
+          country: "CO", // También por defecto Colombia al agregar acompañante
           email: "",
           phone: "",
         }
@@ -131,9 +156,27 @@ const GuestInformation = forwardRef(
     };
 
     const saveGuestData = () => {
+      let gErrors = {};
+
+      if (!tempGuestData.firstName?.trim()) gErrors.firstName = "Requerido";
+      if (!tempGuestData.lastName?.trim()) gErrors.lastName = "Requerido";
+      if (!tempGuestData.country) gErrors.country = "Requerido";
+      if (
+        tempGuestData.email?.trim() &&
+        !emailRegex.test(tempGuestData.email)
+      ) {
+        gErrors.email = "Formato incorrecto";
+      }
+
+      if (Object.keys(gErrors).length > 0) {
+        setGuestModalErrors(gErrors);
+        return;
+      }
+
       const updatedGuests = [...guests];
       updatedGuests[currentGuestIndex] = tempGuestData;
       setGuests(updatedGuests);
+      setGuestModalErrors({});
       onOpenChange(false);
     };
 
@@ -181,14 +224,11 @@ const GuestInformation = forwardRef(
                 isInvalid={!!errors.country}
                 errorMessage={errors.country}
                 isDisabled={isSubmitting}
-                selectedKey={
-                  countries.find((c) => c.cca2 === mainContact.country)?.name
-                    .common || null
-                }
+                selectedKey={mainContact.country}
               >
                 {countries.map((item) => (
                   <AutocompleteItem
-                    key={item.name.common}
+                    key={item.cca2}
                     startContent={
                       <Avatar
                         alt={item.name.common}
@@ -234,10 +274,9 @@ const GuestInformation = forwardRef(
                 isDisabled={isSubmitting}
               />
 
-              {/* Sección de Términos y Condiciones */}
               <div className="md:col-span-2 mt-2">
                 <div className="flex flex-col gap-1">
-                  <div>
+                  <div className="flex items-center">
                     <Checkbox
                       isSelected={acceptedTerms}
                       onValueChange={(value) => {
@@ -253,16 +292,13 @@ const GuestInformation = forwardRef(
                         He leído y acepto los{" "}
                       </p>
                     </Checkbox>
-                    <span>
-                      {" "}
-                      <button
-                        type="button"
-                        onClick={onTermsOpen}
-                        className="text-[#476d15] font-bold underline hover:text-[#2c4549] transition-colors cursor-pointer"
-                      >
-                        términos y condiciones
-                      </button>
-                    </span>
+                    <button
+                      type="button"
+                      onClick={onTermsOpen}
+                      className="ml-1 text-sm text-[#476d15] font-bold underline hover:text-[#2c4549] transition-colors cursor-pointer"
+                    >
+                      términos y condiciones
+                    </button>
                   </div>
                   {errors.terms && (
                     <p className="text-xs text-danger ml-2">{errors.terms}</p>
@@ -274,7 +310,7 @@ const GuestInformation = forwardRef(
         </Card>
 
         {additionalGuestsCount > 0 && (
-          <Card className="shadow-sm border border-gray-100">
+          <Card className="shadow-sm border border-gray-100 mt-6">
             <CardBody className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2">
@@ -290,23 +326,33 @@ const GuestInformation = forwardRef(
                     const guestData = guests[index];
                     const isCompleted =
                       guestData &&
-                      guestData.firstName &&
-                      guestData.lastName &&
+                      guestData.firstName?.trim() &&
+                      guestData.lastName?.trim() &&
                       guestData.country;
                     return (
                       <div
                         key={index}
-                        className={`flex items-center justify-between p-4 rounded-xl border transition-all ${isCompleted ? "bg-green-50 border-green-200" : "bg-gray-50 border-dashed border-gray-300"}`}
+                        className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+                          isCompleted
+                            ? "bg-green-50 border-green-200"
+                            : "bg-gray-50 border-dashed border-gray-300"
+                        }`}
                       >
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${isCompleted ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-500"}`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                              isCompleted
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-200 text-gray-500"
+                            }`}
                           >
                             {index + 1}
                           </div>
                           <div>
                             <p
-                              className={`font-medium ${isCompleted ? "text-gray-900" : "text-gray-500"}`}
+                              className={`font-medium ${
+                                isCompleted ? "text-gray-900" : "text-gray-500"
+                              }`}
                             >
                               {isCompleted
                                 ? `${guestData.firstName} ${guestData.lastName}`
@@ -337,7 +383,6 @@ const GuestInformation = forwardRef(
           </Card>
         )}
 
-        {/* Modal de Acompañantes (Original) */}
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
           <ModalContent>
             {(onClose) => (
@@ -349,6 +394,8 @@ const GuestInformation = forwardRef(
                       label="Nombres"
                       isRequired
                       value={tempGuestData.firstName || ""}
+                      isInvalid={!!guestModalErrors.firstName}
+                      errorMessage={guestModalErrors.firstName}
                       onChange={(e) =>
                         setTempGuestData({
                           ...tempGuestData,
@@ -361,6 +408,8 @@ const GuestInformation = forwardRef(
                       label="Apellidos"
                       isRequired
                       value={tempGuestData.lastName || ""}
+                      isInvalid={!!guestModalErrors.lastName}
+                      errorMessage={guestModalErrors.lastName}
                       onChange={(e) =>
                         setTempGuestData({
                           ...tempGuestData,
@@ -373,10 +422,12 @@ const GuestInformation = forwardRef(
                       label="País"
                       isRequired
                       variant="bordered"
+                      isInvalid={!!guestModalErrors.country}
+                      errorMessage={guestModalErrors.country}
                       onSelectionChange={(key) =>
                         setTempGuestData({ ...tempGuestData, country: key })
                       }
-                      selectedKey={tempGuestData.country || null}
+                      selectedKey={tempGuestData.country}
                     >
                       {countries.map((item) => (
                         <AutocompleteItem
@@ -405,6 +456,8 @@ const GuestInformation = forwardRef(
                       label="Correo (Opcional)"
                       className="col-span-2"
                       value={tempGuestData.email || ""}
+                      isInvalid={!!guestModalErrors.email}
+                      errorMessage={guestModalErrors.email}
                       onChange={(e) =>
                         setTempGuestData({
                           ...tempGuestData,
@@ -433,6 +486,7 @@ const GuestInformation = forwardRef(
             )}
           </ModalContent>
         </Modal>
+
         <BasicModal
           isOpen={isTermsOpen}
           onOpenChange={onTermsOpenChange}

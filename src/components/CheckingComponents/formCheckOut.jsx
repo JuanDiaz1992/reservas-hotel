@@ -36,7 +36,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
   } = useCart();
   
   const guestInfoRef = useRef();
-  const [countries, setCountries] = useState([]);
+
   const [paymentMethod, setPaymentMethod] = useState("online");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const additionalGuestsCount = Math.max(0, guestCount - 1);
@@ -59,16 +59,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
 
   useEffect(() => setTitle("Ingresa tus Datos para la Reserva"), [setTitle]);
 
-  useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all?fields=name,flags,cca2")
-      .then((res) => res.json())
-      .then((data) =>
-        setCountries(
-          data.sort((a, b) => a.name.common.localeCompare(b.name.common))
-        )
-      )
-      .catch((err) => console.error("Error países:", err));
-  }, []);
+
 
   useEffect(() => {
     setGuests((prev) =>
@@ -222,7 +213,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         ref={guestInfoRef}
         mainContact={mainContact}
         setMainContact={setMainContact}
-        countries={countries}
         errors={errors}
         setErrors={setErrors}
         isSubmitting={isSubmitting}
