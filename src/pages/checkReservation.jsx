@@ -5,16 +5,16 @@ import { Search, Ticket, ArrowLeft } from "lucide-react";
 import DetailReservation from "../components/CheckingComponents/detailReservation";
 
 export default function CheckReservationPage() {
-  const { uuid } = useParams();
+  const { param } = useParams();
   const navigate = useNavigate();
   const [searchId, setSearchId] = useState("");
   const [title, setTitle] = useState("Tu Reserva");
 
   useEffect(() => {
-    if (!uuid) {
+    if (!param) {
       setTitle("Tu Reserva");
     }
-  }, [uuid]);
+  }, [param]);
 
   const handleSearch = () => {
     if (!searchId.trim()) return;
@@ -42,7 +42,7 @@ export default function CheckReservationPage() {
       </header>
 
       <div className="container mx-auto max-w-[800px] px-4 py-10 animate-appearance-in">
-        {uuid ? (
+        {param ? (
           <div className="flex flex-col gap-4">
             <Button
               variant="flat"

@@ -14,8 +14,8 @@ export default function App(){
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout/details" element={<Checkout />} />
         <Route path="/checkout/success" element={<Checkout />} />
-        <Route path="/checkout/success/:uuid" element={<Checkout />} />
-        <Route path="/my-reservation/:uuid?" element={<CheckReservationPage />} />
+        <Route path="/checkout/success/:param" element={<Checkout />} />
+        <Route path="/my-reservation/:param?" element={<CheckReservationPage />} />
       </Route>
     </Routes>
   );

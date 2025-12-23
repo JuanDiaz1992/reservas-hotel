@@ -35,7 +35,8 @@ import { useCurrency } from "../../context/currencyContext";
 
 export default function DetailReservation({ setTitle }) {
   const navigate = useNavigate();
-  const { uuid } = useParams();
+  const { param } = useParams();
+  const [uuid, setUuid] = useState()
 
   const { finalizeBooking } = useCart();
   const { formatPrice } = useCurrency();
@@ -116,17 +117,17 @@ export default function DetailReservation({ setTitle }) {
     }
   };
 
-  // Función para cargar los datos (extraída para poder re-llamarla)
   const loadData = useCallback(
     async (showSpinner = true) => {
       if (showSpinner) setLoading(true);
       setError(false);
       const response = await get({
-        endpoint: `/reservations/${uuid}`,
+        endpoint: `/reservations/${param}`,
       });
 
       if (!response.error && response.data?.status === "success") {
         const data = response.data.data;
+        setUuid(data.uuid)
         setResData(data);
 
         if (!finalizedSent.current) {
@@ -138,7 +139,7 @@ export default function DetailReservation({ setTitle }) {
       }
       setLoading(false);
     },
-    [uuid, finalizeBooking]
+    [param, finalizeBooking]
   );
 
   const handleTogglePaymentMethod = async () => {
@@ -177,9 +178,9 @@ export default function DetailReservation({ setTitle }) {
 
   useEffect(() => {
     setTitle("Detalles de tu Reserva");
-    if (!uuid) return;
+    if (!param) return;
     loadData();
-  }, [uuid, loadData, setTitle]);
+  }, [param, loadData, setTitle]);
 
   const handleCopy = (text, id) => {
     navigator.clipboard.writeText(text);
