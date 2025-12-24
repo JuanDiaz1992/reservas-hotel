@@ -33,3 +33,27 @@ export async function post({ endpoint, body }) {
     };
   }
 }
+
+
+export async function postProtected({ endpoint, body, token }) {
+  const baseUrl = import.meta.env.VITE_API_URL;
+  try {
+    const respuesta = await fetch(`${baseUrl}${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) {
+      return { data: resultado, error: `Error ${respuesta.status}`, status: respuesta.status };
+    }
+    return { data: resultado, error: null, status: respuesta.status };
+  } catch (error) {
+    return { data: null, error: "Error de conexión", status: 500 };
+  }
+}

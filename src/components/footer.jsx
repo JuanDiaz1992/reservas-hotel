@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@heroui/react";
 import {
   Facebook,
@@ -11,6 +11,11 @@ import {
 } from "lucide-react";
 
 export default function Footer() {
+  const location = useLocation();
+  const hideFooter = location.pathname.startsWith("/admin");
+  if (hideFooter) {
+    return
+  }
   return (
     <footer className="bg-[#424436] text-white pt-16 pb-8 border-t border-white/10">
       <div className="container mx-auto px-6">

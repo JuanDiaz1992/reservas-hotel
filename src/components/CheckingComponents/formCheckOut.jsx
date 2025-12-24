@@ -31,7 +31,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     cart,
     guestCount,
     dateRange,
-    totalNights, // Extraído del contexto para el cálculo correcto
+    totalNights,
     setReservationId,
     setSelectedPaymentMethod,
   } = useCart();
@@ -316,7 +316,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         </CardBody>
       </Card>
 
-      {/* Botón de Acción Final */}
       <div>
         <Button
           className="w-full h-16 bg-[#476d15] text-white text-lg font-bold shadow-2xl"

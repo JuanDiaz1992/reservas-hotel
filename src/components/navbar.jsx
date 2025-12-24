@@ -12,13 +12,14 @@ import {
 import { useEffect, useState } from "react";
 import CurrencySelector from "./currencySelector";
 import CartDropdown from "./cartDropdown";
-
 import { scrollToTopInstant, scrollToTop } from "../utils/scrollToTop";
 
 export default function Component() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+
+  const hideNavbar = location.pathname.startsWith("/admin");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,6 +40,8 @@ export default function Component() {
       scrollToTopInstant();
     }
   };
+
+  if (hideNavbar) return null;
 
   return (
     <Navbar
@@ -81,7 +84,6 @@ export default function Component() {
           </Button>
         </NavbarItem>
 
-        {/* NUEVO ENLACE: MIS RESERVAS (Escritorio) */}
         <NavbarItem>
           <Button
             as={Link}
@@ -133,7 +135,7 @@ export default function Component() {
 
           <Button
             as={Link}
-            to="/loguin"
+            to="/login"
             className="bg-[#476d15] text-white hover:bg-white/90 hover:text-[#5C6046]"
             onClick={handleNavigationClick}
           >
@@ -176,7 +178,7 @@ export default function Component() {
         </NavbarMenuItem>
         <NavbarMenuItem>
           <Link
-            to="/loguin"
+            to="/login"
             className="w-full text-lg text-white hover:text-white/80 py-2 block"
             onClick={handleNavigationClick}
           >
