@@ -3,7 +3,6 @@ import {
   ModalContent,
   ModalBody,
 } from "@heroui/react";
-import { useState } from "react"
 
 export default function BasicModal({ isOpen, onOpenChange, Content, size = "md", scrollBehavior="normal" }) {
 

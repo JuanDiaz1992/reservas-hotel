@@ -34,3 +34,47 @@ export async function del({ endpoint, body = {} }) {
     };
   }
 }
+
+
+export async function delProtected({ endpoint, token, body = {} }) {
+  const baseUrl = import.meta.env.VITE_API_URL;
+
+  try {
+    const respuesta = await fetch(`${baseUrl}${endpoint}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: body && Object.keys(body).length > 0 ? JSON.stringify(body) : null,
+    });
+
+    let resultado = null;
+    if (respuesta.status !== 204) {
+      resultado = await respuesta.json();
+    } else {
+      resultado = { success: true };
+    }
+
+    if (!respuesta.ok) {
+      return {
+        data: resultado,
+        error: `Error ${respuesta.status}: ${respuesta.statusText}`,
+        status: respuesta.status,
+      };
+    }
+
+    return {
+      data: resultado,
+      error: null,
+      status: respuesta.status,
+    };
+  } catch (error) {
+    console.error("Error en delProtected:", error);
+    return {
+      data: null,
+      error: "No se pudo conectar con el servidor",
+      status: 500,
+    };
+  }
+}

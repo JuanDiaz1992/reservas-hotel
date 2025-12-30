@@ -5,7 +5,6 @@ import {
   CalendarCheck,
   PlusCircle,
   LogOut,
-  User,
   Settings,
   Menu,
   X,
@@ -19,25 +18,54 @@ import {
   addToast,
 } from "@heroui/react";
 import { useAuth } from "../context/authContext";
-import { postProtected } from "../../api/post";
+import { postProtected, postProtectedFormData } from "../../api/post";
 import { useNavigate } from "react-router-dom";
-import RoomList from "../components/AdminComponents.jsx/RoomList";
+import RoomList from "../components/AdminComponents.jsx/Rooms/RoomList";
 import { getProtected } from "../../api/get";
+import { delProtected } from "../../api/delete";
 
 export default function AdminPanel() {
   const { logout, token } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [roomsAvailable, setRoomsroomsAvailable] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updateRooms, setUpdateRooms] = useState(false);
+
+  const getRoomsAvailable = async () => {
+    setIsLoading(true);
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    const formatDate = (date) => date.toISOString().split("T")[0];
+
+    const checkIn = formatDate(today);
+    const checkOut = formatDate(tomorrow);
+
+    try {
+      const response = await getProtected({
+        endpoint: `/search-rooms?check_in=${checkIn}&check_out=${checkOut}&guests=2`,
+        token: token,
+      });
+      const roomsData = response?.data?.rooms || [];
+      setRoomsroomsAvailable(roomsData);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getRooms = async () => {
     setIsLoading(true);
     try {
-      const response = await getProtected({ endpoint: "/rooms", token: token });
-      if (response.data) {
-        setRooms(response.data.data || []);
-      }
+      const response = await getProtected({
+        endpoint: `/rooms`,
+        token: token,
+      });
+      const roomsData = response?.data?.data || [];
+      setRooms(roomsData);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -46,8 +74,10 @@ export default function AdminPanel() {
   };
 
   useEffect(() => {
+    getRoomsAvailable();
     getRooms();
-  }, []);
+    setUpdateRooms(false);
+  }, [updateRooms]);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -71,8 +101,8 @@ export default function AdminPanel() {
       navigate("/");
     }
   };
-  const totalDisponibilidad = rooms.reduce(
-    (acc, room) => acc + (room.inventory || 0),
+  const totalDisponibilidad = roomsAvailable.reduce(
+    (acc, room) => acc + (room.available_stock || 0),
     0
   );
   const menuItems = [
@@ -123,14 +153,16 @@ export default function AdminPanel() {
               )}
             </button>
           ))}
-          <a 
-              href="/" 
-              target="_blank" 
-              className="w-full flex items-center gap-3 p-3 rounded-xl text-[#D4AF37]/60 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] transition-all"
-            >
-              <ExternalLink size={20} />
-              {isSidebarOpen && <span className="font-medium text-sm">Ver Web Pública</span>}
-            </a>
+          <a
+            href="/"
+            target="_blank"
+            className="w-full flex items-center gap-3 p-3 rounded-xl text-[#D4AF37]/60 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] transition-all"
+          >
+            <ExternalLink size={20} />
+            {isSidebarOpen && (
+              <span className="font-medium text-sm">Ver Web Pública</span>
+            )}
+          </a>
         </nav>
 
         <div className="p-4 border-t border-white/10">
@@ -233,7 +265,11 @@ export default function AdminPanel() {
             )}
 
             {activeTab === "rooms" && (
-              <RoomList rooms={rooms} isLoading={isLoading} />
+              <RoomList
+                rooms={rooms}
+                isLoading={isLoading}
+                setUpdateRooms={setUpdateRooms}
+              />
             )}
 
             {activeTab === "bookings" && (
