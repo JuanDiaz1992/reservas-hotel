@@ -9,6 +9,9 @@ import {
   Menu,
   X,
   ExternalLink,
+  ClipboardCheck,
+  BellRing,
+  Archive,
 } from "lucide-react";
 import {
   Button,
@@ -16,21 +19,25 @@ import {
   CardBody,
   User as UserUI,
   addToast,
+  Tabs,
+  Tab,
 } from "@heroui/react";
 import { useAuth } from "../context/authContext";
-import { postProtected, postProtectedFormData } from "../../api/post";
+import { postProtected } from "../../api/post";
 import { useNavigate } from "react-router-dom";
-import RoomList from "../components/AdminComponents.jsx/Rooms/RoomList";
+import RoomList from "../components/AdminComponents/Rooms/RoomList";
+import ReservationsList from "../components/AdminComponents/Reservations/ReservationsList";
 import { getProtected } from "../../api/get";
-import { delProtected } from "../../api/delete";
 
 export default function AdminPanel() {
   const { logout, token } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  /*ROOMS*/
+  const [isLoading, setIsLoading] = useState(true);
   const [roomsAvailable, setRoomsroomsAvailable] = useState([]);
   const [rooms, setRooms] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [updateRooms, setUpdateRooms] = useState(false);
 
   const getRoomsAvailable = async () => {
@@ -39,7 +46,6 @@ export default function AdminPanel() {
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
     const formatDate = (date) => date.toISOString().split("T")[0];
-
     const checkIn = formatDate(today);
     const checkOut = formatDate(tomorrow);
 
@@ -73,11 +79,105 @@ export default function AdminPanel() {
     }
   };
 
+  /*Reservations*/
+  const [loadingReservations, setLoadingReservations] = useState(false);
+  const [updateReservations, setUpdateReservations] = useState(false);
+  const [totalReservations, setTotalReservations] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [reservations, setReservations] = useState([]);
+  const [checkInToday, setTodayCheckIns] = useState();
+  const [onSearch, setOnSearch] = useState(false);
+  const [reservationFilter, setReservationFilter] = useState("inbox");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const getReservations = async (
+    filterType = reservationFilter,
+    page = 1,
+    forInterval = false
+  ) => {
+    if (!forInterval) {
+      setLoadingReservations(true);
+    }
+
+    try {
+      const response = await getProtected({
+        endpoint: `/reservations?filter=${filterType}&page=${page}`,
+        token: token,
+      });
+
+      if (response.status === 200) {
+        const reservationsArray = response.data.data || [];
+        setReservations(reservationsArray);
+        setTotalPages(response.data.last_page || 1);
+        setCurrentPage(response.data.current_page || 1);
+        setTotalReservations(response.data.total || 0);
+
+        if (filterType === "inbox") {
+          setPendingCount(response.data.total || 0);
+        }
+      }
+    } catch (error) {
+      console.error("Error al procesar reservas:", error);
+    } finally {
+      if (!forInterval) {
+        setLoadingReservations(false);
+      }
+    }
+  };
+
+  const setSearchTerm = async (value) => {
+    if (!value) {
+      getReservations();
+      setOnSearch(false);
+      return;
+    }
+    setOnSearch(true);
+    setLoadingReservations(true);
+    try {
+      const response = await getProtected({
+        endpoint: `/reservations/${value}`,
+        token: token,
+      });
+
+      if (response.status === 200) {
+        const rawData = response.data.data;
+        const validatedData = Array.isArray(rawData) ? rawData : [rawData];
+        setReservations(validatedData);
+      } else {
+        setReservations([]);
+      }
+    } catch (error) {
+      console.error("Error en búsqueda:", error);
+      setReservations([]);
+    } finally {
+      setLoadingReservations(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!onSearch) {
+      if (updateReservations) {
+        setUpdateReservations(false);
+      }
+      getReservations(reservationFilter, currentPage);
+
+      const interval = setInterval(() => {
+        if (!loadingReservations) {
+          getReservations(reservationFilter, currentPage, true);
+        }
+      }, 60000);
+
+      return () => clearInterval(interval);
+    }
+  }, [updateReservations, onSearch, reservationFilter, currentPage]);
+
   useEffect(() => {
     getRoomsAvailable();
     getRooms();
     setUpdateRooms(false);
   }, [updateRooms]);
+
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -101,10 +201,12 @@ export default function AdminPanel() {
       navigate("/");
     }
   };
+
   const totalDisponibilidad = roomsAvailable.reduce(
     (acc, room) => acc + (room.available_stock || 0),
     0
   );
+
   const menuItems = [
     {
       id: "dashboard",
@@ -121,10 +223,14 @@ export default function AdminPanel() {
   ];
 
   return (
-    <div className="bg-[#0a0f06] flex text-white font-sans min-h-[900px]">
+    <div className="bg-[#0a0f06] flex text-white font-sans min-h-screen">
+      {/* SIDEBAR */}
       <aside
-        className={`${isSidebarOpen ? "w-64" : "w-20"} bg-[#0f1e09] border-r border-white/10 transition-all duration-300 flex flex-col`}
+        className={`${
+          isSidebarOpen ? "w-64" : "w-20"
+        } bg-[#0f1e09] border-r border-white/10 transition-all duration-300 flex flex-col`}
       >
+        {/* Logo */}
         <div className="p-6 flex items-center gap-3">
           <div className="bg-[#D4AF37] p-2 rounded-lg">
             <Settings size={20} className="text-black" />
@@ -136,12 +242,13 @@ export default function AdminPanel() {
           )}
         </div>
 
+        {/* Navigation */}
         <nav className="flex-grow px-3 mt-4 space-y-2">
           {menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
+              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
                 activeTab === item.id
                   ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20"
                   : "text-white/60 hover:bg-white/5 hover:text-white"
@@ -153,39 +260,80 @@ export default function AdminPanel() {
               )}
             </button>
           ))}
-          <a
-            href="/"
-            target="_blank"
-            className="w-full flex items-center gap-3 p-3 rounded-xl text-[#D4AF37]/60 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] transition-all"
+        </nav>
+
+        {/* BOTTOM ACTIONS (RESTAURADOS) */}
+        <div className="p-4 border-t border-white/10 space-y-2">
+          <button
+            onClick={() => navigate("/")}
+            className="w-full flex items-center gap-3 p-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all"
           >
             <ExternalLink size={20} />
             {isSidebarOpen && (
-              <span className="font-medium text-sm">Ver Web Pública</span>
+              <span className="text-sm font-medium">Volver a la web</span>
             )}
-          </a>
-        </nav>
+          </button>
 
-        <div className="p-4 border-t border-white/10">
-          <Button
-            variant="light"
-            className="w-full justify-start text-danger hover:bg-danger/10"
-            onPress={handleLogout}
-            startContent={<LogOut size={20} />}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 p-3 rounded-xl text-red-400 hover:bg-red-400/10 transition-all"
           >
-            {isSidebarOpen && "Cerrar Sesión"}
-          </Button>
+            <LogOut size={20} />
+            {isSidebarOpen && (
+              <span className="text-sm font-medium">Cerrar Sesión</span>
+            )}
+          </button>
         </div>
       </aside>
 
       <main className="flex-grow flex flex-col">
         {/* TOPBAR */}
-        <header className="h-16 border-b border-white/10 flex items-center justify-between px-8 bg-[#0a0f06]/50 backdrop-blur-md">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white/60 hover:text-white"
-          >
-            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+        <header className="h-16 border-b border-white/10 flex items-center justify-between px-8 bg-[#0a0f06]/50 backdrop-blur-md sticky top-0 z-50">
+          <div className="flex items-center gap-8">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="text-white/60 hover:text-white"
+            >
+              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+
+            {activeTab !== "dashboard" && (
+              <div className="hidden lg:flex items-center gap-6 border-l border-white/10 pl-8 animate-in fade-in slide-in-from-left-4">
+                <div className="flex items-center gap-2">
+                  <BedDouble size={14} className="text-blue-500" />
+                  <span className="text-xs font-medium text-white/60">
+                    {totalDisponibilidad}{" "}
+                    <span className="text-[10px] opacity-40 uppercase">
+                      Libres
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CalendarCheck
+                    size={14}
+                    className={
+                      pendingCount > 0 ? "text-orange-500" : "text-green-500"
+                    }
+                  />
+                  <span className="text-xs font-medium text-white/60">
+                    {pendingCount}{" "}
+                    <span className="text-[10px] opacity-40 uppercase">
+                      Pendientes
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <PlusCircle size={14} className="text-[#D4AF37]" />
+                  <span className="text-xs font-medium text-white/60">
+                    0{" "}
+                    <span className="text-[10px] opacity-40 uppercase">
+                      Add Ons
+                    </span>
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
 
           <UserUI
             name="Administrador"
@@ -195,72 +343,156 @@ export default function AdminPanel() {
               className: "border-1 border-[#D4AF37]",
             }}
             classNames={{
-              name: "text-white",
-              description: "text-[#D4AF37]/60",
+              name: "text-white text-sm",
+              description: "text-[#D4AF37]/60 text-[10px]",
             }}
           />
         </header>
 
         {/* CONTENT AREA */}
         <div className="p-8">
-          <header className="mb-8">
-            <h1 className="text-3xl font-serif text-white">
+          <header className="mb-6">
+            <h1 className="text-2xl font-serif text-white uppercase tracking-wider">
               {menuItems.find((i) => i.id === activeTab)?.label}
             </h1>
-            <p className="text-white/40 text-sm">
-              Panel de control administrativo / Catleya Royal Club
-            </p>
+            {activeTab === "dashboard" && (
+              <p className="text-white/40 text-sm">
+                Resumen de operaciones y estado actual del club
+              </p>
+            )}
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Ejemplo de Cards de Resumen */}
-            <Card className="bg-[#0f1e09] border border-white/10 text-white">
-              <CardBody className="p-6 flex flex-row items-center gap-4">
-                <div className="p-3 bg-blue-500/10 rounded-full text-blue-500">
-                  <BedDouble size={24} />
-                </div>
-                <div>
-                  <p className="text-xs text-white/40 uppercase">
-                    Disponibilidad Inmediata
-                  </p>
-                  <p className="text-2xl font-bold">{totalDisponibilidad}</p>
-                </div>
-              </CardBody>
-            </Card>
+          {activeTab === "dashboard" && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in zoom-in-95 duration-300">
+              <Card className="bg-[#0f1e09]/40 border border-white/5 text-white shadow-none p-2">
+                <CardBody className="flex flex-row items-center gap-4">
+                  <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500">
+                    <BedDouble size={24} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/40 uppercase tracking-widest font-bold">
+                      Disponibilidad
+                    </p>
+                    <p className="text-3xl font-bold leading-tight">
+                      {totalDisponibilidad}
+                    </p>
+                  </div>
+                </CardBody>
+              </Card>
 
-            <Card className="bg-[#0f1e09] border border-white/10 text-white">
-              <CardBody className="p-6 flex flex-row items-center gap-4">
-                <div className="p-3 bg-green-500/10 rounded-full text-green-500">
-                  <CalendarCheck size={24} />
-                </div>
-                <div>
-                  <p className="text-xs text-white/40 uppercase">
-                    Reservas Hoy
-                  </p>
-                  <p className="text-2xl font-bold">5</p>
-                </div>
-              </CardBody>
-            </Card>
+              <Card className="bg-[#0f1e09]/40 border border-white/5 text-white shadow-none p-2">
+                <CardBody className="flex flex-row items-center gap-4">
+                  <div
+                    className={`p-3 rounded-xl ${
+                      pendingCount > 0
+                        ? "bg-orange-500/10 text-orange-500"
+                        : "bg-green-500/10 text-green-500"
+                    }`}
+                  >
+                    <CalendarCheck size={24} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/40 uppercase tracking-widest font-bold">
+                      Por Revisar
+                    </p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-3xl font-bold leading-tight">
+                        {pendingCount}
+                      </p>
+                      <p className="text-xs text-white/20">
+                        de {totalReservations}
+                      </p>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
 
-            <Card className="bg-[#0f1e09] border border-white/10 text-white">
-              <CardBody className="p-6 flex flex-row items-center gap-4">
-                <div className="p-3 bg-yellow-500/10 rounded-full text-yellow-500">
-                  <PlusCircle size={24} />
-                </div>
-                <div>
-                  <p className="text-xs text-white/40 uppercase">
-                    Addons Activos
-                  </p>
-                  <p className="text-2xl font-bold">8</p>
-                </div>
-              </CardBody>
-            </Card>
-          </div>
+              <Card className="bg-[#0f1e09]/40 border border-white/5 text-white shadow-none p-2">
+                <CardBody className="flex flex-row items-center gap-4">
+                  <div className="p-3 bg-[#D4AF37]/10 rounded-xl text-[#D4AF37]">
+                    <PlusCircle size={24} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/40 uppercase tracking-widest font-bold">
+                      Adds On
+                    </p>
+                    <p className="text-3xl font-bold leading-tight">0</p>
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
+          )}
 
-          <div className="mt-10">
+          <div className={`${activeTab === "dashboard" ? "mt-10" : "mt-0"}`}>
+            {activeTab === "bookings" && (
+              <div className="space-y-6">
+                <Tabs
+                  aria-label="Filtro de reservas"
+                  variant="underlined"
+                  color="warning"
+                  selectedKey={reservationFilter}
+                  onSelectionChange={(key) => {
+                    setReservationFilter(key);
+                    setCurrentPage(1);
+                  }}
+                  classNames={{
+                    tabList:
+                      "gap-6 w-full relative rounded-none border-b border-white/5",
+                    cursor: "w-full bg-[#D4AF37]",
+                    tab: "max-w-fit px-0 h-10",
+                    tabContent:
+                      "group-data-[selected=true]:text-[#D4AF37] font-medium text-sm",
+                  }}
+                >
+                  <Tab
+                    key="inbox"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <BellRing size={16} />
+                        <span>Inbox</span>
+                      </div>
+                    }
+                  />
+                  <Tab
+                    key="history"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <ClipboardCheck size={16} />
+                        <span>Confirmadas</span>
+                      </div>
+                    }
+                  />
+                  <Tab
+                    key="cancelled"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <Archive size={16} />
+                        <span>Archivadas</span>
+                      </div>
+                    }
+                  />
+                </Tabs>
+
+                <ReservationsList
+                  reservations={reservations}
+                  loadingReservations={loadingReservations}
+                  setUpdateReservations={setUpdateReservations}
+                  setSearchTerm={setSearchTerm}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
+              </div>
+            )}
+
             {activeTab === "dashboard" && (
-              <div className="p-12 border-2 border-dashed border-white/5 rounded-3xl flex items-center justify-center text-white/20">
-                Bienvenido al resumen general
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="h-64 border-2 border-dashed border-white/5 rounded-3xl flex items-center justify-center text-white/20">
+                  Próximos Check-ins
+                </div>
+                <div className="h-64 border-2 border-dashed border-white/5 rounded-3xl flex items-center justify-center text-white/20">
+                  Estado de Cuartos
+                </div>
               </div>
             )}
 
@@ -270,18 +502,6 @@ export default function AdminPanel() {
                 isLoading={isLoading}
                 setUpdateRooms={setUpdateRooms}
               />
-            )}
-
-            {activeTab === "bookings" && (
-              <div className="p-12 border-2 border-dashed border-white/5 rounded-3xl flex items-center justify-center text-white/20">
-                Módulo de Reservas en desarrollo...
-              </div>
-            )}
-
-            {activeTab === "addons" && (
-              <div className="p-12 border-2 border-dashed border-white/5 rounded-3xl flex items-center justify-center text-white/20">
-                Módulo de Addons en desarrollo...
-              </div>
             )}
           </div>
         </div>

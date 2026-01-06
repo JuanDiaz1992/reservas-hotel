@@ -29,6 +29,7 @@ export default function LoginPage() {
           description: "Inicio de sesión exitoso",
           color: "success",
         });
+        console.log(response.data.access_token);
         login(response.data.access_token);
         navigate("/admin");
       }
