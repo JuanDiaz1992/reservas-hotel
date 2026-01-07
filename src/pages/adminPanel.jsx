@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
   BellRing,
   Archive,
+  Search,
 } from "lucide-react";
 import {
   Button,
@@ -90,6 +91,7 @@ export default function AdminPanel() {
   const [reservationFilter, setReservationFilter] = useState("inbox");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [lastSearch, setLastSearch] = useState("");
 
   const getReservations = async (
     filterType = reservationFilter,
@@ -127,23 +129,24 @@ export default function AdminPanel() {
   };
 
   const setSearchTerm = async (value) => {
+    setLastSearch(value);
     if (!value) {
-      getReservations();
       setOnSearch(false);
+      setReservationFilter("inbox");
       return;
     }
     setOnSearch(true);
+    setReservationFilter("search");
     setLoadingReservations(true);
     try {
       const response = await getProtected({
-        endpoint: `/reservations/${value}`,
+        endpoint: `/reservations/search?q=${value}`,
         token: token,
       });
 
       if (response.status === 200) {
-        const rawData = response.data.data;
-        const validatedData = Array.isArray(rawData) ? rawData : [rawData];
-        setReservations(validatedData);
+        setReservations(response.data.data);
+        setTotalPages(1);
       } else {
         setReservations([]);
       }
@@ -156,20 +159,34 @@ export default function AdminPanel() {
   };
 
   useEffect(() => {
-    if (!onSearch) {
-      if (updateReservations) {
-        setUpdateReservations(false);
+    const refreshData = () => {
+      if (onSearch && lastSearch) {
+        setSearchTerm(lastSearch);
+      } else {
+        getReservations(reservationFilter, currentPage);
       }
-      getReservations(reservationFilter, currentPage);
+    };
+    if (updateReservations) {
+      setUpdateReservations(false);
+      refreshData();
+    }
 
-      const interval = setInterval(() => {
-        if (!loadingReservations) {
+    if (!updateReservations) {
+      refreshData();
+    }
+
+    const interval = setInterval(() => {
+      if (!loadingReservations) {
+        if (onSearch && lastSearch) {
+          setSearchTerm(lastSearch);
+        } else {
           getReservations(reservationFilter, currentPage, true);
         }
-      }, 60000);
+      }
+    }, 60000);
 
-      return () => clearInterval(interval);
-    }
+    return () => clearInterval(interval);
+
   }, [updateReservations, onSearch, reservationFilter, currentPage]);
 
   useEffect(() => {
@@ -351,16 +368,16 @@ export default function AdminPanel() {
 
         {/* CONTENT AREA */}
         <div className="p-8">
-          <header className="mb-6">
-            <h1 className="text-2xl font-serif text-white uppercase tracking-wider">
-              {menuItems.find((i) => i.id === activeTab)?.label}
-            </h1>
-            {activeTab === "dashboard" && (
+          {activeTab === "dashboard" && (
+            <header className="mb-6">
+              <h1 className="text-2xl font-serif text-white uppercase tracking-wider">
+                {menuItems.find((i) => i.id === activeTab)?.label}
+              </h1>
               <p className="text-white/40 text-sm">
                 Resumen de operaciones y estado actual del club
               </p>
-            )}
-          </header>
+            </header>
+          )}
 
           {activeTab === "dashboard" && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in zoom-in-95 duration-300">
@@ -434,6 +451,9 @@ export default function AdminPanel() {
                   onSelectionChange={(key) => {
                     setReservationFilter(key);
                     setCurrentPage(1);
+                    if (key !== "search") {
+                      setOnSearch(false);
+                    }
                   }}
                   classNames={{
                     tabList:
@@ -471,6 +491,17 @@ export default function AdminPanel() {
                       </div>
                     }
                   />
+                  {onSearch && (
+                    <Tab
+                      key="search"
+                      title={
+                        <div className="flex items-center space-x-2">
+                          <Search size={16} className="text-[#D4AF37]" />
+                          <span className="text-[#D4AF37]">Resultados</span>
+                        </div>
+                      }
+                    />
+                  )}
                 </Tabs>
 
                 <ReservationsList

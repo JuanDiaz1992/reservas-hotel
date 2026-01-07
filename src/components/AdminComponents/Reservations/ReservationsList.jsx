@@ -14,20 +14,24 @@ import {
   Input,
   useDisclosure,
   Pagination,
+  addToast,
 } from "@heroui/react";
 import {
   Search,
   Eye,
   Calendar,
   Edit,
-  Trash2,
+  Archive,
   BellRing,
   CheckCircle2,
+  CheckCircle,
+  CreditCard,
 } from "lucide-react";
 
 import BasicModal from "../../basicModal";
 import { delProtected } from "../../../../api/delete";
 import { patchProtected } from "../../../../api/patch";
+import { post } from "../../../../api/post";
 import { useAuth } from "../../../context/authContext";
 
 export default function ReservationsList({
@@ -82,14 +86,14 @@ export default function ReservationsList({
     onOpen();
   };
 
-  const handleDelete = async (id) => {
+  const handleCancel = async (uuid) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta reserva?")) {
       try {
         const response = await delProtected({
-          endpoint: `/reservations/${id}`,
+          endpoint: `/reservations/${uuid}`,
           token: token,
         });
-        console.log(response)
+        console.log(response);
         if (response.status === 200) {
           setUpdateReservations(true);
         }
@@ -123,10 +127,67 @@ export default function ReservationsList({
     }
   };
 
+  const handleChangePaymentMethod = async (uuid, currentMethod) => {
+    try {
+      const newMethod = currentMethod === "epayco" ? "bank_transfer" : "epayco";
+      const response = await post({
+        endpoint: `/reservations/${uuid}/init-payment`,
+        body: { payment_method: newMethod },
+      });
+      if (response.status === 200) {
+        addToast({
+          title: "Método actualizado",
+          description: `Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`,
+          color: "success",
+        });
+        setUpdateReservations(true);
+      }
+    } catch (error) {
+      addToast({
+        title: "Cambio no realizado",
+        description: "Ah ocurrido un error, intentelo de nuevo más tarde",
+        color: "danger",
+      });
+    }
+  };
+
+  const handleConfirmReservation = async (id) => {
+    console.log(id);
+    try {
+      const response = await patchProtected({
+        endpoint: `/reservations/${id}/sync-pms`,
+        body: {
+          is_synced_pms: true,
+        },
+        token: token,
+      });
+      if (response.status === 200) {
+        setUpdateReservations(true);
+        addToast({
+          title: "Reserva Confirmada",
+          description: "La reserva se confirmó correctamente",
+          color: "success",
+        });
+      } else {
+        addToast({
+          title: "Reserva No Confirmada",
+          description: "Ah ocurrido un error, intentelo de nuevo más tarde",
+          color: "danger",
+        });
+      }
+    } catch (error) {
+      addToast({
+        title: "Reserva No Confirmada",
+        description: "Ah ocurrido un error, intentelo de nuevo más tarde",
+        color: "danger",
+      });
+    }
+  };
+
   const renderCell = (reservation, columnKey) => {
     const cellValue = reservation[columnKey];
 
-    const todayStr = new Intl.DateTimeFormat('en-CA').format(new Date());
+    const todayStr = new Intl.DateTimeFormat("en-CA").format(new Date());
     const checkInStr = reservation.check_in
       ? reservation.check_in.split("T")[0]
       : "";
@@ -208,7 +269,6 @@ export default function ReservationsList({
       case "status":
         const isBankTransfer = reservation.payment_method === "bank_transfer";
         const isPending = reservation.payment_status === "pending";
-        // Nueva validación: que no esté cancelada
         const isNotCancelled = reservation.status !== "cancelled";
 
         return (
@@ -235,11 +295,37 @@ export default function ReservationsList({
                 CONFIRMAR PAGO
               </Button>
             )}
+
+            {isPending && isNotCancelled && (
+              <Button
+                size="sm"
+                variant="flat"
+                color="secondary"
+                className="h-7 text-[10px] font-bold bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/20"
+                startContent={<CreditCard size={12} />}
+                onPress={() => handleChangePaymentMethod(reservation.uuid, reservation.payment_method)}
+              >
+                CAMBIAR MÉTODO
+              </Button>
+            )}
           </div>
         );
       case "actions":
         return (
           <div className="flex items-center gap-2">
+            {reservation.is_synced_pms === 0 && (
+              <Tooltip color="success" content="Confirmar Reserva">
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="text-white/60 hover:text-success"
+                  onPress={() => handleConfirmReservation(reservation.id)}
+                >
+                  <CheckCircle size={18} />
+                </Button>
+              </Tooltip>
+            )}
             <Tooltip content="Ver detalles">
               <Button
                 isIconOnly
@@ -262,18 +348,19 @@ export default function ReservationsList({
                 <Edit size={18} />
               </Button>
             </Tooltip>
-
-            <Tooltip color="danger" content="Eliminar reserva">
-              <Button
-                isIconOnly
-                size="sm"
-                variant="light"
-                className="text-danger hover:bg-danger/10"
-                onPress={() => handleDelete(reservation.uuid)}
-              >
-                <Trash2 size={18} />
-              </Button>
-            </Tooltip>
+            {reservation.status !== "cancelled" && (
+              <Tooltip color="danger" content="Archivar reserva">
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="text-danger hover:bg-danger/10"
+                  onPress={() => handleCancel(reservation.uuid)}
+                >
+                  <Archive size={18} />
+                </Button>
+              </Tooltip>
+            )}
           </div>
         );
       default:
@@ -289,7 +376,7 @@ export default function ReservationsList({
           <Input
             isClearable
             variant="bordered"
-            placeholder="Buscar por UUID, código..."
+            placeholder="Buscar por UUID, código o correo..."
             startContent={<Search size={18} className="text-white/40" />}
             value={searchValue}
             onClear={() => handleSearch("")}
@@ -317,7 +404,7 @@ export default function ReservationsList({
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-white/10 max-h-[450px] overflow-auto">
+      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] overflow-auto">
         <Table
           aria-label="Tabla de reservas"
           removeWrapper
@@ -343,7 +430,7 @@ export default function ReservationsList({
             items={reservations || []}
             loadingContent={<Spinner color="warning" />}
             loadingState={loadingReservations ? "loading" : "idle"}
-            emptyContent={"No se encontraron registros en la base de datos."}
+            emptyContent={"No se encontraron reservas."}
           >
             {(item) => {
               const todayStr = new Date().toISOString().split("T")[0];
@@ -392,9 +479,9 @@ export default function ReservationsList({
         onOpenChange={onOpenChange}
         size="2xl"
         Content={() => (
-          <div className="p-6 text-white">
+          <div className="p-">
             <h2 className="text-2xl font-serif mb-4">Editar Reserva</h2>
-            <p className="text-white/60 mb-6">
+            <p className="mb-6">
               Código:{" "}
               <span className="text-[#D4AF37]">
                 {selectedReservation?.reservation_code}
@@ -404,7 +491,7 @@ export default function ReservationsList({
               <Button
                 variant="light"
                 onPress={() => onOpenChange(false)}
-                className="text-white"
+                className=""
               >
                 Cerrar
               </Button>

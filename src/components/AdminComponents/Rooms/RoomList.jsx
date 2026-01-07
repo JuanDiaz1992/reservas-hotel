@@ -298,7 +298,7 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/10 max-h-[450px] overflow-auto">
+      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] overflow-auto">
         <Table
           aria-label="Tabla de habitaciones"
           removeWrapper
