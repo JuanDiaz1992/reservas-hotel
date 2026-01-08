@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import {
   Table,
   TableHeader,
@@ -148,7 +148,7 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
     ? rooms.find((r) => r.id === selectedRoom.id)
     : null;
 
-  const ModalContent = () => {
+  const ModalContent = useCallback(() => {
     if (modalView === "units") {
       return <RoomUnitsManager rooms={rooms} setUpdateRooms={setUpdateRooms} />;
     }
@@ -161,7 +161,7 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
         setUpdateRooms={setUpdateRooms}
       />
     );
-  };
+  }, [modalView, rooms, setUpdateRooms, selectedRoom, updateRoom, createRoom, currentRoomData, onOpenChange]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("es-CO", {
@@ -342,6 +342,7 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
         size={modalView === "units" ? "5xl" : "2xl"}
         scrollBehavior="inside"
         Content={ModalContent}
+        isDismissable={false}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import {
   ModalBody,
 } from "@heroui/react";
 
-export default function BasicModal({ isOpen, onOpenChange, Content, size = "md", scrollBehavior="normal" }) {
+export default function BasicModal({ isOpen, onOpenChange, Content, size = "md", scrollBehavior="normal", isDismissable = true }) {
 
   return (
     <Modal
@@ -13,8 +13,9 @@ export default function BasicModal({ isOpen, onOpenChange, Content, size = "md",
         onOpenChange={onOpenChange}
         backdrop="opaque"
         scrollBehavior={scrollBehavior}
+        isDismissable={isDismissable}
         classNames={{
-          body: "py-6",
+          body: "py-8",
           backdrop: "bg-black/60 backdrop-opacity-90",
           base: "border-gray-200 bg-white text-gray-900",
           header: "border-b-[1px] border-gray-200",

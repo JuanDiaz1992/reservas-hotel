@@ -2,7 +2,7 @@ import { getProtected } from "../../../../api/get";
 import { delProtected } from "../../../../api/delete";
 import { postProtected } from "../../../../api/post";
 import { patchProtected } from "../../../../api/patch";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { useAuth } from "../../../context/authContext";
 import {
   Table,
@@ -31,7 +31,7 @@ import {
   Save,
 } from "lucide-react";
 
-export default function RoomUnitsManager({ rooms, setUpdateRooms }) {
+export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
   const [roomLocks, setRoomLocks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [view, setView] = useState("list");
@@ -49,15 +49,15 @@ export default function RoomUnitsManager({ rooms, setUpdateRooms }) {
   const { token } = useAuth();
 
   // Función para obtener solo los bloqueos
-  const getLocks = async () => {
+  const getLocks = useCallback(async () => {
+    console.log("getLocks called");
     setIsLoading(true);
     const response = await getProtected({ endpoint: "/room-locks", token });
-    console.log(response.data.data);
     if (response?.data?.data) {
       setRoomLocks(response.data.data);
     }
     setIsLoading(false);
-  };
+  }, [token])
 
   // Al montar, cargamos los bloqueos
   useEffect(() => {
@@ -117,14 +117,11 @@ export default function RoomUnitsManager({ rooms, setUpdateRooms }) {
       ? `/room-locks/${selectedLock.id}`
       : "/room-locks";
     const method = selectedLock ? patchProtected : postProtected;
-    console.log(endpoint);
     const response = await method({
       endpoint,
       body: formData,
       token,
     });
-    console.log(formData);
-    console.log(response);
     if (!response.error) {
       addToast({
         title: "¡Éxito!",
@@ -184,12 +181,14 @@ export default function RoomUnitsManager({ rooms, setUpdateRooms }) {
               label="Habitación"
               placeholder="Seleccione unidad"
               selectedKeys={formData.room_id ? [formData.room_id] : []}
-              onChange={(e) =>
-                setFormData({ ...formData, room_id: e.target.value })
-              }
+              onSelectionChange={(keys) => {
+                const value = Array.from(keys)[0];
+                setFormData({ ...formData, room_id: value });
+              }}
               isRequired
               variant="bordered"
               labelPlacement="outside"
+              disableAnimation={false}
               classNames={{ label: "text-gray-700 font-medium" }}
             >
               {rooms.map((room) => (
@@ -380,4 +379,4 @@ export default function RoomUnitsManager({ rooms, setUpdateRooms }) {
       </Table>
     </div>
   );
-}
+});

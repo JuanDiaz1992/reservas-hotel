@@ -11,8 +11,9 @@ import {
   ExternalLink,
   ClipboardCheck,
   BellRing,
-  Archive,
+  CalendarX2,
   Search,
+  RotateCw,
 } from "lucide-react";
 import {
   Button,
@@ -29,171 +30,15 @@ import { useNavigate } from "react-router-dom";
 import RoomList from "../components/AdminComponents/Rooms/RoomList";
 import ReservationsList from "../components/AdminComponents/Reservations/ReservationsList";
 import { getProtected } from "../../api/get";
+import { useAdminDataRooms } from "../hooks/useAdminDataRooms";
+import { useAdminDataReservations } from "../hooks/useAdminDataReservations";
 
 export default function AdminPanel() {
   const { logout, token } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  /*ROOMS*/
-  const [isLoading, setIsLoading] = useState(true);
-  const [roomsAvailable, setRoomsroomsAvailable] = useState([]);
-  const [rooms, setRooms] = useState([]);
-  const [updateRooms, setUpdateRooms] = useState(false);
-
-  const getRoomsAvailable = async () => {
-    setIsLoading(true);
-    const today = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
-    const formatDate = (date) => date.toISOString().split("T")[0];
-    const checkIn = formatDate(today);
-    const checkOut = formatDate(tomorrow);
-
-    try {
-      const response = await getProtected({
-        endpoint: `/search-rooms?check_in=${checkIn}&check_out=${checkOut}&guests=2`,
-        token: token,
-      });
-      const roomsData = response?.data?.rooms || [];
-      setRoomsroomsAvailable(roomsData);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getRooms = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getProtected({
-        endpoint: `/rooms`,
-        token: token,
-      });
-      const roomsData = response?.data?.data || [];
-      setRooms(roomsData);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /*Reservations*/
-  const [loadingReservations, setLoadingReservations] = useState(false);
-  const [updateReservations, setUpdateReservations] = useState(false);
-  const [totalReservations, setTotalReservations] = useState(0);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [reservations, setReservations] = useState([]);
-  const [checkInToday, setTodayCheckIns] = useState();
-  const [onSearch, setOnSearch] = useState(false);
-  const [reservationFilter, setReservationFilter] = useState("inbox");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [lastSearch, setLastSearch] = useState("");
-
-  const getReservations = async (
-    filterType = reservationFilter,
-    page = 1,
-    forInterval = false
-  ) => {
-    if (!forInterval) {
-      setLoadingReservations(true);
-    }
-
-    try {
-      const response = await getProtected({
-        endpoint: `/reservations?filter=${filterType}&page=${page}`,
-        token: token,
-      });
-
-      if (response.status === 200) {
-        const reservationsArray = response.data.data || [];
-        setReservations(reservationsArray);
-        setTotalPages(response.data.last_page || 1);
-        setCurrentPage(response.data.current_page || 1);
-        setTotalReservations(response.data.total || 0);
-
-        if (filterType === "inbox") {
-          setPendingCount(response.data.total || 0);
-        }
-      }
-    } catch (error) {
-      console.error("Error al procesar reservas:", error);
-    } finally {
-      if (!forInterval) {
-        setLoadingReservations(false);
-      }
-    }
-  };
-
-  const setSearchTerm = async (value) => {
-    setLastSearch(value);
-    if (!value) {
-      setOnSearch(false);
-      setReservationFilter("inbox");
-      return;
-    }
-    setOnSearch(true);
-    setReservationFilter("search");
-    setLoadingReservations(true);
-    try {
-      const response = await getProtected({
-        endpoint: `/reservations/search?q=${value}`,
-        token: token,
-      });
-
-      if (response.status === 200) {
-        setReservations(response.data.data);
-        setTotalPages(1);
-      } else {
-        setReservations([]);
-      }
-    } catch (error) {
-      console.error("Error en búsqueda:", error);
-      setReservations([]);
-    } finally {
-      setLoadingReservations(false);
-    }
-  };
-
-  useEffect(() => {
-    const refreshData = () => {
-      if (onSearch && lastSearch) {
-        setSearchTerm(lastSearch);
-      } else {
-        getReservations(reservationFilter, currentPage);
-      }
-    };
-    if (updateReservations) {
-      setUpdateReservations(false);
-      refreshData();
-    }
-
-    if (!updateReservations) {
-      refreshData();
-    }
-
-    const interval = setInterval(() => {
-      if (!loadingReservations) {
-        if (onSearch && lastSearch) {
-          setSearchTerm(lastSearch);
-        } else {
-          getReservations(reservationFilter, currentPage, true);
-        }
-      }
-    }, 60000);
-
-    return () => clearInterval(interval);
-
-  }, [updateReservations, onSearch, reservationFilter, currentPage]);
-
-  useEffect(() => {
-    getRoomsAvailable();
-    getRooms();
-    setUpdateRooms(false);
-  }, [updateRooms]);
+  const { rooms } = useAdminDataRooms(token);
+  const { reservationsData } = useAdminDataReservations(token, activeTab);
 
   const navigate = useNavigate();
 
@@ -218,11 +63,6 @@ export default function AdminPanel() {
       navigate("/");
     }
   };
-
-  const totalDisponibilidad = roomsAvailable.reduce(
-    (acc, room) => acc + (room.available_stock || 0),
-    0
-  );
 
   const menuItems = [
     {
@@ -319,13 +159,13 @@ export default function AdminPanel() {
                 <div className="flex items-center gap-2">
                   <BedDouble size={14} className="text-blue-500" />
                   <span className="text-xs font-medium text-white/60">
-                    {totalDisponibilidad}{" "}
+                    {rooms.totalDisponibilidad}{" "}
                     <span className="text-[10px] opacity-40 uppercase">
                       Libres
                     </span>
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                {/*              <div className="flex items-center gap-2">
                   <CalendarCheck
                     size={14}
                     className={
@@ -338,7 +178,7 @@ export default function AdminPanel() {
                       Pendientes
                     </span>
                   </span>
-                </div>
+                </div> */}
                 <div className="flex items-center gap-2">
                   <PlusCircle size={14} className="text-[#D4AF37]" />
                   <span className="text-xs font-medium text-white/60">
@@ -391,7 +231,7 @@ export default function AdminPanel() {
                       Disponibilidad
                     </p>
                     <p className="text-3xl font-bold leading-tight">
-                      {totalDisponibilidad}
+                      {rooms.totalDisponibilidad}
                     </p>
                   </div>
                 </CardBody>
@@ -401,7 +241,7 @@ export default function AdminPanel() {
                 <CardBody className="flex flex-row items-center gap-4">
                   <div
                     className={`p-3 rounded-xl ${
-                      pendingCount > 0
+                      reservationsData.pendingCount > 0
                         ? "bg-orange-500/10 text-orange-500"
                         : "bg-green-500/10 text-green-500"
                     }`}
@@ -414,10 +254,10 @@ export default function AdminPanel() {
                     </p>
                     <div className="flex items-baseline gap-2">
                       <p className="text-3xl font-bold leading-tight">
-                        {pendingCount}
+                        {reservationsData.pendingCount}
                       </p>
                       <p className="text-xs text-white/20">
-                        de {totalReservations}
+                        de {reservationsData.totalReservations}
                       </p>
                     </div>
                   </div>
@@ -443,75 +283,92 @@ export default function AdminPanel() {
           <div className={`${activeTab === "dashboard" ? "mt-10" : "mt-0"}`}>
             {activeTab === "bookings" && (
               <div className="space-y-6">
-                <Tabs
-                  aria-label="Filtro de reservas"
-                  variant="underlined"
-                  color="warning"
-                  selectedKey={reservationFilter}
-                  onSelectionChange={(key) => {
-                    setReservationFilter(key);
-                    setCurrentPage(1);
-                    if (key !== "search") {
-                      setOnSearch(false);
-                    }
-                  }}
-                  classNames={{
-                    tabList:
-                      "gap-6 w-full relative rounded-none border-b border-white/5",
-                    cursor: "w-full bg-[#D4AF37]",
-                    tab: "max-w-fit px-0 h-10",
-                    tabContent:
-                      "group-data-[selected=true]:text-[#D4AF37] font-medium text-sm",
-                  }}
-                >
-                  <Tab
-                    key="inbox"
-                    title={
-                      <div className="flex items-center space-x-2">
-                        <BellRing size={16} />
-                        <span>Inbox</span>
-                      </div>
-                    }
-                  />
-                  <Tab
-                    key="history"
-                    title={
-                      <div className="flex items-center space-x-2">
-                        <ClipboardCheck size={16} />
-                        <span>Confirmadas</span>
-                      </div>
-                    }
-                  />
-                  <Tab
-                    key="cancelled"
-                    title={
-                      <div className="flex items-center space-x-2">
-                        <Archive size={16} />
-                        <span>Archivadas</span>
-                      </div>
-                    }
-                  />
-                  {onSearch && (
+                <div className="flex items-center justify-between gap-4 border-b border-white/5">
+                  <Tabs
+                    aria-label="Filtro de reservas"
+                    variant="underlined"
+                    color="warning"
+                    selectedKey={reservationsData.reservationFilter}
+                    onSelectionChange={(key) => {
+                      reservationsData.setReservationFilter(key);
+                      reservationsData.setCurrentPage(1);
+                      if (key !== "search") {
+                        reservationsData.setOnSearch(false);
+                      }
+                    }}
+                    classNames={{
+                      base: "w-full",
+                      tabList: "gap-6 relative rounded-none border-b-0",
+                      cursor: "w-full bg-[#D4AF37]",
+                      tab: "max-w-fit px-0 h-12",
+                      tabContent:
+                        "group-data-[selected=true]:text-[#D4AF37] font-medium text-sm",
+                    }}
+                  >
                     <Tab
-                      key="search"
+                      key="inbox"
                       title={
                         <div className="flex items-center space-x-2">
-                          <Search size={16} className="text-[#D4AF37]" />
-                          <span className="text-[#D4AF37]">Resultados</span>
+                          <BellRing size={16} />
+                          <span>Inbox</span>
                         </div>
                       }
                     />
-                  )}
-                </Tabs>
+                    <Tab
+                      key="history"
+                      title={
+                        <div className="flex items-center space-x-2">
+                          <ClipboardCheck size={16} />
+                          <span>Confirmadas</span>
+                        </div>
+                      }
+                    />
+                    <Tab
+                      key="cancelled"
+                      title={
+                        <div className="flex items-center space-x-2">
+                          <CalendarX2 size={16} />
+                          <span>Canceladas</span>
+                        </div>
+                      }
+                    />
+                    {reservationsData.onSearch && (
+                      <Tab
+                        key="search"
+                        title={
+                          <div className="flex items-center space-x-2">
+                            <Search size={16} className="text-[#D4AF37]" />
+                            <span className="text-[#D4AF37]">Resultados</span>
+                          </div>
+                        }
+                      />
+                    )}
+                  </Tabs>
+
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    radius="full"
+                    onPress={() =>
+                      reservationsData.getReservations(reservationsData.reservationFilter, reservationsData.currentPage)
+                    }
+                    isLoading={reservationsData.loadingReservations}
+                    className="text-white/40 hover:text-[#D4AF37] transition-colors"
+                    title="Recargar reservas"
+                  >
+                    {!reservationsData.loadingReservations && <RotateCw size={18} />}
+                  </Button>
+                </div>
 
                 <ReservationsList
-                  reservations={reservations}
-                  loadingReservations={loadingReservations}
-                  setUpdateReservations={setUpdateReservations}
-                  setSearchTerm={setSearchTerm}
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(page) => setCurrentPage(page)}
+                  reservations={reservationsData.reservations}
+                  loadingReservations={reservationsData.loadingReservations}
+                  setUpdateReservations={reservationsData.setUpdateReservations}
+                  setSearchTerm={reservationsData.setSearchTerm}
+                  currentPage={reservationsData.currentPage}
+                  totalPages={reservationsData.totalPages}
+                  onPageChange={(page) => reservationsData.setCurrentPage(page)}
                 />
               </div>
             )}
@@ -529,9 +386,9 @@ export default function AdminPanel() {
 
             {activeTab === "rooms" && (
               <RoomList
-                rooms={rooms}
-                isLoading={isLoading}
-                setUpdateRooms={setUpdateRooms}
+                rooms={rooms.data}
+                isLoading={rooms.isLoading}
+                setUpdateRooms={rooms.setUpdateRooms}
               />
             )}
           </div>

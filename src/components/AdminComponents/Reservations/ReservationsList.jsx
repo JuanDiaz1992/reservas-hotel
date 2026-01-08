@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import {
   Table,
   TableHeader,
@@ -21,11 +21,12 @@ import {
   Eye,
   Calendar,
   Edit,
-  Archive,
+  CalendarX2,
   BellRing,
   CheckCircle2,
   CheckCircle,
   CreditCard,
+  
 } from "lucide-react";
 
 import BasicModal from "../../basicModal";
@@ -33,6 +34,8 @@ import { delProtected } from "../../../../api/delete";
 import { patchProtected } from "../../../../api/patch";
 import { post } from "../../../../api/post";
 import { useAuth } from "../../../context/authContext";
+import DetailReservation from "./DetailReservation";
+import ReservationEdit from "./ReservationEdit";
 
 export default function ReservationsList({
   reservations,
@@ -45,8 +48,10 @@ export default function ReservationsList({
 }) {
   const [searchValue, setSearchValue] = useState("");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectedReservation, setSelectedReservation] = useState(null);
+
   const [isConfirming, setIsConfirming] = useState(false);
+  const [selectedReservationId, setSelectedReservationId] = useState(null);
+  const [modalMode, setModalMode] = useState(null);
   const { token } = useAuth();
 
   const handleSearch = (value) => {
@@ -81,11 +86,16 @@ export default function ReservationsList({
     completed: "primary",
   };
 
-  const handleEditClick = (reservation) => {
-    setSelectedReservation(reservation);
+  const currentReservation = reservations?.find(
+    (r) => r.id === selectedReservationId
+  );
+
+
+  const handleViewDetailsClick = (reservation) => {
+    setSelectedReservationId(reservation.id);
+    setModalMode("detail");
     onOpen();
   };
-
   const handleCancel = async (uuid) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta reserva?")) {
       try {
@@ -192,7 +202,7 @@ export default function ReservationsList({
       ? reservation.check_in.split("T")[0]
       : "";
     const isToday = todayStr === checkInStr;
-
+    const isCancelled = reservation.status === "cancelled";
     switch (columnKey) {
       case "code":
         return (
@@ -269,7 +279,6 @@ export default function ReservationsList({
       case "status":
         const isBankTransfer = reservation.payment_method === "bank_transfer";
         const isPending = reservation.payment_status === "pending";
-        const isNotCancelled = reservation.status !== "cancelled";
 
         return (
           <div className="flex flex-col gap-2">
@@ -282,74 +291,79 @@ export default function ReservationsList({
               {reservation.status}
             </Chip>
 
-            {isBankTransfer && isPending && isNotCancelled && (
-              <Button
-                size="sm"
-                variant="flat"
-                color="success"
-                isLoading={isConfirming}
-                className="h-7 text-[10px] font-bold bg-success/10 hover:bg-success/20 text-success border border-success/20"
-                startContent={!isConfirming && <CheckCircle2 size={12} />}
-                onPress={() => handleConfirmPayment(reservation.id)}
-              >
-                CONFIRMAR PAGO
-              </Button>
-            )}
+            {/* Solo mostramos botones de pago si NO está cancelada */}
+            {!isCancelled && (
+              <>
+                {isBankTransfer && isPending && (
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    color="success"
+                    isLoading={isConfirming}
+                    className="h-7 text-[10px] font-bold bg-success/10 hover:bg-success/20 text-success border border-success/20"
+                    startContent={!isConfirming && <CheckCircle2 size={12} />}
+                    onPress={() => handleConfirmPayment(reservation.id)}
+                  >
+                    CONFIRMAR PAGO
+                  </Button>
+                )}
 
-            {isPending && isNotCancelled && (
-              <Button
-                size="sm"
-                variant="flat"
-                color="secondary"
-                className="h-7 text-[10px] font-bold bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/20"
-                startContent={<CreditCard size={12} />}
-                onPress={() => handleChangePaymentMethod(reservation.uuid, reservation.payment_method)}
-              >
-                CAMBIAR MÉTODO
-              </Button>
+                {isPending && (
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    color="secondary"
+                    className="h-7 text-[10px] font-bold bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/20"
+                    startContent={<CreditCard size={12} />}
+                    onPress={() =>
+                      handleChangePaymentMethod(
+                        reservation.uuid,
+                        reservation.payment_method
+                      )
+                    }
+                  >
+                    CAMBIAR MÉTODO
+                  </Button>
+                )}
+              </>
             )}
           </div>
         );
+
       case "actions":
         return (
-          <div className="flex items-center gap-2">
-            {reservation.is_synced_pms === 0 && (
-              <Tooltip color="success" content="Confirmar Reserva">
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  className="text-white/60 hover:text-success"
-                  onPress={() => handleConfirmReservation(reservation.id)}
-                >
-                  <CheckCircle size={18} />
-                </Button>
-              </Tooltip>
-            )}
+          <div className="flex items-center justify-center gap-2">
+            {!isCancelled &&
+              reservation.is_synced_pms === 0 &&
+              reservation.status === "confirmed" && (
+                <Tooltip color="success" content="Confirmar Reserva">
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    className="text-white/60 hover:text-success"
+                    onPress={() => handleConfirmReservation(reservation.id)}
+                  >
+                    <CheckCircle size={18} />
+                  </Button>
+                </Tooltip>
+              )}
+
             <Tooltip content="Ver detalles">
               <Button
                 isIconOnly
                 size="sm"
                 variant="light"
                 className="text-white/60 hover:text-[#D4AF37]"
+                onPress={() => handleViewDetailsClick(reservation)}
               >
                 <Eye size={18} />
               </Button>
             </Tooltip>
 
-            <Tooltip content="Editar Reserva">
-              <Button
-                isIconOnly
-                size="sm"
-                variant="light"
-                className="text-white/60 hover:text-[#D4AF37]"
-                onPress={() => handleEditClick(reservation)}
-              >
-                <Edit size={18} />
-              </Button>
-            </Tooltip>
-            {reservation.status !== "cancelled" && (
-              <Tooltip color="danger" content="Archivar reserva">
+            {/* Botón Cancelar: Solo si no está cancelada actualmente */}
+            {!isCancelled && (
+              <Tooltip color="danger" content="Cancelar reserva">
                 <Button
                   isIconOnly
                   size="sm"
@@ -357,7 +371,7 @@ export default function ReservationsList({
                   className="text-danger hover:bg-danger/10"
                   onPress={() => handleCancel(reservation.uuid)}
                 >
-                  <Archive size={18} />
+                  <CalendarX2 size={18} />
                 </Button>
               </Tooltip>
             )}
@@ -473,34 +487,34 @@ export default function ReservationsList({
         </div>
       )}
 
-      {/* Modal para Editar */}
       <BasicModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        size="2xl"
-        Content={() => (
-          <div className="p-">
-            <h2 className="text-2xl font-serif mb-4">Editar Reserva</h2>
-            <p className="mb-6">
-              Código:{" "}
-              <span className="text-[#D4AF37]">
-                {selectedReservation?.reservation_code}
-              </span>
-            </p>
-            <div className="flex justify-end gap-3 mt-4">
-              <Button
-                variant="light"
-                onPress={() => onOpenChange(false)}
-                className=""
-              >
-                Cerrar
-              </Button>
-              <Button className="bg-[#D4AF37] text-black font-bold">
-                Actualizar Estado
-              </Button>
-            </div>
-          </div>
-        )}
+        size="5xl"
+        scrollBehavior="inside"
+        Content={() => {
+          if (!currentReservation) return <Spinner color="warning" />;
+
+          if (modalMode === "detail") {
+            return (
+              <DetailReservation
+                reservation={currentReservation}
+                setUpdateReservations={setUpdateReservations}
+              />
+            );
+          }
+
+          if (modalMode === "edit") {
+            return (
+              <ReservationEdit
+                reservation={currentReservation}
+                setUpdateReservations={setUpdateReservations}
+              />
+            );
+          }
+
+          return null;
+        }}
       />
     </div>
   );
