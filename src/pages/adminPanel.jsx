@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   BedDouble,
@@ -29,9 +29,10 @@ import { postProtected } from "../../api/post";
 import { useNavigate } from "react-router-dom";
 import RoomList from "../components/AdminComponents/Rooms/RoomList";
 import ReservationsList from "../components/AdminComponents/Reservations/ReservationsList";
-import { getProtected } from "../../api/get";
+import AddonsList from "../components/AdminComponents/Addons/AddonsList";
 import { useAdminDataRooms } from "../hooks/useAdminDataRooms";
 import { useAdminDataReservations } from "../hooks/useAdminDataReservations";
+import { useAdminDataAddons } from "../hooks/useAdminDataAddons";
 
 export default function AdminPanel() {
   const { logout, token } = useAuth();
@@ -39,6 +40,7 @@ export default function AdminPanel() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { rooms } = useAdminDataRooms(token);
   const { reservationsData } = useAdminDataReservations(token, activeTab);
+  const { addonsData } = useAdminDataAddons(token);
 
   const navigate = useNavigate();
 
@@ -87,7 +89,6 @@ export default function AdminPanel() {
           isSidebarOpen ? "w-64" : "w-20"
         } bg-[#0f1e09] border-r border-white/10 transition-all duration-300 flex flex-col`}
       >
-        {/* Logo */}
         <div className="p-6 flex items-center gap-3">
           <div className="bg-[#D4AF37] p-2 rounded-lg">
             <Settings size={20} className="text-black" />
@@ -99,7 +100,6 @@ export default function AdminPanel() {
           )}
         </div>
 
-        {/* Navigation */}
         <nav className="flex-grow px-3 mt-4 space-y-2">
           {menuItems.map((item) => (
             <button
@@ -119,7 +119,6 @@ export default function AdminPanel() {
           ))}
         </nav>
 
-        {/* BOTTOM ACTIONS (RESTAURADOS) */}
         <div className="p-4 border-t border-white/10 space-y-2">
           <button
             onClick={() => navigate("/")}
@@ -144,7 +143,7 @@ export default function AdminPanel() {
       </aside>
 
       <main className="flex-grow flex flex-col">
-        {/* TOPBAR */}
+        {/* TOPBAR SIN INFO ADICIONAL */}
         <header className="h-16 border-b border-white/10 flex items-center justify-between px-8 bg-[#0a0f06]/50 backdrop-blur-md sticky top-0 z-50">
           <div className="flex items-center gap-8">
             <button
@@ -153,43 +152,6 @@ export default function AdminPanel() {
             >
               {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-
-            {activeTab !== "dashboard" && (
-              <div className="hidden lg:flex items-center gap-6 border-l border-white/10 pl-8 animate-in fade-in slide-in-from-left-4">
-                <div className="flex items-center gap-2">
-                  <BedDouble size={14} className="text-blue-500" />
-                  <span className="text-xs font-medium text-white/60">
-                    {rooms.totalDisponibilidad}{" "}
-                    <span className="text-[10px] opacity-40 uppercase">
-                      Libres
-                    </span>
-                  </span>
-                </div>
-                {/*              <div className="flex items-center gap-2">
-                  <CalendarCheck
-                    size={14}
-                    className={
-                      pendingCount > 0 ? "text-orange-500" : "text-green-500"
-                    }
-                  />
-                  <span className="text-xs font-medium text-white/60">
-                    {pendingCount}{" "}
-                    <span className="text-[10px] opacity-40 uppercase">
-                      Pendientes
-                    </span>
-                  </span>
-                </div> */}
-                <div className="flex items-center gap-2">
-                  <PlusCircle size={14} className="text-[#D4AF37]" />
-                  <span className="text-xs font-medium text-white/60">
-                    0{" "}
-                    <span className="text-[10px] opacity-40 uppercase">
-                      Add Ons
-                    </span>
-                  </span>
-                </div>
-              </div>
-            )}
           </div>
 
           <UserUI
@@ -282,7 +244,11 @@ export default function AdminPanel() {
 
           <div className={`${activeTab === "dashboard" ? "mt-10" : "mt-0"}`}>
             {activeTab === "bookings" && (
-              <div className="space-y-6">
+              <div className="">
+                <h2 className="text-xl font-serif text-white uppercase tracking-wider">
+                  Listado de Reservas
+                </h2>
+
                 <div className="flex items-center justify-between gap-4 border-b border-white/5">
                   <Tabs
                     aria-label="Filtro de reservas"
@@ -338,7 +304,7 @@ export default function AdminPanel() {
                         title={
                           <div className="flex items-center space-x-2">
                             <Search size={16} className="text-[#D4AF37]" />
-                            <span className="text-[#D4AF37]">Resultados</span>
+                            <span>Resultados</span>
                           </div>
                         }
                       />
@@ -351,13 +317,17 @@ export default function AdminPanel() {
                     variant="light"
                     radius="full"
                     onPress={() =>
-                      reservationsData.getReservations(reservationsData.reservationFilter, reservationsData.currentPage)
+                      reservationsData.getReservations(
+                        reservationsData.reservationFilter,
+                        reservationsData.currentPage
+                      )
                     }
                     isLoading={reservationsData.loadingReservations}
                     className="text-white/40 hover:text-[#D4AF37] transition-colors"
-                    title="Recargar reservas"
                   >
-                    {!reservationsData.loadingReservations && <RotateCw size={18} />}
+                    {!reservationsData.loadingReservations && (
+                      <RotateCw size={18} />
+                    )}
                   </Button>
                 </div>
 
@@ -389,6 +359,14 @@ export default function AdminPanel() {
                 rooms={rooms.data}
                 isLoading={rooms.isLoading}
                 setUpdateRooms={rooms.setUpdateRooms}
+              />
+            )}
+
+            {activeTab === "addons" && (
+              <AddonsList
+                addons={addonsData.addons}
+                isLoading={addonsData.isLoading}
+                setUpdateAddons={addonsData.setUpdateAddons}
               />
             )}
           </div>

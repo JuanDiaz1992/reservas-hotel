@@ -36,7 +36,7 @@ import { useCurrency } from "../../context/currencyContext";
 export default function DetailReservation({ setTitle }) {
   const navigate = useNavigate();
   const { param } = useParams();
-  const [uuid, setUuid] = useState()
+  const [uuid, setUuid] = useState();
 
   const { finalizeBooking } = useCart();
   const { formatPrice } = useCurrency();
@@ -127,7 +127,7 @@ export default function DetailReservation({ setTitle }) {
 
       if (!response.error && response.data?.status === "success") {
         const data = response.data.data;
-        setUuid(data.uuid)
+        setUuid(data.uuid);
         setResData(data);
 
         if (!finalizedSent.current) {
@@ -419,16 +419,20 @@ export default function DetailReservation({ setTitle }) {
               <p className="text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">
                 Alojamiento
               </p>
-              {resData.rooms?.map((room, i) => (
-                <div key={i} className="flex justify-between text-sm py-0.5">
-                  <span className="text-gray-700">
-                    {room.room_name} (x{room.adults || 1} Ad)
-                  </span>
-                  <span className="font-semibold text-gray-900">
-                    {formatPrice(room.price)}
-                  </span>
-                </div>
-              ))}
+              {resData.rooms
+                ?.filter(
+                  (room) => room.status?.toLowerCase().trim() !== "cancelled"
+                )
+                .map((room, i) => (
+                  <div key={i} className="flex justify-between text-sm py-0.5">
+                    <span className="text-gray-700">
+                      {room.room_name} (x{room.adults || 1} Ad)
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {formatPrice(room.price)}
+                    </span>
+                  </div>
+                ))}
             </div>
 
             {resData.addons && resData.addons.length > 0 && (
