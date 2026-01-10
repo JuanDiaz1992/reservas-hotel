@@ -96,7 +96,7 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
     try {
       const response = await patchProtected({
         endpoint: `/addons/${id}/toggle-status`,
-        token, token
+        token
       });
       if (response.status === 200) {
         addToast({
