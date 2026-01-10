@@ -45,7 +45,7 @@ export default function AboutUsSection() {
               initial={{ scale: 1.2 }}
               whileInView={{ scale: 1 }}
               transition={{ duration: 1.8, ease: "easeOut" }}
-              src="/images/about-catleya-2.webp"
+              src="/images/about-catleya-3.webp"
               alt="Experiencia Catleya"
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -118,7 +118,7 @@ export default function AboutUsSection() {
                 className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group"
               >
                 <img
-                  src="/images/about-catleya-1.webp"
+                  src="/images/about-catleya-4.webp"
                   alt="Arquitectura Catleya"
                   className="w-full h-full object-cover rounded-sm shadow-2xl transition-transform duration-700 group-hover:scale-110"
                 />

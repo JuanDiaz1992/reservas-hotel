@@ -83,7 +83,7 @@ const glassInputClasses = {
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(/images/escapada-de-lujo-junto-la-piscina.webp)`,
+          backgroundImage: `url(/images/banner-login.webp)`,
         }}
       />
       <div className="absolute inset-0 z-0 bg-black/50" />

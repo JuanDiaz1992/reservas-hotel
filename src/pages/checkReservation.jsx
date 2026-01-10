@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Input, Button, Card, CardBody } from "@heroui/react";
 import { Search, Ticket, ArrowLeft } from "lucide-react";
 import DetailReservation from "../components/CheckingComponents/detailReservation";
+import BasicBanner from "../components/basicBanner";
 
 export default function CheckReservationPage() {
   const { param } = useParams();
@@ -28,18 +29,7 @@ export default function CheckReservationPage() {
 
   return (
     <>
-      <header className="relative w-full min-h-[400px] h-64 sm:h-80">
-        <img
-          src="/images/home-2.webp"
-          alt="Lujo"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-          <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wide text-center px-4">
-            {title}
-          </h1>
-        </div>
-      </header>
+      <BasicBanner title={title} imgSrc="/images/home-2.webp" />
 
       <div className="container mx-auto max-w-[800px] px-4 py-10 animate-appearance-in">
         {param ? (

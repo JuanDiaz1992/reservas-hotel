@@ -5,6 +5,7 @@ import CheckOutCart from "../components/CheckingComponents/cartCheckOut";
 import { scrollToTop } from "../utils/scrollToTop";
 import FormCheckOut from "../components/CheckingComponents/formCheckOut";
 import DetailReservation from "../components/CheckingComponents/detailReservation";
+import BasicBanner from "../components/basicBanner";
 
 export default function Checkout() {
   const { uuid } = useParams();
@@ -52,18 +53,8 @@ export default function Checkout() {
 
   return (
     <div className="bg-gray-50">
-      <header className="relative w-full h-64 sm:h-80 overflow-hidden">
-        <img
-          src="/images/home-2.webp"
-          alt="Lujo"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-          <h1 className="text-white text-5xl lg:text-6xl font-extrabold tracking-wide">
-            Checkout
-          </h1>
-        </div>
-      </header>
+
+      <BasicBanner title={title} imgSrc="/images/Habitaciones(12).webp" subtitleColor="text-white"/>
 
       <section className="container max-w-[1200px] mx-auto py-12 px-4">
         <h2

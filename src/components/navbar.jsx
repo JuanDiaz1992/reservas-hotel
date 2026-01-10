@@ -58,15 +58,16 @@ export default function Component() {
     >
       <NavbarContent>
         <NavbarBrand>
-          <Link to="/" className="flex items-center space-x-2" onClick={handleNavigationClick}>
+          <Link
+            to="/"
+            className="flex items-center"
+            onClick={handleNavigationClick}
+          >
             <img
-              src="/images/logo.webp"
+              src="/images/logo.svg"
               alt="Logo"
-              className="rounded-full max-w-10"
+              className="max-w-[110px] transition-all"
             />
-            <p className="text-xl font-bold text-white">
-              Hotel Catleya Royal Club
-            </p>
           </Link>
         </NavbarBrand>
       </NavbarContent>
@@ -87,6 +88,18 @@ export default function Component() {
         <NavbarItem>
           <Button
             as={Link}
+            to="/sobre-nosotros"
+            variant="light"
+            className="text-white data-[hover=true]:bg-white/10"
+            onClick={handleNavigationClick}
+          >
+            Nosotros
+          </Button>
+        </NavbarItem>
+
+        <NavbarItem>
+          <Button
+            as={Link}
             to="/my-reservation"
             variant="light"
             className="text-white data-[hover=true]:bg-white/10"
@@ -99,19 +112,7 @@ export default function Component() {
         <NavbarItem>
           <Button
             as={Link}
-            to="/about"
-            variant="light"
-            className="text-white data-[hover=true]:bg-white/10"
-            onClick={handleNavigationClick}
-          >
-            Nosotros
-          </Button>
-        </NavbarItem>
-
-        <NavbarItem>
-          <Button
-            as={Link}
-            to="/contact"
+            to="/contacto"
             variant="light"
             className="text-white data-[hover=true]:bg-white/10"
             onClick={handleNavigationClick}
@@ -157,7 +158,7 @@ export default function Component() {
         </div>
       </NavbarContent>
 
-      <NavbarMenu className="bg-black/95 backdrop-blur-md border-l border-white/10 pt-8">
+      <NavbarMenu className="bg-black/95 backdrop-blur-md border-l border-white/10 pt-8 gap-4">
         <NavbarMenuItem>
           <Link
             to="/"
@@ -167,6 +168,16 @@ export default function Component() {
             Inicio
           </Link>
         </NavbarMenuItem>
+        {/* Añadidos para consistencia en móvil */}
+        <NavbarMenuItem>
+          <Link
+            to="/sobre-nosotros"
+            className="w-full text-lg text-white hover:text-white/80 py-2 block"
+            onClick={handleNavigationClick}
+          >
+            Nosotros
+          </Link>
+        </NavbarMenuItem>
         <NavbarMenuItem>
           <Link
             to="/my-reservation"
@@ -174,6 +185,15 @@ export default function Component() {
             onClick={handleNavigationClick}
           >
             Mis Reservas
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link
+            to="/contacto"
+            className="w-full text-lg text-white hover:text-white/80 py-2 block"
+            onClick={handleNavigationClick}
+          >
+            Contacto
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>

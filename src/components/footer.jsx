@@ -9,12 +9,13 @@ import {
   Mail,
   Code2,
 } from "lucide-react";
+import { scrollToTopInstant } from "../utils/scrollToTop";
 
 export default function Footer() {
   const location = useLocation();
   const hideFooter = location.pathname.startsWith("/admin");
   if (hideFooter) {
-    return
+    return;
   }
   return (
     <footer className="bg-[#424436] text-white pt-16 pb-8 border-t border-white/10">
@@ -24,12 +25,13 @@ export default function Footer() {
           {/* Columna 1: Marca y Sobre Nosotros */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <img
-                src="/images/logo.webp"
-                alt="Hotel Catleya Royal Club"
-                className="w-12 h-12 rounded-full"
-              />
-              <h3 className="text-2xl font-bold italic">Catleya Royal Club</h3>
+              <Link to="/" onClick={scrollToTopInstant}>
+                <img
+                  src="/images/logo.svg"
+                  alt="Hotel Catleya Royal Club"
+                  className="w-[150px]"
+                />
+              </Link>
             </div>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">
               Un santuario de lujo y tranquilidad donde cada detalle está
@@ -67,27 +69,47 @@ export default function Footer() {
             <h4 className="font-bold text-lg mb-6 tracking-wider">Explorar</h4>
             <ul className="space-y-3 text-sm text-white/70">
               <li>
-                <Link to="/" className="hover:text-white transition-colors block">
+                <Link
+                  to="/"
+                  className="hover:text-white transition-colors block"
+                  onClick={scrollToTopInstant}
+                >
                   Inicio
                 </Link>
               </li>
               <li>
-                <Link to="/my-reservation" className="hover:text-white transition-colors block">
+                <Link
+                  to="/my-reservation"
+                  className="hover:text-white transition-colors block"
+                  onClick={scrollToTopInstant}
+                >
                   Mis Reservas
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white transition-colors block">
+                <Link
+                  to="/sobre-nosotros"
+                  className="hover:text-white transition-colors block"
+                  onClick={scrollToTopInstant}
+                >
                   Nosotros
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-white transition-colors block">
+                <Link
+                  to="/contacto"
+                  className="hover:text-white transition-colors block"
+                  onClick={scrollToTopInstant}
+                >
                   Contacto
                 </Link>
               </li>
               <li>
-                <Link to="/terms-and-conditions" className="hover:text-[#D4AF37] transition-colors block">
+                <Link
+                  to="/terms-and-conditions"
+                  className="hover:text-[#D4AF37] transition-colors block"
+                  onClick={scrollToTopInstant}
+                >
                   Términos y condiciones
                 </Link>
               </li>
@@ -99,7 +121,12 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-white/70">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
-                <a href="https://maps.google.com" target="_blank" rel="noreferrer" className="hover:text-white">
+                <a
+                  href="https://maps.google.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white"
+                >
                   Vereda Pénjamo | Corregimiento de Combia | Finca La Waira,
                   Pereira, Risaralda
                 </a>
@@ -117,38 +144,48 @@ export default function Footer() {
 
           {/* Columna 4: Suscripción / Newsletter (Espacio que estaba vacío) */}
           <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
-            <h4 className="font-bold text-sm mb-4 uppercase tracking-[0.2em]">Reserva con confianza</h4>
+            <h4 className="font-bold text-sm mb-4 uppercase tracking-[0.2em]">
+              Reserva con confianza
+            </h4>
             <p className="text-xs text-white/50 leading-relaxed mb-4">
-              Nuestra plataforma utiliza tecnología de encriptación avanzada para proteger todos sus pagos.
+              Nuestra plataforma utiliza tecnología de encriptación avanzada
+              para proteger todos sus pagos.
             </p>
             <div className="flex items-center gap-2 text-[#D4AF37]">
-               <img src="/images/epayco.webp" className="h-4 grayscale brightness-200 opacity-50" alt="ePayco" />
+              <img
+                src="/images/epayco.webp"
+                className="h-4 grayscale brightness-200 opacity-50"
+                alt="ePayco"
+              />
             </div>
           </div>
-
         </div>
 
         {/* Separador Renovado con Créditos a Site Pixel Studio */}
         <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
-            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] mb-1">Propiedad</p>
-            <p className="text-xs text-white/50">© 2024 Hotel Catleya Royal Club. Todos los derechos reservados.</p>
+            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] mb-1">
+              Propiedad
+            </p>
+            <p className="text-xs text-white/50">
+              © 2024 Hotel Catleya Royal Club. Todos los derechos reservados.
+            </p>
           </div>
-
-
 
           <div className="text-center md:text-right group">
             <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] mb-1 group-hover:text-[#D4AF37] transition-colors">
               Desarrollo Tecnológico
             </p>
-            <a 
-              href="https://sitepixelstudio.com" 
-              target="_blank" 
+            <a
+              href="https://sitepixelstudio.com"
+              target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-xs text-white/50 hover:text-white transition-all"
             >
               <span>Crafted by</span>
-              <span className="font-bold tracking-tight text-white group-hover:text-[#D4AF37]">SITE PIXEL STUDIO</span>
+              <span className="font-bold tracking-tight text-white group-hover:text-[#D4AF37]">
+                SITE PIXEL STUDIO
+              </span>
               <Code2 size={14} className="text-[#D4AF37]" />
             </a>
           </div>

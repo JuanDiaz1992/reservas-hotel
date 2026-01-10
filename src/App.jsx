@@ -6,6 +6,8 @@ import Checkout from "./pages/checkout";
 import CheckReservationPage from "./pages/checkReservation";
 import TermsAndConditions from "./pages/termsAndConditions";
 import AdminPanel from "./pages/adminPanel";
+import AboutUs from "./pages/aboutUs";
+import Contact from "./pages/contac";
 import { ProtectedRoute, PublicRoute } from "./context/authGuards";
 
 export default function App() {
@@ -13,6 +15,8 @@ export default function App() {
     <Routes>
       <Route element={<DefaultLayout />}>
         <Route index element={<Home />} />
+        <Route path="/sobre-nosotros" element={<AboutUs />} />
+        <Route path="/contacto" element={<Contact />} />
         <Route
           path="/login"
           element={

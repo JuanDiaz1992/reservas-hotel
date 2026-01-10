@@ -87,25 +87,25 @@ export const galleryImages = [
 
 export const testimonials = [
   {
-    id: 1,
+    id: 2,
     quote:
       "Súper recomendado la comida 10 de 10 el lugar es espectacular. Un espacio perfecto para desconectarse de todo.",
-    author: "Tatiana Molina",
+    author: "Juan Camilo Herrera",
     image: "/images/review1.webp",
   },
   {
-    id: 2,
+    id: 1,
     quote:
       "La atención del personal es de otro mundo, te hacen sentir como en casa desde que llegas. Las habitaciones tienen una vista increíble.",
-    author: "Juan Camilo Herrera",
-    image: "/images/review3.webp",
+    author: "Tatiana Molina",
+    image: "/images/about-catleya-2.webp",
   },
   {
     id: 3,
     quote:
       "Es la segunda vez que venimos en familia y no deja de sorprendernos. La tranquilidad y el clima de Pereira se disfrutan al máximo aquí.",
     author: "Mariana Restrepo",
-    image: "/images/review2.webp",
+    image: "/images/review-4.webp",
   },
 ];
 
