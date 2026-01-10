@@ -19,6 +19,7 @@ import { delProtected } from "../../../../api/delete";
 import { postProtectedFormData } from "../../../../api/post";
 import { useAuth } from "../../../context/authContext";
 import AddonsForm from "./AddonsForm";
+import { patchProtected } from "../../../../api/patch";
 
 export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -92,7 +93,27 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
   };
 
   const toggleStatus = async (id) => {
-    console.log("desactivado" + id)
+    try {
+      const response = await patchProtected({
+        endpoint: `/addons/${id}/toggle-status`,
+        token, token
+      });
+      if (response.status === 200) {
+        addToast({
+          title: "Estado Actualizado",
+          description: "El estado del servicio ha sido actualizado.",
+          color: "success",
+        });
+        setUpdateAddons(true);
+      }
+    } catch (error) {
+      addToast({
+        title: "Error",
+        description: "No se pudo actualizar el estado",
+        color: "danger",
+      });
+      console.error("Error al actualizar estado:", error);
+    }
   }
 
   const handleEditClick = (addon) => {
@@ -146,12 +167,12 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
                 <Edit size={18} />
               </Button>
             </Tooltip>
-            <Tooltip content={addon.isActive ? "Desactivar" : "Activar"}>
+            <Tooltip content={addon.is_active ? "Desactivar" : "Activar"}>
               <Button
                 isIconOnly
                 size="sm"
                 variant="light"
-                className={`${addon.isActive ? "text-success" : "text-danger"} hover:opacity-80`}
+                className={`${addon.is_active ? "text-success" : "text-danger"} hover:opacity-80`}
                 onPress={() => toggleStatus(addon.id)}
               >
                 <Power size={18} />

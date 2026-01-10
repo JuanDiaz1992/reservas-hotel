@@ -8,7 +8,7 @@ export function useAdminDataAddons(token) {
     setLoading(true);
     try{
       const response = await getProtected({
-        endpoint:"/addons",
+        endpoint:"/addons?all=true",
         token:token,
       });
       if (response.status === 200) {
