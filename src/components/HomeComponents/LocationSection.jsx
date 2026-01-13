@@ -5,7 +5,7 @@ export default function LocationSection() {
     const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3975.438610127137!2d-75.7453238!3d4.865939!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e387f70e4a9d1f3%3A0xfdba7186374b0adf!2sCatleya%20Royal%20Club!5e0!3m2!1ses!2sco!4v1765938839380!5m2!1ses!2sco";
     
   return (
-    <section className="bg-white py-24 px-4">
+    <section className="bg-white pb-24 px-4">
       <div className="container mx-auto max-w-[1200px]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           

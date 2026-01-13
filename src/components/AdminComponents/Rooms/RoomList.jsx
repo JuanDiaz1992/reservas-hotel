@@ -298,16 +298,17 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] overflow-auto">
-        <Table
-          aria-label="Tabla de habitaciones"
-          removeWrapper
-          isHeaderSticky
-          classNames={{
-            base: "overflow-visible",
-            table: "min-w-[800px]",
-            th: "bg-[#0f1e09] text-white/60 py-4 uppercase text-xs font-bold",
-            td: "py-4 px-3 border-b border-white/5 bg-[#0f1e09]/30",
+      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] md:max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="overflow-x-auto">
+          <Table
+            aria-label="Tabla de habitaciones"
+            removeWrapper
+            isHeaderSticky
+            classNames={{
+              base: "overflow-visible",
+              table: "min-w-[800px]",
+              th: "bg-[#0f1e09] text-white/60 py-4 uppercase text-xs font-bold",
+              td: "py-4 px-3 border-b border-white/5 bg-[#0f1e09]/30",
           }}
         >
           <TableHeader>
@@ -335,6 +336,7 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
       <BasicModal
         isOpen={isOpen}

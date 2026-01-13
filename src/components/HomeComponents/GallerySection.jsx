@@ -1,7 +1,19 @@
 import { Button } from "@heroui/react";
 import { Instagram, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import { Image } from "@unpic/react";
 
 export default function GallerySection({ visiblePhotos, showAllPhotos, setShowAllPhotos, getGridClass }) {
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  const slides = visiblePhotos.map((img) => ({
+    src: img.src,
+    alt: img.alt,
+  }));
+
   return (
     <section className="py-24 bg-white px-4" id="gallery-section">
       <div className="container mx-auto max-w-[1200px]">
@@ -16,9 +28,22 @@ export default function GallerySection({ visiblePhotos, showAllPhotos, setShowAl
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[200px] md:auto-rows-[260px] gap-4 transition-all duration-500">
-          {visiblePhotos.map((img, index) => (
-            <div key={index} className={`relative group overflow-hidden rounded-lg animate-appearance-in ${getGridClass(index)}`}>
-              <img src={img.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={img.alt} loading="lazy" />
+          {visiblePhotos.map((img, i) => (
+            <div
+              key={i}
+              className={`relative group overflow-hidden rounded-lg animate-appearance-in cursor-pointer ${getGridClass(i)}`}
+              onClick={() => {
+                setIndex(i);
+                setOpen(true);
+              }}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                layout="fullWidth"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
               <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <Instagram className="text-white w-5 h-5 drop-shadow-md" />
@@ -40,6 +65,14 @@ export default function GallerySection({ visiblePhotos, showAllPhotos, setShowAl
           </Button>
         </div>
       </div>
+
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        slides={slides}
+        index={index}
+        on={{ view: ({ index: currentIndex }) => setIndex(currentIndex) }}
+      />
     </section>
   );
 }

@@ -14,7 +14,7 @@ export default function TermsAndConditions() {
     <div className="bg-gray-50">
       <div className="relative h-[40vh] min-h-[300px] w-full flex items-center justify-center bg-[#2c4549] no-print">
         <img
-          src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070"
+          src="images/review1.webp"
           alt="Banner Catleya Royal Club"
           className="absolute inset-0 w-full h-full object-cover"
         />

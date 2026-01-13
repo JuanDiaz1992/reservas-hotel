@@ -154,6 +154,7 @@ export default function Component() {
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
             className="text-white"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           />
         </div>
       </NavbarContent>

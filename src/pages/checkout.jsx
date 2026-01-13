@@ -63,7 +63,7 @@ export default function Checkout() {
           {title}
         </h2>{" "}
         <div className="flex flex-col lg:flex-row gap-[24px]">
-          <div className={view === 3 ? "w-full" : "w-full lg:w-8/12"}>
+          <div className={`${view === 3 ? "w-full" : "w-full lg:w-8/12"} ${view === 2 ? 'order-2' : 'order-1'}`}>
             {view === 1 && (
               <AddsOnListing
                 setTitle={setTitle}
@@ -88,7 +88,7 @@ export default function Checkout() {
             )}
           </div>
           {view !== 3 && (
-            <div className="w-full lg:w-4/12">
+            <div className={`w-full lg:w-4/12 ${view === 2 ? 'order-1' : 'order-2'}`}>
               <CheckOutCart view={view} setView={navigateViews} />
             </div>
           )}

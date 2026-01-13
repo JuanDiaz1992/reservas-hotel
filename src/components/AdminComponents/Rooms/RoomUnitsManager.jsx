@@ -288,14 +288,15 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
         </Button>
       </div>
 
-      <Table
-        aria-label="Tabla de bloqueos"
-        removeWrapper
-        classNames={{
-          th: "bg-gray-50 text-gray-500 text-[10px] font-bold uppercase py-4 border-b border-gray-100",
-          td: "text-gray-700 text-sm border-b border-gray-50 py-4",
-        }}
-      >
+      <div className="overflow-x-auto">
+        <Table
+          aria-label="Tabla de bloqueos"
+          removeWrapper
+          classNames={{
+            th: "bg-gray-50 text-gray-500 text-[10px] font-bold uppercase py-4 border-b border-gray-100",
+            td: "text-gray-700 text-sm border-b border-gray-50 py-4",
+          }}
+        >
         <TableHeader>
           <TableColumn>UNIDAD / HABITACIÓN</TableColumn>
           <TableColumn>FECHAS BLOQUEO</TableColumn>
@@ -377,6 +378,7 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
           )}
         </TableBody>
       </Table>
+      </div>
     </div>
   );
 });

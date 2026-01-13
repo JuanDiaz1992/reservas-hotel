@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function AboutUsSection() {
   const leftImageReveal = {
-    hidden: { clipPath: "inset(0 100% 0 0)", opacity: 0 },
+    hidden: { clipPath: "inset(0 80% 0 0)", opacity: 0 },
     visible: {
       clipPath: "inset(0 0% 0 0)",
       opacity: 1,
@@ -21,7 +21,7 @@ export default function AboutUsSection() {
   };
 
   const rightColumnSlide = {
-    hidden: { opacity: 0, x: 30 },
+    hidden: { opacity: 0, x: -30 },
     visible: {
       opacity: 1,
       x: 0,
@@ -111,10 +111,7 @@ export default function AboutUsSection() {
                 <span className="italic text-gray-400">Catleya Royal Club</span>
               </motion.h2>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.6, duration: 0.8 }}
+              <div
                 className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group"
               >
                 <img
@@ -122,7 +119,7 @@ export default function AboutUsSection() {
                   alt="Arquitectura Catleya"
                   className="w-full h-full object-cover rounded-sm shadow-2xl transition-transform duration-700 group-hover:scale-110"
                 />
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>

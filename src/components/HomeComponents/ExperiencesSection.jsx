@@ -1,4 +1,6 @@
 import { Utensils, Sparkles, Compass, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@heroui/react";
 
 export default function ExperiencesSection() {
   const experiences = [
@@ -57,16 +59,27 @@ export default function ExperiencesSection() {
                   {exp.desc}
                 </p>
 
-                <a
+{/*                 <a
                   href={exp.linkUrl || "#"}
                   className="inline-flex items-center gap-2 text-sm font-medium text-[#476d15] hover:gap-3 transition-all duration-300"
                 >
                   {exp.linkText || "Más información"}
                   <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
-                </a>
+                </a> */}
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-16 text-center">
+          <Link to="/sobre-nosotros">
+            <Button
+              className="bg-[#476d15] text-white font-medium px-8 py-4 rounded-full hover:bg-[#3a5a10] transition-all duration-300 shadow-lg hover:shadow-xl"
+              endContent={<ArrowRight className="w-4 h-4" />}
+            >
+              Conoce Más Sobre Nosotros
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

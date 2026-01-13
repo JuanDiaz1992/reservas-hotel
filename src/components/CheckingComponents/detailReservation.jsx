@@ -481,7 +481,7 @@ export default function DetailReservation({ setTitle }) {
 
       <div className="flex flex-col sm:flex-row gap-3">
         <Button
-          className="flex-1 bg-[#476d15] text-white h-12 font-bold shadow-lg"
+          className="flex-1 bg-[#476d15] text-white py-[12px] font-bold shadow-lg"
           onPress={() => {
             navigate("/");
             scrollToTopInstant();
@@ -496,7 +496,7 @@ export default function DetailReservation({ setTitle }) {
           <Button
             variant="light"
             color="danger"
-            className="flex-1 h-12 font-medium"
+            className="flex-1 py-[12px] font-medium"
             onPress={handleCancel}
             isLoading={isCancelling}
             startContent={!isCancelling && <Trash2 size={18} />}

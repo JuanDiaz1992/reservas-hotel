@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination, Navigation } from "swiper/modules";
 import { scrollToTopInstant } from "../../utils/scrollToTop";
+import { Image } from "@unpic/react";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -153,9 +154,10 @@ export default function PhilosophySection() {
               >
                 {images.map((img) => (
                   <SwiperSlide key={img.id}>
-                    <img
+                    <Image
                       src={img.src}
                       alt={img.alt}
+                      layout="fullWidth"
                       className="w-full h-full object-cover"
                     />
                   </SwiperSlide>
@@ -187,29 +189,32 @@ export default function PhilosophySection() {
         </div>
       </div>
 
-      <style jsx global>{`
-        .philosophy-swiper .swiper-pagination-bullet {
-          background: white;
-          opacity: 0.5;
-          border-radius: 0;
-          width: 30px;
-          height: 2px;
-        }
-        .philosophy-swiper .swiper-pagination-bullet-active {
-          background: #476d15;
-          opacity: 1;
-        }
-        .philosophy-swiper .swiper-pagination {
-          text-align: right;
-          padding-right: 20px;
-          bottom: 20px !important;
-        }
-        /* Deshabilitar flechas de Swiper por defecto (las que vienen con el módulo) */
-        .swiper-button-next,
-        .swiper-button-prev {
-          display: none !important;
-        }
-      `}</style>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+  .philosophy-swiper .swiper-pagination-bullet {
+    background: white;
+    opacity: 0.5;
+    border-radius: 0;
+    width: 30px;
+    height: 2px;
+  }
+  .philosophy-swiper .swiper-pagination-bullet-active {
+    background: #476d15;
+    opacity: 1;
+  }
+  .philosophy-swiper .swiper-pagination {
+    text-align: right;
+    padding-right: 20px;
+    bottom: 20px !important;
+  }
+  .swiper-button-next,
+  .swiper-button-prev {
+    display: none !important;
+  }
+`,
+        }}
+      />
     </section>
   );
 }

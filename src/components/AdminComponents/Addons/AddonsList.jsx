@@ -222,12 +222,13 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
       </div>
 
       {/* TABLA */}
-      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] overflow-auto">
-        <Table
-          aria-label="Tabla de addons"
-          removeWrapper
-          isHeaderSticky
-          classNames={{
+      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] md:max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="overflow-x-auto">
+          <Table
+            aria-label="Tabla de addons"
+            removeWrapper
+            isHeaderSticky
+            classNames={{
             base: "overflow-visible",
             table: "min-w-[800px]",
             th: "bg-[#0f1e09] text-white/60 py-4 uppercase text-xs font-bold",
@@ -259,6 +260,7 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       <BasicModal

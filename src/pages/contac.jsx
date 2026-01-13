@@ -1,5 +1,5 @@
-"use client";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
   Mail,
   Phone,
@@ -8,6 +8,9 @@ import {
   Send,
   Instagram,
 } from "lucide-react";
+import { postProtectedFormData } from "../../api/post";
+import { useAuth } from "../context/authContext";
+import { use } from "react";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -19,8 +22,51 @@ const fadeInUp = {
 };
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: 'Información General',
+    message: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { token } = useAuth();
   const mapEmbedUrl =
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3975.438610127137!2d-75.7453238!3d4.865939!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e387f70e4a9d1f3%3A0xfdba7186374b0adf!2sCatleya%20Royal%20Club!5e0!3m2!1ses!2sco!4v1765938839380!5m2!1ses!2sco";
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('email', formData.email);
+    data.append('phone', formData.phone);
+    data.append('subject', formData.subject);
+    data.append('message', formData.message);
+    try {
+      const response = await postProtectedFormData({
+        endpoint: '/contact',
+        body: data,
+        token
+      });
+      if (response.status === 200) {
+        setSubmitted(true);
+      }
+    } catch (error) {
+      
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-[#111111] text-white">
@@ -121,7 +167,8 @@ export default function Contact() {
                   Síganos:
                 </p>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/catleyaroyalclub/"
+                  target="_blank"
                   className="text-[#2c4549] hover:text-[#476d15] transition-colors"
                 >
                   <Instagram size={20} />
@@ -143,7 +190,18 @@ export default function Contact() {
               variants={fadeInUp}
               className="lg:col-span-7 bg-white p-8 md:p-12 shadow-xl shadow-gray-200/50 rounded-sm"
             >
-              <form className="space-y-6">
+              {submitted ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-[#476d15] rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Send className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-serif text-[#2c4549] mb-4">¡Mensaje Enviado!</h3>
+                  <p className="text-gray-600 font-light">
+                    Gracias por contactarnos. Hemos recibido tu mensaje y te responderemos lo antes posible.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
@@ -151,6 +209,9 @@ export default function Contact() {
                     </label>
                     <input
                       type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
                       placeholder="Ej. Juan Pérez"
                       className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
                     />
@@ -161,6 +222,9 @@ export default function Contact() {
                     </label>
                     <input
                       type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       placeholder="juan@ejemplo.com"
                       className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
                     />
@@ -169,9 +233,28 @@ export default function Contact() {
 
                 <div className="space-y-2">
                   <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
+                    Teléfono
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="+57 300 000 0000"
+                    className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
                     Asunto
                   </label>
-                  <select className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light text-gray-500">
+                  <select 
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light text-gray-500"
+                  >
                     <option>Información General</option>
                     <option>Reservas de Habitaciones</option>
                     <option>Eventos y Bodas</option>
@@ -184,6 +267,9 @@ export default function Contact() {
                     Mensaje
                   </label>
                   <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
                     rows={5}
                     placeholder="¿En qué podemos ayudarle?"
                     className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light resize-none"
@@ -192,15 +278,17 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#2c4549] text-white py-4 flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-xs font-bold hover:bg-[#476d15] transition-all duration-500 group"
+                  disabled={loading}
+                  className="w-full bg-[#2c4549] text-white py-4 flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-xs font-bold hover:bg-[#476d15] transition-all duration-500 group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Enviar Mensaje
+                  {loading ? 'Enviando...' : 'Enviar Mensaje'}
                   <Send
                     size={14}
-                    className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+                    className={`transition-transform ${loading ? 'animate-pulse' : 'group-hover:translate-x-1 group-hover:-translate-y-1'}`}
                   />
                 </button>
               </form>
+              )}
             </motion.div>
           </div>
         </div>

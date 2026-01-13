@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   BedDouble,
@@ -38,11 +38,33 @@ export default function AdminPanel() {
   const { logout, token } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showText, setShowText] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const { rooms } = useAdminDataRooms(token);
   const { reservationsData } = useAdminDataReservations(token, activeTab);
   const { addonsData } = useAdminDataAddons(token);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setIsSidebarOpen(!mobile);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      const timer = setTimeout(() => setShowText(true), 300);
+      return () => clearTimeout(timer);
+    } else {
+      setShowText(false);
+    }
+  }, [isSidebarOpen]);
 
   const handleLogout = async () => {
     try {
@@ -82,22 +104,27 @@ export default function AdminPanel() {
   ];
 
   return (
-    <div className="bg-[#0a0f06] flex text-white font-sans min-h-screen">
+    <div className="bg-[#0a0f06] flex text-white font-sans min-h-screen ">
       {/* SIDEBAR */}
       <aside
         className={`${
           isSidebarOpen ? "w-64" : "w-20"
-        } bg-[#0f1e09] border-r border-white/10 transition-all duration-300 flex flex-col`}
+        } bg-[#0f1e09] border-r border-white/10 transition-all duration-300 flex flex-col fixed md:relative z-50 h-screen ${
+          isMobile && !isSidebarOpen ? "-translate-x-full" : "translate-x-0"
+        }`}
       >
         <div className="p-6 flex items-center gap-3">
-          <div className="bg-[#D4AF37] p-2 rounded-lg">
-            <Settings size={20} className="text-black" />
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="text-white/60 hover:text-white"
+          >
+            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+          <div className="h-[40px]">
+            {showText && (
+              <img src="images/logo.svg" alt="" className="max-w-[120px]" />
+            )}
           </div>
-          {isSidebarOpen && (
-            <span className="font-serif font-bold tracking-widest text-lg">
-              CATLEYA
-            </span>
-          )}
         </div>
 
         <nav className="flex-grow px-3 mt-4 space-y-2">
@@ -112,7 +139,7 @@ export default function AdminPanel() {
               }`}
             >
               {item.icon}
-              {isSidebarOpen && (
+              {showText && (
                 <span className="font-medium text-sm">{item.label}</span>
               )}
             </button>
@@ -120,12 +147,28 @@ export default function AdminPanel() {
         </nav>
 
         <div className="p-4 border-t border-white/10 space-y-2">
+          <div className="px-3 py-2">
+            <UserUI
+              name="Administrador"
+              description="Admin Principal"
+              avatarProps={{
+                src: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+                className: "border-1 border-[#D4AF37]",
+              }}
+              classNames={{
+                name: showText ? "text-white text-sm" : "hidden",
+                description: showText
+                  ? "text-[#D4AF37]/60 text-[10px]"
+                  : "hidden",
+              }}
+            />
+          </div>
           <button
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-3 p-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all"
           >
             <ExternalLink size={20} />
-            {isSidebarOpen && (
+            {showText && (
               <span className="text-sm font-medium">Volver a la web</span>
             )}
           </button>
@@ -135,39 +178,32 @@ export default function AdminPanel() {
             className="w-full flex items-center gap-3 p-3 rounded-xl text-red-400 hover:bg-red-400/10 transition-all"
           >
             <LogOut size={20} />
-            {isSidebarOpen && (
+            {showText && (
               <span className="text-sm font-medium">Cerrar Sesión</span>
             )}
           </button>
         </div>
       </aside>
 
-      <main className="flex-grow flex flex-col">
-        {/* TOPBAR SIN INFO ADICIONAL */}
-        <header className="h-16 border-b border-white/10 flex items-center justify-between px-8 bg-[#0a0f06]/50 backdrop-blur-md sticky top-0 z-50">
-          <div className="flex items-center gap-8">
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="text-white/60 hover:text-white"
-            >
-              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+      {/* BACKDROP PARA MÓVIL */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
-          <UserUI
-            name="Administrador"
-            description="Admin Principal"
-            avatarProps={{
-              src: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-              className: "border-1 border-[#D4AF37]",
-            }}
-            classNames={{
-              name: "text-white text-sm",
-              description: "text-[#D4AF37]/60 text-[10px]",
-            }}
-          />
-        </header>
+      {/* BOTÓN FLOTANTE PARA ABRIR SIDEBAR EN MÓVIL */}
+      {isMobile && !isSidebarOpen && (
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="fixed top-4 right-4 z-50 text-white/60 hover:text-white bg-[#0f1e09]/80 p-2 rounded-lg transition-colors"
+        >
+          <Menu size={24} />
+        </button>
+      )}
 
+      <main className="flex-grow flex flex-col min-w-0 overflow-hidden">
         {/* CONTENT AREA */}
         <div className="p-8">
           {activeTab === "dashboard" && (

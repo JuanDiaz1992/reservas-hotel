@@ -21,14 +21,13 @@ const imageReveal = {
 
 export default function AboutUs() {
   return (
-    <div className="bg-[#111111] text-white">
-      {/* --- SECCIÓN 1: HERO / EL ORIGEN (DARK) --- */}
+    <main className="bg-[#111111] text-white">
       <section className="relative py-32 px-4 flex items-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.15 }}
           transition={{ duration: 2 }}
-          className="absolute top-20 left-20 w-[500px] h-[500px] bg-[#476d15] blur-[150px] rounded-full pointer-events-none"
+          className="absolute top-20 left-4 md:left-20 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-[#476d15] blur-[100px] md:blur-[150px] rounded-full pointer-events-none"
         />
 
         <div className="container mx-auto max-w-[1200px] relative z-10">
@@ -43,7 +42,7 @@ export default function AboutUs() {
                 <span className="text-[#476d15] uppercase tracking-[0.3em] text-xs font-bold flex items-center gap-2">
                   <Sparkles size={14} /> El Origen
                 </span>
-                <h1 className="text-5xl md:text-5xl font-serif leading-tight">
+                <h1 className="text-4xl md:text-5xl font-serif leading-tight">
                   La materialización de <br />
                   <span className="text-gray-400 italic">un sueño personal.</span>
                 </h1>
@@ -81,7 +80,6 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* --- SECCIÓN 2: NUESTRA MISIÓN (LIGHT - EL ALIVIO VISUAL) --- */}
       <section className="py-32 px-4 bg-[#F9F9F7] text-[#1a1a1a] relative">
         <div className="container mx-auto max-w-[1200px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
@@ -144,7 +142,6 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* --- SECCIÓN 3: QUIÉNES SOMOS (DARK / TEAM) --- */}
       <section className="py-32 px-4 bg-[#111111]">
         <div className="container mx-auto max-w-[1200px]">
           <motion.div
@@ -165,9 +162,22 @@ export default function AboutUs() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Diseño & Arquitectura", img: "/images/AboutUs/AboutUs-4.webp" },
-              { title: "Hospitalidad & Servicio", img: "/images/AboutUs/AboutUs-5.webp", offset: true },
-              { title: "Gastronomía de Autor", img: "/images/AboutUs/AboutUs-6.webp" }
+              { 
+                title: "Diseño & Arquitectura", 
+                img: "/images/AboutUs/AboutUs-4.webp",
+                desc: "Arquitectura que rinde homenaje al paisaje cafetero, integrando líneas orgánicas y espacios abiertos diseñados para la reconexión y el descanso absoluto."
+              },
+              { 
+                title: "Hospitalidad & Servicio", 
+                img: "/images/AboutUs/AboutUs-5.webp", 
+                offset: true,
+                desc: "Atención personalizada que anticipa necesidades, creando momentos memorables con calidez y discreción en cada interacción."
+              },
+              { 
+                title: "Gastronomía de Autor", 
+                img: "/images/AboutUs/AboutUs-6.webp",
+                desc: "Cocina innovadora que honra los sabores locales, transformando ingredientes frescos en experiencias culinarias únicas y sofisticadas."
+              }
             ].map((item, index) => (
               <motion.div
                 key={index}
@@ -181,14 +191,14 @@ export default function AboutUs() {
                   <img src={item.img} alt={item.title} className="w-full h-full object-cover hover:scale-110 transition-transform duration-1000" />
                 </div>
                 <h3 className="text-xl font-serif italic text-gray-300">{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed font-light">{item.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* --- SECCIÓN 4: COMPROMISO (DARK + GLOW) --- */}
-      <section className="py-32 px-4 relative">
+      <section className="pb-32 px-4 relative">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 0.1 }}
@@ -228,6 +238,6 @@ export default function AboutUs() {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

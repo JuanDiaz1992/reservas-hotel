@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import { Image } from "@unpic/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
@@ -19,7 +20,13 @@ export default function TestimonialsSection({ testimonials }) {
       >
         {testimonials.map((item) => (
           <SwiperSlide key={item.id}>
-            <div className="relative h-full w-full flex items-center justify-center bg-center bg-cover" style={{ backgroundImage: `url("${item.image}")` }}>
+            <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
+              <Image
+                src={item.image}
+                alt={item.author}
+                layout="fullWidth"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
               <div className="absolute inset-0 bg-black/50"></div>
               <div className="relative z-10 container mx-auto px-4 text-center py-10 animate-appearance-in">
                 <div className="flex justify-center gap-1 mb-6">
