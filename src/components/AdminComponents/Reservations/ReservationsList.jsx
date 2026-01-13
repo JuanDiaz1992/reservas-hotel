@@ -418,7 +418,7 @@ export default function ReservationsList({
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] md:max-h-[calc(100vh-120px)] overflow-y-auto">
+      <div className="rounded-2xl border border-white/10 max-h-[calc(100vh-320px)] md:max-h-[calc(100vh-220px)] overflow-y-auto">
         <div className="overflow-x-auto">
           <Table
             aria-label="Tabla de reservas"
