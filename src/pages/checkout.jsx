@@ -88,7 +88,7 @@ export default function Checkout() {
             )}
           </div>
           {view !== 3 && (
-            <div className={`w-full lg:w-4/12 ${view === 2 ? 'order-1' : 'order-2'}`}>
+            <div className={`w-full lg:w-4/12 ${view === 2 ? 'order-1 md:order-2' : 'order-2 md:order-1'}`}>
               <CheckOutCart view={view} setView={navigateViews} />
             </div>
           )}

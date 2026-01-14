@@ -45,10 +45,9 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
     quantity: 1,
     reason: "",
   });
-
+  const today = new Date().toISOString().split("T")[0];
   const { token } = useAuth();
 
-  // Función para obtener solo los bloqueos
   const getLocks = useCallback(async () => {
     console.log("getLocks called");
     setIsLoading(true);
@@ -59,7 +58,6 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
     setIsLoading(false);
   }, [token])
 
-  // Al montar, cargamos los bloqueos
   useEffect(() => {
     getLocks();
   }, []);
@@ -219,6 +217,7 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
               onValueChange={(val) =>
                 setFormData({ ...formData, start_date: val })
               }
+              min={today}
               isRequired
               variant="bordered"
               labelPlacement="outside"
@@ -232,6 +231,7 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
               onValueChange={(val) =>
                 setFormData({ ...formData, end_date: val })
               }
+              min={today}
               isRequired
               variant="bordered"
               labelPlacement="outside"

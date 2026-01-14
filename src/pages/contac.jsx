@@ -23,11 +23,11 @@ const fadeInUp = {
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: 'Información General',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    subject: "Información General",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,9 +37,9 @@ export default function Contact() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -47,22 +47,21 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
     const data = new FormData();
-    data.append('name', formData.name);
-    data.append('email', formData.email);
-    data.append('phone', formData.phone);
-    data.append('subject', formData.subject);
-    data.append('message', formData.message);
+    data.append("name", formData.name);
+    data.append("email", formData.email);
+    data.append("phone", formData.phone);
+    data.append("subject", formData.subject);
+    data.append("message", formData.message);
     try {
       const response = await postProtectedFormData({
-        endpoint: '/contact',
+        endpoint: "/contact",
         body: data,
-        token
+        token,
       });
       if (response.status === 200) {
         setSubmitted(true);
       }
     } catch (error) {
-      
     } finally {
       setLoading(false);
     }
@@ -123,7 +122,10 @@ export default function Contact() {
                     <p className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-1">
                       Reservas & WhatsApp
                     </p>
-                    <p className="text-xl font-serif">+57 300 000 0000</p>
+
+                    <a href="tel:+573215957743" className="text-xl font-serif">
+                      +57 (321) 595-7743
+                    </a>
                   </div>
                 </div>
 
@@ -136,9 +138,9 @@ export default function Contact() {
                     <p className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-1">
                       Correo Electrónico
                     </p>
-                    <p className="text-xl font-serif">
+                    <a href="mailto:reservas@catleyaroyal.club" className="text-xl font-serif">
                       reservas@catleyaroyal.club
-                    </p>
+                    </a>
                   </div>
                 </div>
 
@@ -195,99 +197,102 @@ export default function Contact() {
                   <div className="w-16 h-16 bg-[#476d15] rounded-full flex items-center justify-center mx-auto mb-6">
                     <Send className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-serif text-[#2c4549] mb-4">¡Mensaje Enviado!</h3>
+                  <h3 className="text-2xl font-serif text-[#2c4549] mb-4">
+                    ¡Mensaje Enviado!
+                  </h3>
                   <p className="text-gray-600 font-light">
-                    Gracias por contactarnos. Hemos recibido tu mensaje y te responderemos lo antes posible.
+                    Gracias por contactarnos. Hemos recibido tu mensaje y te
+                    responderemos lo antes posible.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
+                        Nombre Completo
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="Ej. Juan Pérez"
+                        className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="juan@ejemplo.com"
+                        className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
+                      />
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
                     <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
-                      Nombre Completo
+                      Teléfono
                     </label>
                     <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
                       onChange={handleInputChange}
-                      placeholder="Ej. Juan Pérez"
+                      placeholder="+57 300 000 0000"
                       className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
-                      Email
+                      Asunto
                     </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
+                    <select
+                      name="subject"
+                      value={formData.subject}
                       onChange={handleInputChange}
-                      placeholder="juan@ejemplo.com"
-                      className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
-                    />
+                      className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light text-gray-500"
+                    >
+                      <option>Información General</option>
+                      <option>Reservas de Habitaciones</option>
+                      <option>Eventos y Bodas</option>
+                      <option>Experiencias Gastronómicas</option>
+                    </select>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
-                    Teléfono
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="+57 300 000 0000"
-                    className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light"
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
+                      Mensaje
+                    </label>
+                    <textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      rows={5}
+                      placeholder="¿En qué podemos ayudarle?"
+                      className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light resize-none"
+                    ></textarea>
+                  </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
-                    Asunto
-                  </label>
-                  <select 
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light text-gray-500"
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#2c4549] text-white py-4 flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-xs font-bold hover:bg-[#476d15] transition-all duration-500 group disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <option>Información General</option>
-                    <option>Reservas de Habitaciones</option>
-                    <option>Eventos y Bodas</option>
-                    <option>Experiencias Gastronómicas</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest font-bold text-gray-500">
-                    Mensaje
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    rows={5}
-                    placeholder="¿En qué podemos ayudarle?"
-                    className="w-full bg-[#F9F9F7] border-none p-4 focus:ring-1 focus:ring-[#476d15] outline-none transition-all font-light resize-none"
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#2c4549] text-white py-4 flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-xs font-bold hover:bg-[#476d15] transition-all duration-500 group disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Enviando...' : 'Enviar Mensaje'}
-                  <Send
-                    size={14}
-                    className={`transition-transform ${loading ? 'animate-pulse' : 'group-hover:translate-x-1 group-hover:-translate-y-1'}`}
-                  />
-                </button>
-              </form>
+                    {loading ? "Enviando..." : "Enviar Mensaje"}
+                    <Send
+                      size={14}
+                      className={`transition-transform ${loading ? "animate-pulse" : "group-hover:translate-x-1 group-hover:-translate-y-1"}`}
+                    />
+                  </button>
+                </form>
               )}
             </motion.div>
           </div>
@@ -314,7 +319,6 @@ export default function Contact() {
                 title="Ubicación Finca La Waira"
               ></iframe>
             </div>
-
           </motion.div>
 
           <div className="mt-16 space-y-4">

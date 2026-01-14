@@ -131,13 +131,13 @@ export default function Footer() {
                   Pereira, Risaralda
                 </a>
               </li>
-              <li className="flex items-center gap-3">
+              <li className="flex items-center gap-3" >
                 <Phone className="w-5 h-5 text-[#D4AF37] shrink-0" />
-                <span>+57 (1) 555-0199</span>
+                <a href="tel:+573215957743">+57 (321) 595-7743</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-[#D4AF37] shrink-0" />
-                <span>reservas@catleyahotel.com</span>
+                <a href="mailto:reservas@catleyahotel.com">reservas@catleyahotel.com</a>
               </li>
             </ul>
           </div>

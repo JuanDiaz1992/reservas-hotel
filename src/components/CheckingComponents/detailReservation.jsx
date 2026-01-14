@@ -330,7 +330,7 @@ export default function DetailReservation({ setTitle }) {
                       </Button>
                     </div>
                     <p className="text-[10px] text-gray-500">
-                      {acc.type} - {acc.titular || "Catleya RoyalClub"}
+                      {acc.type} - {acc.holder || "Catleya RoyalClub"}
                     </p>
                   </div>
                 ))}

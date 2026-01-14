@@ -44,6 +44,8 @@ export const CartProvider = ({ children }) => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   useEffect(() => {
     localStorage.setItem("booking_cart", JSON.stringify(cart));
   }, [cart]);
@@ -160,6 +162,8 @@ const addToCart = (newItem) => {
         clearCart,
         isSidebarOpen,
         setIsSidebarOpen,
+        setIsDropdownOpen,
+        isDropdownOpen,
         dateRange,
         setDateRange,
         totalNights,

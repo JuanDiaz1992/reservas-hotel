@@ -111,16 +111,10 @@ export const testimonials = [
 
 export const BANK_ACCOUNTS = [
   {
-    bank: "Bancolombia",
-    number: "7217 6161 426",
-    type: "Cuenta Corriente",
-    holder: "Catleya RoyalClub",
-  },
-  {
     bank: "Davivienda",
-    number: "PON_AQUI_TU_NUMERO",
-    type: "Cuenta de Ahorros",
-    holder: "Catleya RoyalClub",
+    number: "0550 1266 0003 3693",
+    type: "Cuenta de Ahorros Damas",
+    holder: "JUALCAVIAL S.A.S",
   },
 ];
 

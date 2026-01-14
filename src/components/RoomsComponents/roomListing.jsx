@@ -11,7 +11,7 @@ import { useCart } from "../../context/cartContext";
 export default function RoomListing({ results, guests = 1 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const { cart, isSidebarOpen, addToCart, setIsSidebarOpen } = useCart();
+  const { cart, isSidebarOpen, addToCart, setIsSidebarOpen, setIsDropdownOpen } = useCart();
 
   const rooms = results;
   const showCapacityAlert = guests > 2;
@@ -158,7 +158,7 @@ export default function RoomListing({ results, guests = 1 }) {
                 Ocultar
               </Button>
             </div>
-            <Button className="w-full bg-[#476d15] text-white">
+            <Button onPress={() => setIsDropdownOpen(true) } className="w-full bg-[#476d15] text-white">
               Ver Reserva ({cart.length})
             </Button>
           </div>

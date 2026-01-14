@@ -38,15 +38,8 @@ export default function BasicBanner({
             className="h-[1px] bg-[#476d15] mb-6"
           />
 
-          <h1 className="text-white text-4xl md:text-6xl lg:text-7xl font-serif text-center px-4 tracking-tight max-w-full break-words leading-tight">
-            {title.split(" ").map((word, i) => (
-              <span
-                key={i}
-                className={i % 2 !== 0 ? "italic text-gray-300 ml-3" : "ml-3"}
-              >
-                {word}
-              </span>
-            ))}
+          <h1 className="text-white text-4xl md:text-6xl lg:text-7xl font-serif text-center px-4 tracking-tight w-full ">
+            {title}
           </h1>
 
           <motion.div
