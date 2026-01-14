@@ -48,18 +48,21 @@ export async function delProtected({ endpoint, token, body = {} }) {
       },
       body: body && Object.keys(body).length > 0 ? JSON.stringify(body) : null,
     });
-
     let resultado = null;
     if (respuesta.status !== 204) {
-      resultado = await respuesta.json();
+      try {
+        resultado = await respuesta.json();
+      } catch (e) {
+        resultado = null;
+      }
     } else {
       resultado = { success: true };
     }
-
     if (!respuesta.ok) {
       return {
         data: resultado,
-        error: `Error ${respuesta.status}: ${respuesta.statusText}`,
+        error: resultado?.message || `Error ${respuesta.status}: ${respuesta.statusText}`,
+        errors: resultado?.errors || null,
         status: respuesta.status,
       };
     }

@@ -77,14 +77,26 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
     }
   };
 
-  const deleteRoom = async (id) => {
-    if (
-      !window.confirm("¿Estás seguro de que deseas eliminar esta habitación?")
-    )
+const deleteRoom = async (room) => {
+    // 1. Validación Preventiva: Estado Activo
+    // Verificamos si la habitación está activa. Si lo está, no dejamos borrar.
+    const isActive = room.is_active === 1 || room.is_active === true || room.is_active === "active";
+
+    if (isActive) {
+      addToast({
+        title: "No se puede eliminar",
+        description: "Para eliminar esta habitación, primero debes desactivarla usando el botón de encendido.",
+        color: "warning",
+      });
+      return;
+    }
+
+    // 2. Confirmación del usuario
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar "${room.name}"? Esta acción no se puede deshacer.`))
       return;
 
     try {
-      const response = await delProtected({ endpoint: `/rooms/${id}`, token });
+      const response = await delProtected({ endpoint: `/rooms/${room.id}`, token });
 
       if (response && !response.error) {
         addToast({
@@ -92,17 +104,20 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
           description: "Habitación borrada correctamente",
           color: "success",
         });
-
         setUpdateRooms(true);
       } else {
         addToast({
-          title: "Error",
-          description: "No se pudo eliminar",
+          title: "Error al eliminar",
+          description:"Asegúrate de que no existan bloqueos o mantenimientos activos para este grupo.",
           color: "danger",
         });
       }
     } catch (error) {
-      console.error("Error al eliminar:", error);
+      addToast({
+        title: "Error al eliminar",
+        description: "Asegúrate de que no existan bloqueos o mantenimientos activos para este grupo.",
+        color: "danger",
+      });
     }
   };
 
@@ -161,7 +176,16 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
         setUpdateRooms={setUpdateRooms}
       />
     );
-  }, [modalView, rooms, setUpdateRooms, selectedRoom, updateRoom, createRoom, currentRoomData, onOpenChange]);
+  }, [
+    modalView,
+    rooms,
+    setUpdateRooms,
+    selectedRoom,
+    updateRoom,
+    createRoom,
+    currentRoomData,
+    onOpenChange,
+  ]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("es-CO", {
@@ -252,7 +276,7 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
                 size="sm"
                 variant="light"
                 className="text-danger"
-                onPress={() => deleteRoom(room.id)}
+                onPress={() => deleteRoom(room)}
               >
                 <Trash2 size={18} />
               </Button>
@@ -309,33 +333,33 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
               table: "min-w-[800px]",
               th: "bg-[#0f1e09] text-white/60 py-4 uppercase text-xs font-bold",
               td: "py-4 px-3 border-b border-white/5 bg-[#0f1e09]/30",
-          }}
-        >
-          <TableHeader>
-            <TableColumn key="name">HABITACIÓN</TableColumn>
-            <TableColumn key="services">SERVICIOS</TableColumn>
-            <TableColumn key="price">PRECIO</TableColumn>
-            <TableColumn key="inventory">STOCK</TableColumn>
-            <TableColumn key="actions">ACCIONES</TableColumn>
-          </TableHeader>
-          <TableBody
-            items={rooms}
-            loadingContent={<Spinner color="warning" />}
-            loadingState={isLoading ? "loading" : "idle"}
-            emptyContent={"No hay habitaciones registradas."}
+            }}
           >
-            {(item) => (
-              <TableRow
-                key={item.id}
-                className="hover:bg-white/5 transition-colors"
-              >
-                {(columnKey) => (
-                  <TableCell>{renderCell(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            <TableHeader>
+              <TableColumn key="name">HABITACIÓN</TableColumn>
+              <TableColumn key="services">SERVICIOS</TableColumn>
+              <TableColumn key="price">PRECIO</TableColumn>
+              <TableColumn key="inventory">STOCK</TableColumn>
+              <TableColumn key="actions">ACCIONES</TableColumn>
+            </TableHeader>
+            <TableBody
+              items={rooms}
+              loadingContent={<Spinner color="warning" />}
+              loadingState={isLoading ? "loading" : "idle"}
+              emptyContent={"No hay habitaciones registradas."}
+            >
+              {(item) => (
+                <TableRow
+                  key={item.id}
+                  className="hover:bg-white/5 transition-colors"
+                >
+                  {(columnKey) => (
+                    <TableCell>{renderCell(item, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
       <BasicModal

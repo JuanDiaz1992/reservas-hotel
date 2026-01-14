@@ -13,7 +13,12 @@ export function Provider({ children }) {
     <HelmetProvider>
       <HeroUIProvider navigate={navigate} useHref={useHref}>
         <AuthProvider>
-          <ToastProvider />
+          <ToastProvider
+            placement="top-right"
+            toastOptions={{
+              className: "z-[10000]",
+            }}
+          />
           <CartProvider>
             <CurrencyProvider>{children}</CurrencyProvider>
           </CartProvider>
