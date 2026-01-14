@@ -116,11 +116,18 @@ export const BANK_ACCOUNTS = [
     type: "Cuenta de Ahorros Damas",
     holder: "JUALCAVIAL S.A.S",
   },
+    {
+    bank: "Bancolombia",
+    number: "0550 1266 0003 3693",
+    type: "Cuenta de Ahorros Damas",
+    holder: "JUALCAVIAL S.A.S",
+  },
 ];
 
 export const TRANSFER_INSTRUCTIONS = {
   email: "reservas@catleyaroyalclub.com",
   percentage: 50,
+  whatsapp: "https://wa.me/573215957743",
 };
 
 export const TERMS_AND_CONDITIONS = `

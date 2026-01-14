@@ -18,10 +18,15 @@ import {
   Calendar,
   Users as UsersIcon,
   ShieldCheck,
+  MessageCircle,
 } from "lucide-react";
 import { useCart } from "../../context/cartContext";
 import { post } from "../../../api/post";
-import { BANK_ACCOUNTS, TRANSFER_INSTRUCTIONS, SECURE_PAYMENT_INFO } from "../../data";
+import {
+  BANK_ACCOUNTS,
+  TRANSFER_INSTRUCTIONS,
+  SECURE_PAYMENT_INFO,
+} from "../../data";
 import GuestInformation from "./SubComponents/guestInformation";
 import { useCurrency } from "../../context/currencyContext";
 import BasicModal from "../basicModal";
@@ -35,7 +40,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     setReservationId,
     setSelectedPaymentMethod,
   } = useCart();
-  
+
   const guestInfoRef = useRef();
 
   const [paymentMethod, setPaymentMethod] = useState("online");
@@ -78,14 +83,14 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
 
       if (item.type === "room") {
         // Habitación: (Precio unitario con extras) * Cantidad * Noches
-        return acc + (price * qty * nights);
+        return acc + price * qty * nights;
       } else {
         // Addon: Precio * Cantidad (Suele ser pago único)
-        return acc + (price * qty);
+        return acc + price * qty;
       }
     }, 0);
   };
-    
+
   const total = calculateGrandTotal();
   const depositAmount = total / 2;
 
@@ -93,7 +98,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     if (guestInfoRef.current) {
       const validation = guestInfoRef.current.validate();
       if (!validation.isValid) {
-        toast(validation.message, { icon: '⚠️' });
+        toast(validation.message, { icon: "⚠️" });
         return;
       }
     }
@@ -101,7 +106,9 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     try {
       setIsSubmitting(true);
       const formatBackendDate = (d) =>
-        d ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}` : "";
+        d
+          ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`
+          : "";
 
       const body = {
         check_in: formatBackendDate(dateRange?.start),
@@ -124,9 +131,9 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
           })),
         addons: cart
           .filter((i) => i.type === "addon")
-          .map((a) => ({ 
-            id: a.originalId || a.id, 
-            quantity: a.quantity 
+          .map((a) => ({
+            id: a.originalId || a.id,
+            quantity: a.quantity,
           })),
         guests: guests
           .filter((g) => g?.firstName)
@@ -140,10 +147,15 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
 
       const response = await post({ endpoint: "/reservations", body });
 
-      if (response.status >= 200 && response.status < 300 && response.data?.status === "success") {
+      if (
+        response.status >= 200 &&
+        response.status < 300 &&
+        response.data?.status === "success"
+      ) {
         const uuid = response.data.data.reservation_uuid;
-        const methodForBack = paymentMethod === "transferencia" ? "bank_transfer" : "epayco";
-        
+        const methodForBack =
+          paymentMethod === "transferencia" ? "bank_transfer" : "epayco";
+
         await post({
           endpoint: `/reservations/${uuid}/init-payment`,
           body: { payment_method: methodForBack },
@@ -170,9 +182,9 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         </div>
       </div>
       <h3 className="text-xl font-bold text-gray-800">Pago seguro online</h3>
-      <div 
+      <div
         className="text-sm text-gray-600 leading-relaxed text-left"
-        dangerouslySetInnerHTML={{ __html: SECURE_PAYMENT_INFO }} 
+        dangerouslySetInnerHTML={{ __html: SECURE_PAYMENT_INFO }}
       />
     </div>
   );
@@ -198,8 +210,11 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-green-400" />
             <span className="text-sm">
-              {dateRange?.start.day}/{dateRange?.start.month} - {dateRange?.end.day}/{dateRange?.end.month} 
-              <span className="ml-1 opacity-70">({totalNights} {totalNights === 1 ? 'noche' : 'noches'})</span>
+              {dateRange?.start.day}/{dateRange?.start.month} -{" "}
+              {dateRange?.end.day}/{dateRange?.end.month}
+              <span className="ml-1 opacity-70">
+                ({totalNights} {totalNights === 1 ? "noche" : "noches"})
+              </span>
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -236,7 +251,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
           <h3 className="text-xl font-serif text-[#2c4549] flex items-center gap-2 mb-6">
             <CreditCard className="w-5 h-5" /> Método de Pago
           </h3>
-          
+
           <RadioGroup
             value={paymentMethod}
             onValueChange={setPaymentMethod}
@@ -250,19 +265,27 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
               >
                 <Radio value="online">
                   <div className="ml-2">
-                    <p className="font-semibold text-gray-800">Pago en línea (ePayco)</p>
-                    <p className="text-xs text-gray-500">Tarjetas, PSE, Nequi, Daviplata</p>
+                    <p className="font-semibold text-gray-800">
+                      Pago en línea (ePayco)
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Tarjetas, PSE, Nequi, Daviplata
+                    </p>
                   </div>
                 </Radio>
               </div>
 
               <div
                 className={`p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === "transferencia" ? "border-[#476d15] bg-green-50" : "border-gray-200"}`}
-                onClick={() => !isSubmitting && setPaymentMethod("transferencia")}
+                onClick={() =>
+                  !isSubmitting && setPaymentMethod("transferencia")
+                }
               >
                 <Radio value="transferencia">
                   <div className="ml-2">
-                    <p className="font-semibold text-gray-800">Transferencia Bancaria</p>
+                    <p className="font-semibold text-gray-800">
+                      Transferencia Bancaria
+                    </p>
                     <p className="text-xs text-gray-500">Aprobación manual</p>
                   </div>
                 </Radio>
@@ -275,24 +298,39 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
               <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-5">
                 <div className="flex justify-between items-center mb-6">
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Monto a consignar (50%)</p>
-                    <p className="text-2xl font-bold text-[#476d15]">{formatPrice(depositAmount)}</p>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">
+                      Monto a consignar (50%)
+                    </p>
+                    <p className="text-2xl font-bold text-[#476d15]">
+                      {formatPrice(depositAmount)}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] text-gray-400">Total reserva</p>
-                    <p className="text-xs font-semibold text-gray-600">{formatPrice(total)}</p>
+                    <p className="text-xs font-semibold text-gray-600">
+                      {formatPrice(total)}
+                    </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                   {BANK_ACCOUNTS.map((acc, i) => (
-                    <div key={i} className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                    <div
+                      key={i}
+                      className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm"
+                    >
                       <div className="flex items-center gap-2 mb-1">
                         <Landmark size={12} className="text-[#476d15]" />
-                        <p className="text-[10px] font-bold uppercase text-gray-700">{acc.bank}</p>
+                        <p className="text-[10px] font-bold uppercase text-gray-700">
+                          {acc.bank}
+                        </p>
                       </div>
-                      <p className="text-sm font-mono font-bold text-gray-800">{acc.number}</p>
-                      <p className="text-[10px] text-gray-500">{acc.type} - {acc.titular}</p>
+                      <p className="text-sm font-mono font-bold text-gray-800">
+                        {acc.number}
+                      </p>
+                      <p className="text-[10px] text-gray-500">
+                        {acc.type} - {acc.titular}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -300,7 +338,25 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
                 <Divider className="my-4" />
                 <div className="flex items-start gap-3 text-xs text-gray-600 italic">
                   <Mail size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                  <p>Para confirmar, envía tu comprobante a <span className="font-bold text-[#476d15]">{TRANSFER_INSTRUCTIONS.email}</span> o vía WhatsApp.</p>
+                  <div className="flex flex-col gap-1">
+                    <p>
+                      Para confirmar, envía tu comprobante a{" "}
+                      <span className="font-bold text-[#476d15] not-italic">
+                        {TRANSFER_INSTRUCTIONS.email}
+                      </span>{" "}
+                      o vía{" "}
+                      <a
+                        href={`https://wa.me/573215957743?text=Hola!%20Envío%20mi%20comprobante%20de%20pago.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-0.5 font-bold text-[#25D366] not-italic hover:underline underline-offset-2"
+                      >
+                        <MessageCircle size={14} className="inline" />
+                        WhatsApp
+                      </a>
+                      .
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -316,7 +372,9 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
           isLoading={isSubmitting}
           isDisabled={isSubmitting}
         >
-          {isSubmitting ? "Procesando..." : `Confirmar y Reservar por ${formatPrice(paymentMethod === 'online' ? total : depositAmount)}`}
+          {isSubmitting
+            ? "Procesando..."
+            : `Confirmar y Reservar por ${formatPrice(paymentMethod === "online" ? total : depositAmount)}`}
         </Button>
         <div className="flex flex-col items-center gap-2 mt-3">
           <p className="text-center text-[10px] text-gray-400">
@@ -333,10 +391,10 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         </div>
       </div>
 
-      <BasicModal 
-        isOpen={isOpen} 
-        onOpenChange={onOpenChange} 
-        Content={SecurePaymentContent} 
+      <BasicModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        Content={SecurePaymentContent}
         size="md"
       />
     </div>

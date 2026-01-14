@@ -80,12 +80,13 @@ const GuestSelectionPopover = ({
 
   return (
     <Popover
-      isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
-      placement="left"
-      offset={10}
-      showArrow
-      shouldFlip={false}
+isOpen={isOpen}
+  onOpenChange={(open) => setIsOpen(open)}
+  placement="bottom-end"
+  offset={10}
+  showArrow
+  shouldFlip={true}
+  containerPadding={15}
     >
       <PopoverTrigger>
         <Button
@@ -100,7 +101,7 @@ const GuestSelectionPopover = ({
           {isDisabled ? "En el carrito" : "Reservar"}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-4 w-72">
+      <PopoverContent className="p-4 w-[280px] xs:w-72">
         <div className="w-full space-y-4">
           <div className="space-y-1">
             <h4 className="font-bold text-medium">Seleccionar Huéspedes</h4>

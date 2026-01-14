@@ -1,13 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Button,
-  Card,
-  CardBody,
-  Divider,
-  Spinner,
-  Chip,
-} from "@heroui/react";
+import { Button, Card, CardBody, Divider, Spinner, Chip } from "@heroui/react";
 import toast from "react-hot-toast";
 import {
   CheckCircle2,
@@ -24,6 +17,7 @@ import {
   XCircle,
   PlusCircle,
   RefreshCcw,
+  MessageCircle,
 } from "lucide-react";
 import { useCart } from "../../context/cartContext";
 import { get } from "../../../api/get";
@@ -148,7 +142,9 @@ export default function DetailReservation({ setTitle }) {
       });
 
       if (!response.error) {
-        toast.success(`Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`);
+        toast.success(
+          `Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`
+        );
         await loadData(false);
       } else {
         throw new Error();
@@ -311,17 +307,37 @@ export default function DetailReservation({ setTitle }) {
                   </div>
                 ))}
               </div>
+
               <div className="bg-amber-100/50 p-4 rounded-lg border border-amber-200">
                 <div className="flex gap-2 items-start text-sm text-amber-900">
                   <Mail size={16} className="mt-1 shrink-0" />
                   <div>
-                    <p className="font-bold">¿A dónde enviar el comprobante?</p>
-                    <p>
-                      Envía la foto a:{" "}
-                      <strong>{TRANSFER_INSTRUCTIONS.email}</strong>
+                    <p className="font-bold mb-1">
+                      ¿A dónde enviar el comprobante?
                     </p>
-                    <p className="text-xs mt-1 italic">
-                      Monto: $
+
+                    <p className="text-amber-950">
+                      Envía la foto a:{" "}
+                      <strong className="select-all">
+                        {TRANSFER_INSTRUCTIONS.email}
+                      </strong>
+                    </p>
+
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <span>O por WhatsApp:</span>
+                      <a
+                        href={`https://wa.me/573215957743?text=Hola!%20Envío%20el%20comprobante%20de%20mi%20reserva%20por%20valor%20de%20$${Number(resData.deposit_required).toLocaleString()}%20COP`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 font-bold text-green-700 hover:text-green-800 transition-colors underline decoration-2 underline-offset-2"
+                      >
+                        <MessageCircle size={16} />
+                        Enviar Comprobante
+                      </a>
+                    </div>
+
+                    <p className="text-xs mt-2 italic opacity-80">
+                      Monto a transferir: $
                       {Number(resData.deposit_required).toLocaleString()} COP
                     </p>
                   </div>
