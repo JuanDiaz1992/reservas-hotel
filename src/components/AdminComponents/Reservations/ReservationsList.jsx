@@ -170,11 +170,7 @@ export default function ReservationsList({
         toast.error("Reserva No Confirmada. Ha ocurrido un error, inténtelo de nuevo más tarde");
       }
     } catch (error) {
-      addToast({
-        title: "Reserva No Confirmada",
-        description: "Ah ocurrido un error, intentelo de nuevo más tarde",
-        color: "danger",
-      });
+      toast.error("Reserva No Confirmada. Ha ocurrido un error, inténtelo de nuevo más tarde");
     }
   };
 

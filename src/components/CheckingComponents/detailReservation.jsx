@@ -148,11 +148,7 @@ export default function DetailReservation({ setTitle }) {
       });
 
       if (!response.error) {
-        addToast({
-          title: "Método actualizado",
-          description: `Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`,
-          color: "success",
-        });
+        toast.success(`Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`);
         await loadData(false);
       } else {
         throw new Error();
@@ -186,11 +182,7 @@ export default function DetailReservation({ setTitle }) {
     });
 
     if (!response.error) {
-      addToast({
-        title: "Reserva anulada",
-        description: "La reserva se ha cancelado correctamente.",
-        color: "success",
-      });
+      toast.success("La reserva se ha cancelado correctamente.");
 
       setTimeout(() => {
         navigate("/");

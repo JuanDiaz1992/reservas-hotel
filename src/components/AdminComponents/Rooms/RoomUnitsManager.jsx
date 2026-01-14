@@ -20,7 +20,7 @@ import {
   SelectItem,
   Textarea,
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import {
   Calendar,
   Info,
