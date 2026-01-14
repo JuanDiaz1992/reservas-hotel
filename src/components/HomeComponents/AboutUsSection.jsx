@@ -1,5 +1,6 @@
 import { Button } from "@heroui/react";
 import { motion } from "framer-motion";
+import { scrollToTop } from "../../utils/scrollToTop";
 
 export default function AboutUsSection() {
   const leftImageReveal = {
@@ -73,7 +74,7 @@ export default function AboutUsSection() {
                 whileTap={{ scale: 0.98 }}
                 className="pt-4"
               >
-                <Button className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 text-sm font-bold transition-all uppercase tracking-widest rounded-none border-none">
+                <Button onPress={scrollToTop} className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 text-sm font-bold transition-all uppercase tracking-widest rounded-none border-none">
                   Reservar Ahora
                 </Button>
               </motion.div>
