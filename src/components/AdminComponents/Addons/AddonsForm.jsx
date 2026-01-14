@@ -4,7 +4,7 @@ import {
   Textarea,
   Image,
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 
@@ -33,7 +33,6 @@ export default function AddonsForm({
     if (!price || price <= 0) newErrors.price = "Precio debe ser mayor a 0";
 
     const imageFile = formData.get("image");
-    // Solo validamos si no hay previsualización (es decir, ni imagen previa ni nueva seleccionada)
     if (!previewImage && (!imageFile || imageFile.size === 0)) {
       newErrors.image = "Debes subir una imagen para el servicio";
     }

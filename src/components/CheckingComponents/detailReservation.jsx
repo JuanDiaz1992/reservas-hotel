@@ -8,7 +8,7 @@ import {
   Spinner,
   Chip,
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import {
   CheckCircle2,
   Home,
@@ -80,11 +80,7 @@ export default function DetailReservation({ setTitle }) {
       });
       handler.open(epaycoData);
     } else {
-      addToast({
-        title: "Error",
-        description: "No se cargó el módulo de pagos.",
-        color: "danger",
-      });
+      toast.error("No se cargó el módulo de pagos.");
     }
   };
 
@@ -107,11 +103,7 @@ export default function DetailReservation({ setTitle }) {
         throw new Error("No se recibieron datos de pago");
       }
     } catch (err) {
-      addToast({
-        title: "Error",
-        description: "No se pudo iniciar el proceso de pago.",
-        color: "danger",
-      });
+      toast.error("No se pudo iniciar el proceso de pago.");
     } finally {
       setIsInitializingPayment(false);
     }
@@ -166,11 +158,7 @@ export default function DetailReservation({ setTitle }) {
         throw new Error();
       }
     } catch (err) {
-      addToast({
-        title: "Error",
-        description: "No se pudo cambiar el método de pago.",
-        color: "danger",
-      });
+      toast.error("No se pudo cambiar el método de pago.");
     } finally {
       setIsChangingMethod(false);
     }
@@ -210,11 +198,7 @@ export default function DetailReservation({ setTitle }) {
       }, 1500);
     } else {
       setIsCancelling(false);
-      addToast({
-        title: "Error",
-        description: "No se pudo anular la reserva.",
-        color: "danger",
-      });
+      toast.error("No se pudo anular la reserva.");
     }
   };
 

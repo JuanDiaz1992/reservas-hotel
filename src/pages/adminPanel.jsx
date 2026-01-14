@@ -23,7 +23,7 @@ import {
   Tabs,
   Tab,
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import { useAuth } from "../context/authContext";
 import { postProtected } from "../../api/post";
 import { useNavigate } from "react-router-dom";
@@ -74,11 +74,7 @@ export default function AdminPanel() {
         token: token,
       });
       if (response.data) {
-        addToast({
-          title: "Sesión cerrada",
-          description: "Has salido del sistema correctamente",
-          color: "success",
-        });
+        toast.success("Sesión cerrada. Has salido del sistema correctamente");
       }
     } catch (error) {
       console.error("Error al invalidar token en servidor:", error);

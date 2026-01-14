@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Crown, LogIn } from "lucide-react";
 import { Button, Input, Checkbox } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import { useAuth } from "../context/authContext";
 import { post } from "../../api/post";
 import { useNavigate } from "react-router-dom";
@@ -25,28 +25,16 @@ export default function LoginPage() {
         body: formData,
       });
       if (response.data && response.data.access_token) {
-        addToast({
-          title: "¡Bienvenido!",
-          description: "Inicio de sesión exitoso",
-          color: "success",
-        });
+        toast.success("¡Bienvenido! Inicio de sesión exitoso");
         console.log(response.data.access_token);
         login(response.data.access_token);
         navigate("/admin");
       }
       else {
-        addToast({
-          title: "Inicio de sesión fallido",
-          description: "Verifica tus credenciales",
-          color: "danger",
-        });
+        toast.error("Inicio de sesión fallido. Verifica tus credenciales");
       }
     } catch (err) {
-      addToast({
-        title: "Error crítico",
-        description: "Ocurrió un error inesperado en la aplicación",
-        color: "danger",
-      });
+      toast.error("Error crítico. Ocurrió un error inesperado en la aplicación");
     } finally {
       setIsLoading(false);
     }

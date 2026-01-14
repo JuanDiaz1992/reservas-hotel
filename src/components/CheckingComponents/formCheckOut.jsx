@@ -8,7 +8,7 @@ import {
   Divider,
   useDisclosure,
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import {
   ChevronLeft,
   CheckCircle2,
@@ -93,11 +93,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     if (guestInfoRef.current) {
       const validation = guestInfoRef.current.validate();
       if (!validation.isValid) {
-        addToast({
-          title: "Información incompleta",
-          description: validation.message,
-          color: "warning",
-        });
+        toast(validation.message, { icon: '⚠️' });
         return;
       }
     }
@@ -160,11 +156,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         throw new Error(response.error || "Error en el servidor");
       }
     } catch (error) {
-      addToast({
-        title: "Error",
-        description: "No se pudo procesar la reserva. Intenta de nuevo.",
-        color: "danger",
-      });
+      toast.error("No se pudo procesar la reserva. Intenta de nuevo.");
     } finally {
       setIsSubmitting(false);
     }

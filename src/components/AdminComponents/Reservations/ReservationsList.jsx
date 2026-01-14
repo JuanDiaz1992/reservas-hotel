@@ -15,7 +15,7 @@ import {
   useDisclosure,
   Pagination,
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import {
   Search,
   Eye,
@@ -145,19 +145,11 @@ export default function ReservationsList({
         body: { payment_method: newMethod },
       });
       if (response.status === 200) {
-        addToast({
-          title: "Método actualizado",
-          description: `Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`,
-          color: "success",
-        });
+        toast.success(`Se ha cambiado el método a ${newMethod === "epayco" ? "Pago Online" : "Transferencia Bancaria"}.`);
         setUpdateReservations(true);
       }
     } catch (error) {
-      addToast({
-        title: "Cambio no realizado",
-        description: "Ah ocurrido un error, intentelo de nuevo más tarde",
-        color: "danger",
-      });
+      toast.error("Cambio no realizado. Ha ocurrido un error, inténtelo de nuevo más tarde");
     }
   };
 
@@ -173,17 +165,9 @@ export default function ReservationsList({
       });
       if (response.status === 200) {
         setUpdateReservations(true);
-        addToast({
-          title: "Reserva Confirmada",
-          description: "La reserva se confirmó correctamente",
-          color: "success",
-        });
+        toast.success("La reserva se confirmó correctamente");
       } else {
-        addToast({
-          title: "Reserva No Confirmada",
-          description: "Ah ocurrido un error, intentelo de nuevo más tarde",
-          color: "danger",
-        });
+        toast.error("Reserva No Confirmada. Ha ocurrido un error, inténtelo de nuevo más tarde");
       }
     } catch (error) {
       addToast({

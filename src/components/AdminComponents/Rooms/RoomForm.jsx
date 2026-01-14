@@ -6,7 +6,7 @@ import {
   Checkbox,
   Image,
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { X, Loader2 } from "lucide-react";
 import { delProtected } from "../../../../api/delete";
@@ -40,18 +40,10 @@ export default function RoomForm({
       });
 
       if (!response.error) {
-        addToast({
-          title: "Eliminada",
-          description: "Imagen borrada correctamente",
-          color: "success",
-        });
+        toast.success("Imagen borrada correctamente");
         setUpdateRooms(true);
       } else {
-        addToast({
-          title: "Error",
-          description: response.error || "No se pudo eliminar la imagen",
-          color: "danger",
-        });
+        toast.error(response.error || "No se pudo eliminar la imagen");
       }
     } catch (error) {
       console.error("Error eliminando imagen:", error);

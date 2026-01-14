@@ -1,5 +1,5 @@
 import { Button, Divider, Chip, User, Tooltip } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 import { 
   Phone, 
   CreditCard, 
@@ -32,11 +32,7 @@ export default function DetailReservation({
       });
       if (response.status === 200) {
         setUpdateReservations(true);
-        addToast({
-          title: "Cuarto cancelado",
-          description: `El cuarto fue cancelado exitosamente de esta reserva`,
-          color: "success",
-        });
+        toast.success("Cuarto cancelado. El cuarto fue cancelado exitosamente de esta reserva");
       }
     } catch (error) {
       console.error("Error al cancelar cuarto", error);

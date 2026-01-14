@@ -3,7 +3,7 @@ import { useCart } from "../../context/cartContext";
 import { get } from "../../../api/get";
 import { useEffect, useState } from "react";
 import { Spinner } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+import toast from "react-hot-toast";
 
 export default function AddsOnListing({ setTitle, navigateViews, setHasAddons }) {
   const [addsOnList, setAddsOnList] = useState([]);
@@ -44,23 +44,12 @@ export default function AddsOnListing({ setTitle, navigateViews, setHasAddons })
     const hasRoom = cart.some((item) => item.type === "room");
 
     if (!hasRoom) {
-      addToast({
-        title: "Acción requerida",
-        description:
-          "Debes seleccionar al menos una habitación antes de añadir servicios adicionales.",
-        variant: "flat",
-        color: "danger",
-      });
+      toast.error("Acción requerida. Debes seleccionar al menos una habitación antes de añadir servicios adicionales.");
       return false;
     }
 
     addToCart(serviceItem);
-    addToast({
-      title: "Servicio añadido",
-      description: `${serviceItem.name} se agregó al carrito.`,
-      variant: "flat",
-      color: "success",
-    });
+    toast.success(`${serviceItem.name} se agregó al carrito.`);
     return true;
   };
 

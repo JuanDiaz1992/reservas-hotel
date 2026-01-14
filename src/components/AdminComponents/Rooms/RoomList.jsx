@@ -11,9 +11,9 @@ import {
   Tooltip,
   Button,
   Spinner,
-  addToast,
   useDisclosure,
 } from "@heroui/react";
+import toast from "react-hot-toast";
 import { Edit, Trash2, Power, Plus, Bed } from "lucide-react";
 import BasicModal from "../../basicModal";
 import { postProtectedFormData } from "../../../../api/post";
@@ -38,17 +38,9 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
     });
 
     if (response.error) {
-      addToast({
-        title: "Error",
-        description: response.error || "No se pudo crear la habitación",
-        color: "danger",
-      });
+      toast.error(response.error || "No se pudo crear la habitación");
     } else {
-      addToast({
-        title: "¡Éxito!",
-        description: "Habitación creada correctamente",
-        color: "success",
-      });
+      toast.success("Habitación creada correctamente");
       setUpdateRooms(true);
     }
   };
@@ -62,17 +54,9 @@ export default function RoomList({ rooms, isLoading, setUpdateRooms }) {
     });
 
     if (response.error) {
-      addToast({
-        title: "Error",
-        description: response.error || "No se pudo actualizar la habitación",
-        color: "danger",
-      });
+      toast.error(response.error || "No se pudo actualizar la habitación");
     } else {
-      addToast({
-        title: "¡Actualizado!",
-        description: "Los cambios se guardaron correctamente",
-        color: "success",
-      });
+      toast.success("Los cambios se guardaron correctamente");
       setUpdateRooms(true);
     }
   };
@@ -83,11 +67,7 @@ const deleteRoom = async (room) => {
     const isActive = room.is_active === 1 || room.is_active === true || room.is_active === "active";
 
     if (isActive) {
-      addToast({
-        title: "No se puede eliminar",
-        description: "Para eliminar esta habitación, primero debes desactivarla usando el botón de encendido.",
-        color: "warning",
-      });
+      toast("Para eliminar esta habitación, primero debes desactivarla usando el botón de encendido.", { icon: '⚠️' });
       return;
     }
 
@@ -99,25 +79,13 @@ const deleteRoom = async (room) => {
       const response = await delProtected({ endpoint: `/rooms/${room.id}`, token });
 
       if (response && !response.error) {
-        addToast({
-          title: "Eliminado",
-          description: "Habitación borrada correctamente",
-          color: "success",
-        });
+        toast.success("Habitación borrada correctamente");
         setUpdateRooms(true);
       } else {
-        addToast({
-          title: "Error al eliminar",
-          description:"Asegúrate de que no existan bloqueos o mantenimientos activos para este grupo.",
-          color: "danger",
-        });
+        toast.error("Asegúrate de que no existan bloqueos o mantenimientos activos para este grupo.");
       }
     } catch (error) {
-      addToast({
-        title: "Error al eliminar",
-        description: "Asegúrate de que no existan bloqueos o mantenimientos activos para este grupo.",
-        color: "danger",
-      });
+      toast.error("Asegúrate de que no existan bloqueos o mantenimientos activos para este grupo.");
     }
   };
 
@@ -128,18 +96,10 @@ const deleteRoom = async (room) => {
     });
 
     if (!result.error) {
-      addToast({
-        title: "Estado actualizado",
-        description: "El estado del grupo ha cambiado",
-        color: "success",
-      });
+      toast.success("El estado del grupo ha cambiado");
       setUpdateRooms(true);
     } else {
-      addToast({
-        title: "Error",
-        description: "No se pudo cambiar el estado",
-        color: "danger",
-      });
+      toast.error("No se pudo cambiar el estado");
     }
   };
 

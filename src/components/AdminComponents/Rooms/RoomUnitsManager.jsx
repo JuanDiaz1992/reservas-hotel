@@ -74,11 +74,7 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
       token,
     });
     if (!response.error) {
-      addToast({
-        title: "Éxito",
-        description: "Bloqueo eliminado y disponibilidad actualizada",
-        color: "success",
-      });
+      toast.success("Bloqueo eliminado y disponibilidad actualizada");
       refreshGlobalData();
     }
   };
@@ -121,21 +117,11 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
       token,
     });
     if (!response.error) {
-      addToast({
-        title: "¡Éxito!",
-        description: selectedLock
-          ? "Bloqueo actualizado"
-          : "Bloqueo generado correctamente",
-        color: "success",
-      });
+      toast.success(selectedLock ? "Bloqueo actualizado" : "Bloqueo generado correctamente");
       setView("list");
       refreshGlobalData();
     } else {
-      addToast({
-        title: "Error",
-        description: response.error || "Error al procesar",
-        color: "danger",
-      });
+      toast.error(response.error || "Error al procesar");
     }
     setIsSubmitting(false);
   };

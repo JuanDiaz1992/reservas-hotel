@@ -1,5 +1,4 @@
 import { HeroUIProvider } from "@heroui/react";
-import { ToastProvider } from "@heroui/toast";
 import { useHref, useNavigate } from "react-router-dom";
 import { CurrencyProvider } from "./context/currencyContext";
 import { CartProvider } from "./context/cartContext";
@@ -13,12 +12,6 @@ export function Provider({ children }) {
     <HelmetProvider>
       <HeroUIProvider navigate={navigate} useHref={useHref}>
         <AuthProvider>
-          <ToastProvider
-            placement="top-right"
-            toastOptions={{
-              className: "z-[10000]",
-            }}
-          />
           <CartProvider>
             <CurrencyProvider>{children}</CurrencyProvider>
           </CartProvider>

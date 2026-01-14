@@ -10,9 +10,9 @@ import {
   Tooltip,
   Button,
   Spinner,
-  addToast,
   useDisclosure,
 } from "@heroui/react";
+import toast from "react-hot-toast";
 import { Edit, Trash2, Plus, Sparkles, Power } from "lucide-react";
 import BasicModal from "../../basicModal";
 import { delProtected } from "../../../../api/delete";
@@ -39,11 +39,7 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
       });
 
       if (response && !response.error) {
-        addToast({
-          title: id ? "Servicio Actualizado" : "Servicio Creado",
-          description: `Se ha guardado "${formData.get("name")}" correctamente.`,
-          color: "success",
-        });
+        toast.success(`Se ha guardado "${formData.get("name")}" correctamente.`);
 
         setUpdateAddons(true);
         onOpenChange(false);
@@ -52,11 +48,7 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
       }
     } catch (error) {
       console.error("Error al guardar addon:", error);
-      addToast({
-        title: "Error",
-        description: error.message || "No se pudo procesar la solicitud",
-        color: "danger",
-      });
+      toast.error(error.message || "No se pudo procesar la solicitud");
     }
   };
 
@@ -74,18 +66,10 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
     try {
       const response = await delProtected({ endpoint: `/addons/${id}`, token });
       if (response && !response.error) {
-        addToast({
-          title: "Eliminado",
-          description: "Servicio eliminado correctamente",
-          color: "success",
-        });
+        toast.success("Servicio eliminado correctamente");
         setUpdateAddons(true);
       } else {
-        addToast({
-          title: "Error",
-          description: "No se pudo eliminar",
-          color: "danger",
-        });
+        toast.error("No se pudo eliminar");
       }
     } catch (error) {
       console.error("Error al eliminar:", error);
@@ -99,19 +83,11 @@ export default function AddonsList({ addons, isLoading, setUpdateAddons }) {
         token
       });
       if (response.status === 200) {
-        addToast({
-          title: "Estado Actualizado",
-          description: "El estado del servicio ha sido actualizado.",
-          color: "success",
-        });
+        toast.success("El estado del servicio ha sido actualizado.");
         setUpdateAddons(true);
       }
     } catch (error) {
-      addToast({
-        title: "Error",
-        description: "No se pudo actualizar el estado",
-        color: "danger",
-      });
+      toast.error("No se pudo actualizar el estado");
       console.error("Error al actualizar estado:", error);
     }
   }
