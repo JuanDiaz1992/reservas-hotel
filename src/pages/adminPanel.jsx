@@ -20,10 +20,10 @@ import {
   Card,
   CardBody,
   User as UserUI,
-  addToast,
   Tabs,
   Tab,
 } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import { useAuth } from "../context/authContext";
 import { postProtected } from "../../api/post";
 import { useNavigate } from "react-router-dom";

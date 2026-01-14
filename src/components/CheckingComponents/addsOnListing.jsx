@@ -2,7 +2,8 @@ import AddsOnCard from "./addsOnCard";
 import { useCart } from "../../context/cartContext";
 import { get } from "../../../api/get";
 import { useEffect, useState } from "react";
-import { addToast, Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 
 export default function AddsOnListing({ setTitle, navigateViews, setHasAddons }) {
   const [addsOnList, setAddsOnList] = useState([]);

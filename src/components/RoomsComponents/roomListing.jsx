@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CalendarX, AlertCircle } from "lucide-react";
-import { Button, useDisclosure, addToast } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import viewElement from "../../utils/scrollToObject";
 import BasicModal from "../basicModal";
 import RoomDetail from "./roomDetail";

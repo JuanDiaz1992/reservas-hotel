@@ -7,8 +7,8 @@ import {
   Divider,
   Spinner,
   Chip,
-  addToast,
 } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import {
   CheckCircle2,
   Home,

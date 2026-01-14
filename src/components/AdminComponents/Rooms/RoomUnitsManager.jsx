@@ -15,12 +15,12 @@ import {
   Spinner,
   Button,
   Tooltip,
-  addToast,
   Input,
   Select,
   SelectItem,
   Textarea,
 } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import {
   Calendar,
   Info,

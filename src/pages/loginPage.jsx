@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Crown, LogIn } from "lucide-react";
-import { Button, Input, Checkbox, addToast } from "@heroui/react";
+import { Button, Input, Checkbox } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import { useAuth } from "../context/authContext";
 import { post } from "../../api/post";
 import { useNavigate } from "react-router-dom";

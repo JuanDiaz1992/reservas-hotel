@@ -5,10 +5,10 @@ import {
   CardBody,
   RadioGroup,
   Radio,
-  addToast,
   Divider,
   useDisclosure,
 } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import {
   ChevronLeft,
   CheckCircle2,

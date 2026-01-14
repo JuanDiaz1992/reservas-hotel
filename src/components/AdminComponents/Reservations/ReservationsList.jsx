@@ -14,8 +14,8 @@ import {
   Input,
   useDisclosure,
   Pagination,
-  addToast,
 } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import {
   Search,
   Eye,

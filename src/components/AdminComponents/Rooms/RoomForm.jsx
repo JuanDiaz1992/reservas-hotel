@@ -5,8 +5,8 @@ import {
   CheckboxGroup,
   Checkbox,
   Image,
-  addToast,
 } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import { useState } from "react";
 import { X, Loader2 } from "lucide-react";
 import { delProtected } from "../../../../api/delete";

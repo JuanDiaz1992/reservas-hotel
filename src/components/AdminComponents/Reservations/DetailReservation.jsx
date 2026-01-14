@@ -1,4 +1,5 @@
-import { Button, Divider, Chip, User, Tooltip, addToast } from "@heroui/react";
+import { Button, Divider, Chip, User, Tooltip } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import { 
   Phone, 
   CreditCard, 

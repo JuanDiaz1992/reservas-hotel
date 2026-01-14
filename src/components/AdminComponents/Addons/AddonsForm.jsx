@@ -3,8 +3,8 @@ import {
   Button,
   Textarea,
   Image,
-  addToast,
 } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 
