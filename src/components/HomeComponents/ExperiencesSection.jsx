@@ -7,13 +7,13 @@ export default function ExperiencesSection() {
     {
       icon: Utensils,
       title: "Gastronomía de Autor",
-      desc: "El Chef Alessandro M. reinterpreta los sabores locales con técnicas de vanguardia en nuestro restaurante 'Raíces'.",
+      desc: "El Chef. reinterpreta los sabores locales con técnicas de vanguardia en nuestro restaurante 'CatleyaRestaurant'.",
       link: "Ver Menú",
     },
     {
       icon: Sparkles,
-      title: "Wellness & Spa",
-      desc: "Tratamientos holísticos inspirados en rituales ancestrales, utilizando aceites orgánicos cultivados en nuestro jardín.",
+      title: "Wellness Holístico",
+      desc: "Una experiencia sensorial inmersiva dedicada al reposo del cuerpo y el alma. Un espacio donde el tiempo se detiene mediante tratamientos de relajación profunda, diseñados para liberar toda carga, restaurar el equilibrio interior y reconectar con el ritmo natural de la vida.",
       link: "Reservar Tratamiento",
     },
     {

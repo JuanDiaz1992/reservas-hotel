@@ -45,10 +45,20 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
 
   const [paymentMethod, setPaymentMethod] = useState("online");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const additionalGuestsCount = Math.max(0, guestCount - 1);
   const { formatPrice } = useCurrency();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [manualExtraGuests, setManualExtraGuests] = useState(0);
+
+  const totalAdditionalGuests = Math.max(0, guestCount - 1 + manualExtraGuests);
+  const maxCapacity = cart
+    .filter((item) => item.type === "room")
+    .reduce((acc, room) => {
+      const cap = Number(room.capacity) || 2;
+      return acc + cap * (room.quantity || 1);
+    }, 0);
+  const additionalGuestsCount = totalAdditionalGuests;
+  const potentialExtraGuests = Math.max(0, maxCapacity - guestCount);
 
   const [mainContact, setMainContact] = useState({
     firstName: "",
@@ -74,7 +84,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
     );
   }, [additionalGuestsCount]);
 
-  // CORRECCIÓN: Cálculo unificado del Total
   const calculateGrandTotal = () => {
     return cart.reduce((acc, item) => {
       const price = Number(item.price) || 0;
@@ -82,10 +91,8 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
       const nights = Number(totalNights) || 1;
 
       if (item.type === "room") {
-        // Habitación: (Precio unitario con extras) * Cantidad * Noches
         return acc + price * qty * nights;
       } else {
-        // Addon: Precio * Cantidad (Suele ser pago único)
         return acc + price * qty;
       }
     }, 0);
@@ -105,6 +112,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
 
     try {
       setIsSubmitting(true);
+      let extraToDistribute = manualExtraGuests;
       const formatBackendDate = (d) =>
         d
           ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`
@@ -123,12 +131,25 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         },
         rooms: cart
           .filter((i) => i.type === "room")
-          .map((r) => ({
-            room_id: r.originalId || r.id,
-            adults: r.adults || 1,
-            children: r.children || 0,
-            quantity: r.quantity || 1,
-          })),
+          .flatMap((r) =>
+            Array.from({ length: r.quantity || 1 }, () => {
+              let adultsInThisRoom = r.adults || 1;
+              const roomMax = Number(r.capacity) || 2;
+
+              if (extraToDistribute > 0 && adultsInThisRoom < roomMax) {
+                const availableSpace = roomMax - adultsInThisRoom;
+                const toAdd = Math.min(extraToDistribute, availableSpace);
+                adultsInThisRoom += toAdd;
+                extraToDistribute -= toAdd;
+              }
+
+              return {
+                room_id: r.originalId || r.id,
+                adults: adultsInThisRoom,
+                children: r.children || 0,
+              };
+            })
+          ),
         addons: cart
           .filter((i) => i.type === "addon")
           .map((a) => ({
@@ -144,6 +165,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
             country: g.country || "",
           })),
       };
+      console.log(body);
 
       const response = await post({ endpoint: "/reservations", body });
 
@@ -228,7 +250,6 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         </CardBody>
       </Card>
 
-      {/* Formulario de Información de Huéspedes */}
       <GuestInformation
         ref={guestInfoRef}
         mainContact={mainContact}
@@ -244,7 +265,37 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
         currentGuestIndex={currentGuestIndex}
         setCurrentGuestIndex={setCurrentGuestIndex}
       />
+      {potentialExtraGuests > manualExtraGuests && (
+        <div className="px-2 mt-4 flex flex-col gap-2">
+          <p className="text-xs text-gray-500 font-medium">
+            Tu selección de habitaciones permite hasta {maxCapacity} personas.
+          </p>
+          <Button
+            size="sm"
+            variant="flat"
+            className="w-fit"
+            color="primary"
+            onPress={() => setManualExtraGuests((prev) => prev + 1)}
+            isDisabled={guestCount + manualExtraGuests >= maxCapacity}
+            startContent={<UsersIcon size={16} />}
+          >
+            Añadir invitado adicional ({manualExtraGuests + guestCount}/
+            {maxCapacity})
+          </Button>
+        </div>
+      )}
 
+      {manualExtraGuests > 0 && (
+        <Button
+          size="xs"
+          variant="light"
+          color="danger"
+          className="mt-1"
+          onPress={() => setManualExtraGuests(0)}
+        >
+          Quitar invitados extra ({manualExtraGuests})
+        </Button>
+      )}
       {/* Sección de Pago */}
       <Card className="shadow-sm border border-gray-100">
         <CardBody className="p-6">

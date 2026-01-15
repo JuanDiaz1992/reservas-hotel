@@ -94,7 +94,7 @@ export default function ImageGallery({ images = [], className = "" }) {
                   e.stopPropagation();
                   handlePrev();
                 }}
-                className="absolute left-4 z-40 p-3 rounded-full bg-black/50 hover:bg-white/20 text-white transition-all hidden md:block"
+                className="absolute left-4 z-40 p-3 rounded-full bg-black/50 hover:bg-white/20 text-white transition-all block"
               >
                 <ChevronLeft className="w-8 h-8" />
               </button>
@@ -116,7 +116,7 @@ export default function ImageGallery({ images = [], className = "" }) {
                   e.stopPropagation();
                   handleNext();
                 }}
-                className="absolute right-4 z-40 p-3 rounded-full bg-black/50 hover:bg-white/20 text-white transition-all hidden md:block"
+                className="absolute right-4 z-40 p-3 rounded-full bg-black/50 hover:bg-white/20 text-white transition-all block"
               >
                 <ChevronRight className="w-8 h-8" />
               </button>

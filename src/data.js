@@ -118,8 +118,8 @@ export const BANK_ACCOUNTS = [
   },
     {
     bank: "Bancolombia",
-    number: "0550 1266 0003 3693",
-    type: "Cuenta de Ahorros Damas",
+    number: "7627 1845 983",
+    type: "Cuenta de Ahorros",
     holder: "JUALCAVIAL S.A.S",
   },
 ];

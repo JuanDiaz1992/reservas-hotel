@@ -168,10 +168,10 @@ export default function AboutUs() {
                 desc: "Arquitectura que rinde homenaje al paisaje cafetero, integrando líneas orgánicas y espacios abiertos diseñados para la reconexión y el descanso absoluto."
               },
               { 
-                title: "Hospitalidad & Servicio", 
-                img: "/images/AboutUs/AboutUs-5.webp", 
+                title: "Eventos & Experiencias", 
+                img: "/images/AboutUs/AboutUs-7.webp", 
                 offset: true,
-                desc: "Atención personalizada que anticipa necesidades, creando momentos memorables con calidez y discreción en cada interacción."
+                desc: "Creamos atmósferas únicas donde la elegancia y la funcionalidad convergen, nuestra dedicación asegura que cada evento sea una experiencia a medida, marcada por la distinción y una ejecución excepcional."
               },
               { 
                 title: "Gastronomía de Autor", 

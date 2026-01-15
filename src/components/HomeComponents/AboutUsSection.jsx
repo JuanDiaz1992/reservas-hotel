@@ -26,7 +26,7 @@ export default function AboutUsSection() {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 1, ease: "easeOut"},
+      transition: { duration: 1, ease: "easeOut" },
     },
   };
 
@@ -65,16 +65,21 @@ export default function AboutUsSection() {
                 Lujo Sostenible
               </p>
               <p className="text-gray-400 font-light leading-relaxed text-sm md:text-base">
-                Un santuario privado inmerso en jardines ancestrales, donde cada 
-                detalle está diseñado para ofrecer una escapada de lujo íntimo. 
-                Reconecta contigo mismo en espacios que fusionan arquitectura y naturaleza.
+                Un refugio de alta gama inmerso en un entorno botánico
+                preservado. Nuestra propuesta de valor se centra en el lujo
+                discreto y la atención al detalle. Una atmósfera diseñada para
+                propiciar el bienestar a través de la integración fluida entre
+                el confort interior y la majestuosidad del paisaje.
               </p>
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="pt-4"
               >
-                <Button onPress={scrollToTop} className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 text-sm font-bold transition-all uppercase tracking-widest rounded-none border-none">
+                <Button
+                  onPress={scrollToTop}
+                  className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 text-sm font-bold transition-all uppercase tracking-widest rounded-none border-none"
+                >
                   Reservar Ahora
                 </Button>
               </motion.div>
@@ -112,9 +117,7 @@ export default function AboutUsSection() {
                 <span className="italic text-gray-400">Catleya Royal Club</span>
               </motion.h2>
 
-              <div
-                className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group"
-              >
+              <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group">
                 <img
                   src="/images/about-catleya-4.webp"
                   alt="Arquitectura Catleya"

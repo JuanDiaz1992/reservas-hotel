@@ -16,15 +16,8 @@ export default function RoomDetail({ room }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 h-full min-h-[500px] max-h-[80vh] overflow-y-auto overflow-x-hidden scrollbar-hide pb-2 ">
       
-      {/* Galería de Imágenes */}
       <div className="relative h-64 md:h-full overflow-y-auto ">
         <ImageGallery images={room.images} />
-        {/* <div className="absolute top-4 left-4 pointer-events-none z-10">
-           <HeroChip className="bg-white/90 backdrop-blur text-[#476d15] font-medium shadow-sm border-0">
-              <Star className="w-3 h-3 inline mr-1 fill-[#D4AF37] text-[#D4AF37]" />
-              Premium Suite
-           </HeroChip>
-        </div> */}
       </div>
 
       {/* Información de la Habitación */}

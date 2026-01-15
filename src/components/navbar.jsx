@@ -66,7 +66,7 @@ export default function Component() {
             <img
               src="/images/logo.svg"
               alt="Logo"
-              className="max-w-[110px] transition-all"
+              className="max-w-[160px] transition-all"
             />
           </Link>
         </NavbarBrand>
