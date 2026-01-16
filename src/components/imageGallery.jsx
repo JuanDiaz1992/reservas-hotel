@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ImageIcon, ZoomIn } from "lucide-react";
 import Lightbox from "yet-another-react-lightbox";
-// 1. Importar el plugin y su estilo
+
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
