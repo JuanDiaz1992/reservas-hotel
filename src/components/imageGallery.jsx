@@ -22,7 +22,6 @@ export default function ImageGallery({ images = [], className = "" }) {
   return (
     <>
       <div className={`flex flex-col gap-2 ${className}`}>
-        {/* Vista Principal */}
         <div
           className={`relative w-full h-48 md:h-80 overflow-hidden rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none ${
             hasImages ? "cursor-pointer group" : "cursor-default"
@@ -39,7 +38,6 @@ export default function ImageGallery({ images = [], className = "" }) {
               <ZoomIn className="text-white w-8 h-8 drop-shadow-lg" />
             </div>
           )}
-          {/* Indicador de más fotos en móvil */}
           {hasImages && images.length > 1 && (
             <div className="absolute bottom-2 right-2 md:hidden bg-black/60 px-2 py-1 rounded text-white text-xs font-medium">
               +{images.length - 1}
@@ -47,7 +45,6 @@ export default function ImageGallery({ images = [], className = "" }) {
           )}
         </div>
 
-        {/* Miniaturas */}
         {hasImages && images.length > 1 && (
           <div className="grid grid-cols-2 gap-2">
             {images.slice(1).map((img, idx) => (
@@ -73,12 +70,10 @@ export default function ImageGallery({ images = [], className = "" }) {
           close={() => setIsOpen(false)}
           slides={lightboxSlides}
           index={currentIndex}
-          // 2. Activar el plugin de Zoom
           plugins={[Zoom]}
-          // 3. Configuración opcional del zoom
           zoom={{
-            maxZoomPixelRatio: 3, // Nivel máximo de zoom
-            scrollToZoom: true,   // Zoom con la rueda del ratón
+            maxZoomPixelRatio: 3,
+            scrollToZoom: true,
           }}
           on={{
             view: ({ index }) => setCurrentIndex(index),

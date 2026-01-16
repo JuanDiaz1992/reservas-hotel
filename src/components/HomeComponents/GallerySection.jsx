@@ -2,10 +2,16 @@ import { Button } from "@heroui/react";
 import { Instagram, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import { Image } from "@unpic/react";
 
-export default function GallerySection({ visiblePhotos, showAllPhotos, setShowAllPhotos, getGridClass }) {
+export default function GallerySection({
+  visiblePhotos,
+  showAllPhotos,
+  setShowAllPhotos,
+  getGridClass,
+}) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
@@ -21,10 +27,16 @@ export default function GallerySection({ visiblePhotos, showAllPhotos, setShowAl
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Instagram className="w-5 h-5 text-[#476d15]" />
-              <span className="text-sm font-bold tracking-widest text-[#476d15] uppercase">Social</span>
+              <span className="text-sm font-bold tracking-widest text-[#476d15] uppercase">
+                Social
+              </span>
             </div>
-            <h2 className="text-3xl font-serif text-[#2c4549]">@Catleyaroyalclub</h2>
-            <p className="text-gray-500 mt-2">Síguenos para tu dosis diaria de calma.</p>
+            <h2 className="text-3xl font-serif text-[#2c4549]">
+              @Catleyaroyalclub
+            </h2>
+            <p className="text-gray-500 mt-2">
+              Síguenos para tu dosis diaria de calma.
+            </p>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[200px] md:auto-rows-[260px] gap-4 transition-all duration-500">
@@ -56,10 +68,19 @@ export default function GallerySection({ visiblePhotos, showAllPhotos, setShowAl
             variant="flat"
             className="bg-[#476d15]/10 text-[#476d15] font-medium px-10 py-6 rounded-full hover:bg-[#476d15] hover:text-white transition-all"
             onClick={() => {
-              if (showAllPhotos) document.getElementById("gallery-section")?.scrollIntoView({ behavior: "smooth" });
+              if (showAllPhotos)
+                document
+                  .getElementById("gallery-section")
+                  ?.scrollIntoView({ behavior: "smooth" });
               setShowAllPhotos(!showAllPhotos);
             }}
-            endContent={showAllPhotos ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            endContent={
+              showAllPhotos ? (
+                <ChevronUp size={18} />
+              ) : (
+                <ChevronDown size={18} />
+              )
+            }
           >
             {showAllPhotos ? "Mostrar menos" : "Ver galería completa"}
           </Button>
@@ -71,6 +92,11 @@ export default function GallerySection({ visiblePhotos, showAllPhotos, setShowAl
         close={() => setOpen(false)}
         slides={slides}
         index={index}
+        plugins={[Zoom]}
+        zoom={{
+          maxZoomPixelRatio: 3,
+          scrollToZoom: true,
+        }}
         on={{ view: ({ index: currentIndex }) => setIndex(currentIndex) }}
       />
     </section>
