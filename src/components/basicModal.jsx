@@ -20,7 +20,7 @@ export default function BasicModal({ isOpen, onOpenChange, Content, size = "md",
           base: "border-gray-200 bg-white text-gray-900",
           header: "border-b-[1px] border-gray-200",
           footer: "border-t-[1px] border-gray-200",
-          closeButton: "hover:bg-gray-100 active:bg-gray-200 cursor-pointer w-8 h-8 md:w-6 md:h-6",
+          closeButton: "hover:bg-red-100 active:bg-red-200 text-red-500 cursor-pointer w-8 h-8 md:w-6 md:h-6",
         }}
         >
       <ModalContent>
