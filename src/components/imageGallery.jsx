@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 import { ImageIcon, ZoomIn } from "lucide-react";
 import Lightbox from "yet-another-react-lightbox";
+// 1. Importar el plugin y su estilo
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
 export default function ImageGallery({ images = [], className = "" }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 1. Si no hay imágenes, definimos el placeholder
   const hasImages = images && images.length > 0;
   const displayImages = hasImages ? images : ["/images/no_picture.webp"];
-  
-  // Convertir imágenes a formato compatible con Lightbox
   const lightboxSlides = displayImages.map((img) => ({ src: img }));
 
   const handleOpen = (index) => {
-    if (!hasImages) return; // No abrir modal si no hay fotos reales
+    if (!hasImages) return;
     setCurrentIndex(index);
     setIsOpen(true);
   };
@@ -35,19 +34,14 @@ export default function ImageGallery({ images = [], className = "" }) {
             alt="Vista principal"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-
-          {hasImages ? (
+          {hasImages && (
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
               <ZoomIn className="text-white w-8 h-8 drop-shadow-lg" />
-            </div>
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/5">
-              <ImageIcon className="text-gray-400 w-10 h-10 opacity-50" />
             </div>
           )}
         </div>
 
-        {/* Miniaturas (Solo si hay más de 1 imagen real) */}
+        {/* Miniaturas */}
         {hasImages && images.length > 1 && (
           <div className="grid grid-cols-2 gap-2">
             {images.slice(1).map((img, idx) => (
@@ -61,20 +55,25 @@ export default function ImageGallery({ images = [], className = "" }) {
                   alt={`Galería ${idx + 1}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Lightbox - Solo se activa si hasImages es true */}
       {hasImages && (
         <Lightbox
           open={isOpen}
           close={() => setIsOpen(false)}
           slides={lightboxSlides}
           index={currentIndex}
+          // 2. Activar el plugin de Zoom
+          plugins={[Zoom]}
+          // 3. Configuración opcional del zoom
+          zoom={{
+            maxZoomPixelRatio: 3, // Nivel máximo de zoom
+            scrollToZoom: true,   // Zoom con la rueda del ratón
+          }}
           on={{
             view: ({ index }) => setCurrentIndex(index),
           }}
