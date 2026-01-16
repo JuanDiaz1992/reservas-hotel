@@ -159,8 +159,6 @@ export const TERMS_AND_CONDITIONS = `
 
     <h4 class="font-bold text-[#2c4549] mt-4">Restricciones Generales</h4>
     <ul class="list-disc ml-5 space-y-1 text-gray-700">
-      <li>No se aceptan <strong>mascotas</strong>.</li>
-      <li>No se aceptan <strong>niños menores de 14 años</strong>.</li>
       <li>Parqueadero privado gratuito para huéspedes.</li>
       <li>Recibimos todas las tarjetas de crédito.</li>
     </ul>

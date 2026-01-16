@@ -128,6 +128,7 @@ export default function RoomListing({ results, guests = 1 }) {
           isOpen={isOpen}
           onOpenChange={onClose}
           size="4xl"
+          isDismissable={false}
           Content={() => (
             <RoomDetail
               room={selectedRoom}

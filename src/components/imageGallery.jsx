@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { X, ChevronLeft, ChevronRight, ZoomIn, ImageIcon } from "lucide-react"; // Añadí ImageIcon como fallback visual
-import { Modal, ModalContent, ModalBody, Button } from "@heroui/react";
+import { ImageIcon, ZoomIn } from "lucide-react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 export default function ImageGallery({ images = [], className = "" }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,21 +10,14 @@ export default function ImageGallery({ images = [], className = "" }) {
   // 1. Si no hay imágenes, definimos el placeholder
   const hasImages = images && images.length > 0;
   const displayImages = hasImages ? images : ["/images/no_picture.webp"];
+  
+  // Convertir imágenes a formato compatible con Lightbox
+  const lightboxSlides = displayImages.map((img) => ({ src: img }));
 
   const handleOpen = (index) => {
     if (!hasImages) return; // No abrir modal si no hay fotos reales
     setCurrentIndex(index);
     setIsOpen(true);
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % displayImages.length);
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex(
-      (prev) => (prev - 1 + displayImages.length) % displayImages.length
-    );
   };
 
   return (
@@ -74,56 +68,18 @@ export default function ImageGallery({ images = [], className = "" }) {
         )}
       </div>
 
-      {/* Modal - Solo se activa si hasImages es true */}
-      <Modal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        size="full"
-        classNames={{
-          base: "bg-black/90 text-white",
-          closeButton:
-            "hover:bg-white/20 active:bg-white/30 text-white z-50 top-4 right-4 p-2",
-        }}
-        backdrop="blur"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <ModalBody className="p-0 overflow-hidden flex items-center justify-center h-full relative">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePrev();
-                }}
-                className="absolute left-4 z-40 p-3 rounded-full bg-black/50 hover:bg-white/20 text-white transition-all block"
-              >
-                <ChevronLeft className="w-8 h-8" />
-              </button>
-
-              <div className="relative w-full h-full flex items-center justify-center p-4 md:p-12">
-                <img
-                  src={displayImages[currentIndex]}
-                  alt="Galería ampliada"
-                  className="max-w-full max-h-full object-contain shadow-2xl rounded-sm animate-appearance-in"
-                />
-
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/60 px-4 py-1 rounded-full text-sm font-medium tracking-widest backdrop-blur-md">
-                  {currentIndex + 1} / {displayImages.length}
-                </div>
-              </div>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleNext();
-                }}
-                className="absolute right-4 z-40 p-3 rounded-full bg-black/50 hover:bg-white/20 text-white transition-all block"
-              >
-                <ChevronRight className="w-8 h-8" />
-              </button>
-            </ModalBody>
-          )}
-        </ModalContent>
-      </Modal>
+      {/* Lightbox - Solo se activa si hasImages es true */}
+      {hasImages && (
+        <Lightbox
+          open={isOpen}
+          close={() => setIsOpen(false)}
+          slides={lightboxSlides}
+          index={currentIndex}
+          on={{
+            view: ({ index }) => setCurrentIndex(index),
+          }}
+        />
+      )}
     </>
   );
 }
