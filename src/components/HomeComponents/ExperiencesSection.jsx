@@ -32,7 +32,8 @@ export default function ExperiencesSection() {
             Experiencias Elevadas
           </h2>
           <p className="text-gray-600 font-light animate-fade-up animate-duration-700 animate-delay-100">
-            Más allá de una estancia, una colección de momentos diseñados para despertar tus sentidos.
+            Más allá de una estancia, una colección de momentos diseñados para
+            despertar tus sentidos.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -59,7 +60,7 @@ export default function ExperiencesSection() {
                   {exp.desc}
                 </p>
 
-{/*                 <a
+                {/*                 <a
                   href={exp.linkUrl || "#"}
                   className="inline-flex items-center gap-2 text-sm font-medium text-[#476d15] hover:gap-3 transition-all duration-300"
                 >
@@ -72,14 +73,14 @@ export default function ExperiencesSection() {
         </div>
 
         <div className="mt-16 text-center">
-          <Link to="/sobre-nosotros">
-            <Button
-              className="bg-[#476d15] text-white font-medium px-8 py-4 rounded-full hover:bg-[#3a5a10] transition-all duration-300 shadow-lg hover:shadow-xl"
-              endContent={<ArrowRight className="w-4 h-4" />}
-            >
-              Conoce Más Sobre Nosotros
-            </Button>
-          </Link>
+          <Button
+            as={Link}
+            to="/sobre-nosotros"
+            className="bg-[#476d15] text-white font-medium px-8 py-4 rounded-full hover:bg-[#3a5a10] transition-all duration-300 shadow-lg hover:shadow-xl"
+            endContent={<ArrowRight className="w-4 h-4" />}
+          >
+            Conoce Más Sobre Nosotros
+          </Button>
         </div>
       </div>
     </section>
