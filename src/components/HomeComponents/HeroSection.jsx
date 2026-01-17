@@ -52,17 +52,17 @@ export default function HeroSection() {
         </video>
 
         {/* IMAGEN DESKTOP CON PARALLAX Y ZOOM */}
-        <motion.div 
-          style={{ y }} 
+        <motion.div
+          style={{ y }}
           className="hidden md:block absolute inset-0 w-full h-[120%] -top-[10%]"
         >
-          <motion.img 
+          <motion.img
             initial={{ scale: 1.2, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            src="/images/banner.webp" 
-            className="w-full h-full object-cover" 
-            alt="Banner Hero" 
+            src="/images/banner.webp"
+            className="w-full h-full object-cover"
+            alt="Banner Hero"
           />
         </motion.div>
 
@@ -73,7 +73,7 @@ export default function HeroSection() {
           className="relative z-10 container mx-auto max-w-[1200px] flex items-center justify-center py-20"
           id="disponibilidad"
         >
-          <motion.div 
+          <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}

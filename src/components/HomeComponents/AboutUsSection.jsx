@@ -1,7 +1,7 @@
 import { Button } from "@heroui/react";
 import { motion } from "framer-motion";
 import { scrollToTop } from "../../utils/scrollToTop";
-
+import { Image } from "@unpic/react";
 export default function AboutUsSection() {
   const leftImageReveal = {
     hidden: { clipPath: "inset(0 80% 0 0)", opacity: 0 },
@@ -42,10 +42,7 @@ export default function AboutUsSection() {
             variants={leftImageReveal}
             className="lg:col-span-4 relative h-[450px] lg:h-auto overflow-hidden"
           >
-            <motion.img
-              initial={{ scale: 1.2 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 1.8, ease: "easeOut" }}
+            <Image
               src="/images/about-catleya-3.webp"
               alt="Experiencia Catleya"
               className="absolute inset-0 w-full h-full object-cover"

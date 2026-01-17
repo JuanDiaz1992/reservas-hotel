@@ -127,7 +127,10 @@ export default function AdminPanel() {
           {menuItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => {
+                setActiveTab(item.id);
+                if (isMobile) setIsSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
                 activeTab === item.id
                   ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20"
@@ -142,7 +145,7 @@ export default function AdminPanel() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/10 space-y-2">
+        <div className="p-4 border-t border-white/10 space-y-2 pb-[55px] md:pb-4">
           <div className="px-3 py-2">
             <UserUI
               name="Administrador"

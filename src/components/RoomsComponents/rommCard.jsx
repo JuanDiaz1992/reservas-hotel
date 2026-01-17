@@ -23,7 +23,7 @@ import {
 import { useCurrency } from "../../context/currencyContext";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-
+import { Image } from "@unpic/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -234,9 +234,10 @@ export default function RoomCard({ room, onOpenModal, onReserve, isInCart }) {
                   onClick={onOpenModal}
                   className="cursor-pointer"
                 >
-                  <img
+                  <Image
                     src={img}
                     alt={`${room.name} - foto ${index + 1}`}
+                    layout="fullWidth"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
@@ -245,9 +246,10 @@ export default function RoomCard({ room, onOpenModal, onReserve, isInCart }) {
             ) : (
               <SwiperSlide>
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <img
+                  <Image
                     src="/images/no_picture.webp"
                     alt="No disponible"
+                    layout="fullWidth"
                     className="w-full h-full object-cover"
                   />
                 </div>
