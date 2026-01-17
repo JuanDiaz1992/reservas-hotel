@@ -4,7 +4,7 @@ import ReservationForm from "../reservationForm";
 import RoomListing from "../RoomsComponents/roomListing";
 import { useState } from "react";
 import scrollToObject from "../../utils/scrollToObject";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function HeroSection() {
   const [hasSearchResults, setHasSearchResults] = useState(false);
@@ -12,10 +12,6 @@ export default function HeroSection() {
   const [results, setResults] = useState([]);
   const [guests, setGuests] = useState(0);
 
-  // Lógica para el Parallax
-  const { scrollY } = useScroll();
-  // Transformamos el scroll: cuando scroll es 0 a 500px, la imagen se desplaza de 0 a 150px
-  const y = useTransform(scrollY, [0, 500], [0, 150]);
 
   const onSearch = async (searchData) => {
     if (searchData.length > 0) {
@@ -51,11 +47,7 @@ export default function HeroSection() {
           <source src="/videos/video2.mp4" type="video/mp4" />
         </video>
 
-        {/* IMAGEN DESKTOP CON PARALLAX Y ZOOM */}
-        <motion.div
-          style={{ y }}
-          className="hidden md:block absolute inset-0 w-full h-[120%] -top-[10%]"
-        >
+        <div className="hidden md:block absolute inset-0 w-full h-full">
           <motion.img
             initial={{ scale: 1.2, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -64,9 +56,8 @@ export default function HeroSection() {
             className="w-full h-full object-cover"
             alt="Banner Hero"
           />
-        </motion.div>
+        </div>
 
-        {/* Overlay para legibilidad */}
         <div className="absolute inset-0 bg-black/40"></div>
 
         <div
