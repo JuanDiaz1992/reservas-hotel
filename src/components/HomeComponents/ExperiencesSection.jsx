@@ -1,6 +1,7 @@
 import { Utensils, Sparkles, Compass, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/react";
+import { scrollToTopInstant } from "../../utils/scrollToTop";
 
 export default function ExperiencesSection() {
   const experiences = [
@@ -76,6 +77,7 @@ export default function ExperiencesSection() {
           <Button
             as={Link}
             to="/sobre-nosotros"
+            onPress={scrollToTopInstant}
             className="bg-[#476d15] text-white font-medium px-8 py-4 rounded-full hover:bg-[#3a5a10] transition-all duration-300 shadow-lg hover:shadow-xl"
             endContent={<ArrowRight className="w-4 h-4" />}
           >
