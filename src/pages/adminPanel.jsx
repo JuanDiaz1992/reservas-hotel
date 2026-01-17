@@ -123,7 +123,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <nav className="flex-grow px-3 mt-4 space-y-2">
+        <nav className="md:flex-grow pb-12 px-3 mt-4 space-y-2">
           {menuItems.map((item) => (
             <button
               key={item.id}
@@ -145,7 +145,7 @@ export default function AdminPanel() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/10 space-y-2 pb-[55px] md:pb-4">
+        <div className="p-4 border-t border-white/10 space-y-2">
           <div className="px-3 py-2">
             <UserUI
               name="Administrador"
