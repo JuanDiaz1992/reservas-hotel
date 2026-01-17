@@ -137,7 +137,7 @@ export default function PhilosophySection() {
           >
             <motion.div
               variants={imageReveal}
-              className="aspect-[4/5] w-full overflow-hidden shadow-2xl relative"
+              className="aspect-[4/5] w-full overflow-hidden h-[400px] md:h-[600px] shadow-2xl relative"
             >
               <Swiper
                 modules={[Autoplay, EffectFade, Pagination, Navigation]}
@@ -152,12 +152,14 @@ export default function PhilosophySection() {
                 }}
                 className="w-full h-full philosophy-swiper"
               >
-                {images.map((img) => (
+                {images.map((img, index) => (
                   <SwiperSlide key={img.id}>
                     <Image
                       src={img.src}
                       alt={img.alt}
                       layout="fullWidth"
+                      priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
                       className="w-full h-full object-cover"
                     />
                   </SwiperSlide>

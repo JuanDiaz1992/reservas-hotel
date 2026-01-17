@@ -52,9 +52,12 @@ export default function GallerySection({
               <Image
                 src={img.src}
                 alt={img.alt}
+                width={400}
+                height={400}
                 layout="fullWidth"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 loading="lazy"
+                priority={i < 4}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
               <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
