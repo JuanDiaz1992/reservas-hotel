@@ -29,17 +29,17 @@ export default function Home() {
   return (
     <main>
       <Helmet>
-        <title>Catleya Royal Club | Lujo y Naturaleza en [Tu Ubicación]</title>
+        <title>Catleya Royal Club | Lujo y Naturaleza en Pereira</title>
         <meta
           name="description"
           content="Descubre el santuario privado de Catleya Royal Club. Experiencias de lujo, hospedaje exclusivo y reconexión natural. Reserva tu escapada hoy."
         />
-        <link rel="canonical" href="https://tudominio.com/" />
+        <link rel="canonical" href="https://catleyaroyalclub.com" />
         <meta
           property="og:title"
           content="Catleya Royal Club - Experiencia de Lujo"
         />
-        <meta property="og:image" content="/images/about-catleya-4.webp" />
+        <meta property="og:image" content="https://catleyaroyalclub.com/images/about-catleya-4.webp" />
       </Helmet>
       <HeroSection />
       <AboutUsSection />

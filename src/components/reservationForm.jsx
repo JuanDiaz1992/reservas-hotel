@@ -30,9 +30,53 @@ export default function ReservationForm({
   setGuests,
 }) {
   const [dateRange, setDateRange] = useState(null);
+  const [pendingStart, setPendingStart] = useState(null);
   const [guests, setGuestsLocal] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const handleDateChange = (newRange) => {
+    // 1. Si el usuario hace clic afuera o el componente intenta resetear a null
+    if (!newRange) {
+      return;
+    }
+
+    // 2. Si ya teníamos una fecha de inicio guardada (pendingStart) y el componente
+    // nos manda un rango donde start y end son iguales (reinicio de selección)
+    if (pendingStart && newRange.start.compare(newRange.end) === 0) {
+      const selectedDate = newRange.start;
+
+      // Si la nueva fecha es posterior a nuestra fecha guardada, completamos el rango
+      if (selectedDate.compare(pendingStart) >= 0) {
+        const finalRange = {
+          start: pendingStart,
+          end: selectedDate,
+        };
+        setDateRange(finalRange);
+        setPendingStart(null); // Limpiamos la memoria temporal
+        setIsOpen(false); // Cerramos al completar
+        return;
+      }
+    }
+
+    // 3. Comportamiento normal:
+    // Si el rango está incompleto (solo start), lo guardamos en nuestra memoria temporal
+    if (
+      newRange.start &&
+      (!newRange.end || newRange.start.compare(newRange.end) === 0)
+    ) {
+      setPendingStart(newRange.start);
+    } else {
+      setPendingStart(null); // Si el rango viene completo de una vez
+    }
+
+    setDateRange(newRange);
+  };
+  useEffect(() => {
+    if (isOpen && dateRange?.start && !dateRange?.end) {
+      setPendingStart(dateRange.start);
+    }
+  }, [isOpen]);
 
   const {
     isOpen: isWarningOpen,
@@ -177,7 +221,7 @@ export default function ReservationForm({
                       aria-label="Seleccionar rango"
                       minValue={today(getLocalTimeZone())}
                       value={dateRange}
-                      onChange={setDateRange}
+                      onChange={handleDateChange}
                       visibleMonths={isMobile ? 1 : 2}
                       showMonthAndYearPickers
                       className="max-w-full"

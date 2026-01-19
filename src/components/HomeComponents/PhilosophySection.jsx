@@ -158,7 +158,6 @@ export default function PhilosophySection() {
                       src={img.src}
                       alt={img.alt}
                       layout="fullWidth"
-                      priority={index === 0}
                       loading={index === 0 ? "eager" : "lazy"}
                       className="w-full h-full object-cover"
                     />
