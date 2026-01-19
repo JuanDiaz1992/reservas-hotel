@@ -42,7 +42,7 @@ export default function Footer() {
                 isIconOnly
                 variant="light"
                 className="text-white data-[hover=true]:text-[#D4AF37] min-w-8 w-8 h-8"
-                onPress={() => window.open("https://instagram.com", "_blank")}
+                onPress={() => window.open("https://www.instagram.com/catleyaroyalclub/", "_blank")}
               >
                 <Instagram className="w-5 h-5" />
               </Button>
@@ -50,17 +50,9 @@ export default function Footer() {
                 isIconOnly
                 variant="light"
                 className="text-white data-[hover=true]:text-[#D4AF37] min-w-8 w-8 h-8"
-                onPress={() => window.open("https://facebook.com", "_blank")}
+                onPress={() => window.open("https://www.facebook.com/catleyaroyalclub/", "_blank")}
               >
                 <Facebook className="w-5 h-5" />
-              </Button>
-              <Button
-                isIconOnly
-                variant="light"
-                className="text-white data-[hover=true]:text-[#D4AF37] min-w-8 w-8 h-8"
-                onPress={() => window.open("https://twitter.com", "_blank")}
-              >
-                <Twitter className="w-5 h-5" />
               </Button>
             </div>
           </div>
