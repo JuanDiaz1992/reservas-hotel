@@ -36,38 +36,29 @@ export default function ReservationForm({
   const [isMobile, setIsMobile] = useState(false);
 
   const handleDateChange = (newRange) => {
-    // 1. Si el usuario hace clic afuera o el componente intenta resetear a null
-    if (!newRange) {
-      return;
-    }
+    if (!newRange) return;
 
-    // 2. Si ya teníamos una fecha de inicio guardada (pendingStart) y el componente
-    // nos manda un rango donde start y end son iguales (reinicio de selección)
     if (pendingStart && newRange.start.compare(newRange.end) === 0) {
       const selectedDate = newRange.start;
-
-      // Si la nueva fecha es posterior a nuestra fecha guardada, completamos el rango
       if (selectedDate.compare(pendingStart) >= 0) {
         const finalRange = {
           start: pendingStart,
           end: selectedDate,
         };
         setDateRange(finalRange);
-        setPendingStart(null); // Limpiamos la memoria temporal
-        setIsOpen(false); // Cerramos al completar
+        setPendingStart(null);
+        setIsOpen(false);
         return;
       }
     }
 
-    // 3. Comportamiento normal:
-    // Si el rango está incompleto (solo start), lo guardamos en nuestra memoria temporal
     if (
       newRange.start &&
       (!newRange.end || newRange.start.compare(newRange.end) === 0)
     ) {
       setPendingStart(newRange.start);
     } else {
-      setPendingStart(null); // Si el rango viene completo de una vez
+      setPendingStart(null);
     }
 
     setDateRange(newRange);
@@ -91,7 +82,10 @@ export default function ReservationForm({
     setGuestCount,
   } = useCart();
 
-  const isDateSelected = dateRange?.start && dateRange?.end;
+  const isDateSelected =
+    dateRange?.start &&
+    dateRange?.end &&
+    dateRange.start.compare(dateRange.end) !== 0;
 
   const executeSearch = async () => {
     const { start, end } = dateRange || {};
@@ -122,8 +116,15 @@ export default function ReservationForm({
     else executeSearch();
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date, isEndField = false) => {
     if (!date) return "Seleccionar";
+
+    if (isEndField && dateRange?.start && dateRange?.end) {
+      if (dateRange.start.compare(dateRange.end) === 0) {
+        return "Seleccionar";
+      }
+    }
+
     return new Date(date.year, date.month - 1, date.day).toLocaleDateString(
       "es-ES",
       { day: "numeric", month: "short", year: "numeric" }
@@ -199,7 +200,7 @@ export default function ReservationForm({
                         </div>
                       </div>
 
-                      {/* SALIDA - Reducimos el pl-6 a pl-2 en móvil */}
+                      {/* SALIDA - Aquí aplicamos el parámetro isEndField */}
                       <div className="flex-1 flex flex-col items-start justify-center h-full pl-3 lg:pl-6">
                         <span className="text-[9px] lg:text-[10px] uppercase tracking-wider text-gray-500 font-bold">
                           Salida
@@ -207,9 +208,14 @@ export default function ReservationForm({
                         <div className="flex items-center gap-1 lg:gap-2 text-[#2c4549]">
                           <CalendarIcon className="w-3 h-3 lg:w-4 lg:h-4 text-[#476d15]" />
                           <span
-                            className={`text-xs lg:text-sm ${!dateRange?.end ? "text-gray-500 italic" : "font-medium"}`}
+                            className={`text-xs lg:text-sm ${
+                              !dateRange?.end ||
+                              dateRange.start?.compare(dateRange.end) === 0
+                                ? "text-gray-500 italic"
+                                : "font-medium"
+                            }`}
                           >
-                            {formatDate(dateRange?.end)}
+                            {formatDate(dateRange?.end, true)}
                           </span>
                         </div>
                       </div>
