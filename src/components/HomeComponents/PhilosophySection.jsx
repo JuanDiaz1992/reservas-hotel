@@ -13,36 +13,37 @@ import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+// SEO: Textos alternativos ricos en palabras clave geolocalizadas y descriptivas
 const images = [
   {
     id: 1,
     src: "/images/slideHome/catleya-slider-img1.webp",
-    alt: "Arquitectura 1",
+    alt: "Fachada de arquitectura sostenible integrada en la selva del Eje Cafetero",
   },
   {
     id: 2,
     src: "/images/slideHome/catleya-slider-img2.webp",
-    alt: "Arquitectura 2",
+    alt: "Diseño de interiores de lujo con materiales naturales y luz cálida",
   },
   {
     id: 3,
     src: "/images/slideHome/catleya-slider-img3.webp",
-    alt: "Arquitectura 3",
+    alt: "Pasillos y zonas comunes rodeadas de jardines botánicos en Pereira",
   },
   {
     id: 4,
     src: "/images/slideHome/catleya-slider-img4.webp",
-    alt: "Arquitectura 4",
+    alt: "Habitaciones de hotel boutique con vista a la naturaleza",
   },
   {
     id: 5,
     src: "/images/slideHome/catleya-slider-img5.webp",
-    alt: "Arquitectura 5",
+    alt: "Detalles arquitectónicos modernos en Catleya Royal Club",
   },
   {
     id: 6,
     src: "/images/slideHome/catleya-slider-img7.webp",
-    alt: "Arquitectura 6",
+    alt: "Iluminación nocturna y ambiente exclusivo en el hotel",
   },
 ];
 
@@ -120,6 +121,8 @@ export default function PhilosophySection() {
                 as={Link}
                 to="/sobre-nosotros"
                 onPress={scrollToTopInstant}
+                /* SEO: Aria-label para dar contexto del destino del enlace */
+                aria-label="Leer más sobre la historia y filosofía de Catleya Royal Club"
                 className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 rounded-none text-sm font-bold transition-all uppercase tracking-widest"
                 endContent={<ArrowRight className="w-4 h-4 ml-2" />}
               >
@@ -133,7 +136,7 @@ export default function PhilosophySection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
-            className="relative group" // "group" para mostrar flechas al hacer hover
+            className="relative group"
           >
             <motion.div
               variants={imageReveal}
@@ -158,7 +161,9 @@ export default function PhilosophySection() {
                       src={img.src}
                       alt={img.alt}
                       layout="fullWidth"
+                      /* SEO: Prioridad alta solo a la primera, el resto lazy */
                       loading={index === 0 ? "eager" : "lazy"}
+                      fetchpriority={index === 0 ? "high" : "auto"}
                       className="w-full h-full object-cover"
                     />
                   </SwiperSlide>
@@ -166,10 +171,20 @@ export default function PhilosophySection() {
               </Swiper>
 
               {/* Flechas Semitransparentes */}
-              <button className="prev-philosophy absolute left-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer ">
+              <button 
+                className="prev-philosophy absolute left-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
+                /* SEO: Accesibilidad para controles sin texto */
+                aria-label="Ver imagen anterior"
+                type="button"
+              >
                 <ChevronLeft size={24} />
               </button>
-              <button className="next-philosophy absolute right-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer">
+              <button 
+                className="next-philosophy absolute right-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
+                /* SEO: Accesibilidad para controles sin texto */
+                aria-label="Ver siguiente imagen"
+                type="button"
+              >
                 <ChevronRight size={24} />
               </button>
             </motion.div>

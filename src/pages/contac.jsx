@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import {
   Mail,
   Phone,
@@ -68,7 +69,28 @@ export default function Contact() {
   };
 
   return (
-    <div className="bg-[#111111] text-white">
+    <main className="bg-[#111111] text-white">
+      <Helmet>
+        <title>Contacto y Reservas | Catleya Royal Club Pereira</title>
+        <meta
+          name="description"
+          content="Póngase en contacto con Catleya Royal Club. Solicite información sobre reservas, eventos corporativos, bodas y experiencias gastronómicas en el Eje Cafetero."
+        />
+        <link rel="canonical" href="https://catleyaroyalclub.com/contacto" />
+
+        <meta
+          property="og:title"
+          content="Contacte con el Concierge de Catleya Royal Club"
+        />
+        <meta
+          property="og:description"
+          content="Personalice su próxima estancia o evento en nuestro refugio de lujo en Pereira."
+        />
+        <meta
+          property="og:url"
+          content="https://catleyaroyalclub.com/contacto"
+        />
+      </Helmet>
       <section className="relative py-32 px-4 flex items-center justify-center text-center overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[#476d15]/5 blur-[120px] rounded-full pointer-events-none" />
 
@@ -138,7 +160,10 @@ export default function Contact() {
                     <p className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-1">
                       Correo Electrónico
                     </p>
-                    <a href="mailto:reservas@catleyaroyal.club" className="text-xl font-serif">
+                    <a
+                      href="mailto:reservas@catleyaroyal.club"
+                      className="text-xl font-serif"
+                    >
                       reservas@catleyaroyal.club
                     </a>
                   </div>
@@ -329,6 +354,6 @@ export default function Contact() {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

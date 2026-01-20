@@ -114,7 +114,7 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
                 <a
-                  href="https://maps.google.com"
+                  href="https://www.google.com/maps/place/Catleya+Royal+Club/@4.865946,-75.7478597,17z/data=!3m1!4b1!4m6!3m5!1s0x8e387f70e4a9d1f3:0xfdba7186374b0adf!8m2!3d4.865946!4d-75.7452848!16s%2Fg%2F11ym12d_5n?entry=ttu&g_ep=EgoyMDI2MDExMy4wIKXMDSoASAFQAw%3D%3D"
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-white"

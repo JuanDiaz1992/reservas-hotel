@@ -2,6 +2,7 @@ import { Button } from "@heroui/react";
 import { motion } from "framer-motion";
 import { scrollToTop } from "../../utils/scrollToTop";
 import { Image } from "@unpic/react";
+
 export default function AboutUsSection() {
   const leftImageReveal = {
     hidden: { clipPath: "inset(0 80% 0 0)", opacity: 0 },
@@ -34,7 +35,6 @@ export default function AboutUsSection() {
     <section className="bg-[#111111] text-white">
       <div className="container mx-auto max-w-[1400px]">
         <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[650px]">
-          {/* Columna Izquierda - Imagen Principal */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -44,12 +44,12 @@ export default function AboutUsSection() {
           >
             <Image
               src="/images/about-catleya-3.webp"
-              alt="Experiencia Catleya"
+              alt="Jardines botánicos y zonas de relajación en Catleya Royal Club Pereira"
               className="absolute inset-0 w-full h-full object-cover"
+              layout="fullWidth"
             />
           </motion.div>
 
-          {/* Columna Central - Texto y Botón */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -75,6 +75,7 @@ export default function AboutUsSection() {
               >
                 <Button
                   onPress={scrollToTop}
+                  aria-label="Reservar su estadía en Catleya Royal Club"
                   className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 text-sm font-bold transition-all uppercase tracking-widest rounded-none border-none"
                 >
                   Reservar Ahora
@@ -83,7 +84,6 @@ export default function AboutUsSection() {
             </div>
           </motion.div>
 
-          {/* Columna Derecha - Título e Imagen Secundaria */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -117,8 +117,9 @@ export default function AboutUsSection() {
               <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group">
                 <img
                   src="/images/about-catleya-4.webp"
-                  alt="Arquitectura Catleya"
+                  alt="Arquitectura moderna integrada con la naturaleza en Risaralda"
                   className="w-full h-full object-cover rounded-sm shadow-2xl transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
                 />
               </div>
             </div>

@@ -29,17 +29,68 @@ export default function Home() {
   return (
     <main>
       <Helmet>
-        <title>Catleya Royal Club | Lujo y Naturaleza en Pereira</title>
+        <title>
+          Catleya Royal Club | Hotel de Lujo y Eventos en el Eje Cafetero
+        </title>
+
         <meta
           name="description"
-          content="Descubre el santuario privado de Catleya Royal Club. Experiencias de lujo, hospedaje exclusivo y reconexión natural. Reserva tu escapada hoy."
+          content="Descubra Catleya Royal Club en Pereira. Un refugio de lujo sereno en el Eje Cafetero con hospedaje exclusivo, gastronomía de autor y escenarios inolvidables para eventos y bodas."
         />
-        <link rel="canonical" href="https://catleyaroyalclub.com" />
+
+        <link rel="canonical" href="https://catleyaroyalclub.com/" />
+
         <meta
           property="og:title"
-          content="Catleya Royal Club - Experiencia de Lujo"
+          content="Catleya Royal Club | Refugio de Lujo Sereno"
         />
-        <meta property="og:image" content="https://catleyaroyalclub.com/images/about-catleya-4.webp" />
+        <meta
+          property="og:description"
+          content="Hospedaje de alta gama, experiencias gastronómicas y eventos memorables en el corazón del Eje Cafetero."
+        />
+        <meta
+          property="og:image"
+          content="https://catleyaroyalclub.com/images/about-catleya-4.webp"
+        />
+        <meta property="og:url" content="https://catleyaroyalclub.com/" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Hotel",
+            name: "Catleya Royal Club",
+            description:
+              "Refugio de lujo sereno en Pereira, Eje Cafetero. Hospedaje exclusivo y experiencias naturales.",
+            image: "https://catleyaroyalclub.com/images/about-catleya-4.webp",
+            url: "https://catleyaroyalclub.com/",
+            telephone: "+573215957743",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Vereda Pénjamo | Corregimiento de Combia | Finca La Waira",
+              addressLocality: "Pereira",
+              addressRegion: "Risaralda",
+              addressCountry: "CO",
+            },
+            geo: {
+              "@type": "GeoCoordinates",
+              latitude: 4.866159798434354,
+              longitude: -75.7453277191281,
+            },
+            priceRange: "$450,000 - $500,000 COP por noche",
+            amenityFeature: [
+              {
+                "@type": "LocationFeatureSpecification",
+                name: "Naturaleza",
+                value: true,
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                name: "Lujo Sostenible",
+                value: true,
+              },
+            ],
+          })}
+        </script>
       </Helmet>
       <HeroSection />
       <AboutUsSection />

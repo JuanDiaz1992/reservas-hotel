@@ -12,7 +12,6 @@ export default function HeroSection() {
   const [results, setResults] = useState([]);
   const [guests, setGuests] = useState(0);
 
-
   const onSearch = async (searchData) => {
     if (searchData.length > 0) {
       setIsSearching(true);
@@ -42,6 +41,8 @@ export default function HeroSection() {
           muted
           loop
           playsInline
+          /* SEO: Etiqueta invisible para accesibilidad */
+          aria-label="Video ambiental experiencia Catleya"
           className="block md:hidden absolute inset-0 w-full h-full object-cover"
         >
           <source src="/videos/video2.mp4" type="video/mp4" />
@@ -54,7 +55,8 @@ export default function HeroSection() {
             transition={{ duration: 1.5, ease: "easeOut" }}
             src="/images/banner.webp"
             className="w-full h-full object-cover"
-            alt="Banner Hero"
+            alt="Jardines y arquitectura de lujo en Catleya Royal Club Pereira"
+            fetchpriority="high"
           />
         </div>
 
@@ -77,6 +79,7 @@ export default function HeroSection() {
               Un santuario privado entre jardines ancestrales, donde cada
               detalle está diseñado para ofrecer una escapada de lujo íntimo.
             </p>
+            {/* Formulario sin envoltorios extra para mantener el tamaño original */}
             <ReservationForm
               onSearch={onSearch}
               isSearching={isSearching}
