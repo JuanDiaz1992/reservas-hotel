@@ -13,7 +13,6 @@ import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-// SEO: Textos alternativos ricos en palabras clave geolocalizadas y descriptivas
 const images = [
   {
     id: 1,
@@ -77,7 +76,6 @@ export default function PhilosophySection() {
 
       <div className="container mx-auto max-w-[1200px]">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Columna de Texto */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -121,7 +119,6 @@ export default function PhilosophySection() {
                 as={Link}
                 to="/sobre-nosotros"
                 onPress={scrollToTopInstant}
-                /* SEO: Aria-label para dar contexto del destino del enlace */
                 aria-label="Leer más sobre la historia y filosofía de Catleya Royal Club"
                 className="bg-[#476d15] hover:bg-[#5a8a1a] text-white px-8 py-6 rounded-none text-sm font-bold transition-all uppercase tracking-widest"
                 endContent={<ArrowRight className="w-4 h-4 ml-2" />}
@@ -131,7 +128,6 @@ export default function PhilosophySection() {
             </motion.div>
           </motion.div>
 
-          {/* Columna del Slider con Flechas */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -161,7 +157,6 @@ export default function PhilosophySection() {
                       src={img.src}
                       alt={img.alt}
                       layout="fullWidth"
-                      /* SEO: Prioridad alta solo a la primera, el resto lazy */
                       loading={index === 0 ? "eager" : "lazy"}
                       fetchpriority={index === 0 ? "high" : "auto"}
                       className="w-full h-full object-cover"
@@ -170,18 +165,15 @@ export default function PhilosophySection() {
                 ))}
               </Swiper>
 
-              {/* Flechas Semitransparentes */}
-              <button 
+              <button
                 className="prev-philosophy absolute left-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
-                /* SEO: Accesibilidad para controles sin texto */
                 aria-label="Ver imagen anterior"
                 type="button"
               >
                 <ChevronLeft size={24} />
               </button>
-              <button 
+              <button
                 className="next-philosophy absolute right-4 top-1/2 -translate-y-1/2 z-30 cursor-pointer"
-                /* SEO: Accesibilidad para controles sin texto */
                 aria-label="Ver siguiente imagen"
                 type="button"
               >
@@ -189,7 +181,6 @@ export default function PhilosophySection() {
               </button>
             </motion.div>
 
-            {/* Cuadro de texto flotante */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -204,33 +195,6 @@ export default function PhilosophySection() {
           </motion.div>
         </div>
       </div>
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-  .philosophy-swiper .swiper-pagination-bullet {
-    background: white;
-    opacity: 0.5;
-    border-radius: 0;
-    width: 30px;
-    height: 2px;
-  }
-  .philosophy-swiper .swiper-pagination-bullet-active {
-    background: #476d15;
-    opacity: 1;
-  }
-  .philosophy-swiper .swiper-pagination {
-    text-align: right;
-    padding-right: 20px;
-    bottom: 20px !important;
-  }
-  .swiper-button-next,
-  .swiper-button-prev {
-    display: none !important;
-  }
-`,
-        }}
-      />
     </section>
   );
 }

@@ -17,3 +17,24 @@ h3 {
   letter-spacing: 0.02em;
   font-weight: 600;
 }
+
+.philosophy-swiper .swiper-pagination-bullet {
+  background: white;
+  opacity: 0.5;
+  border-radius: 0;
+  width: 30px;
+  height: 2px;
+}
+.philosophy-swiper .swiper-pagination-bullet-active {
+  background: #476d15;
+  opacity: 1;
+}
+.philosophy-swiper .swiper-pagination {
+  text-align: right;
+  padding-right: 20px;
+  bottom: 20px !important;
+}
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}

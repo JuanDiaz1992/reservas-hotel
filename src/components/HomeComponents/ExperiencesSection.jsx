@@ -8,26 +8,27 @@ export default function ExperiencesSection() {
     {
       icon: Utensils,
       title: "Gastronomía de Autor",
-      desc: "El Chef. reinterpreta los sabores locales con técnicas de vanguardia en nuestro restaurante 'CatleyaRestaurant'.",
-      link: "Ver Menú",
+      desc: "El Chef reinterpreta los sabores locales con técnicas de vanguardia en nuestro restaurante 'CatleyaRestaurant'.",
+      image: "/images/services/gastronomy.webp",
     },
     {
       icon: Sparkles,
       title: "Wellness Holístico",
-      desc: "Una experiencia sensorial inmersiva dedicada al reposo del cuerpo y el alma. Un espacio donde el tiempo se detiene mediante tratamientos de relajación profunda, diseñados para liberar toda carga, restaurar el equilibrio interior y reconectar con el ritmo natural de la vida.",
-      link: "Reservar Tratamiento",
+      desc: "Una experiencia sensorial inmersiva dedicada al reposo del cuerpo y el alma. Un espacio donde el tiempo se detiene mediante tratamientos de relajación profunda.",
+      image: "/images/services/wellness.webp",
     },
     {
       icon: Compass,
       title: "Expediciones Privadas",
       desc: "Descubre los secretos mejor guardados de la región con nuestros guías expertos en tours totalmente personalizados.",
-      link: "Explorar Rutas",
+      image: "/images/services/tours.webp",
     },
   ];
 
   return (
     <section className="bg-[#F9F9F7] py-24 px-4">
       <div className="container mx-auto max-w-[1200px]">
+        
         <div className="text-center mb-16 max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-serif text-[#2c4549] mb-4 animate-fade-up animate-duration-700">
             Experiencias Elevadas
@@ -37,6 +38,7 @@ export default function ExperiencesSection() {
             despertar tus sentidos.
           </p>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {experiences.map((exp, i) => (
             <div
@@ -46,12 +48,13 @@ export default function ExperiencesSection() {
             >
               <div
                 className="absolute inset-0 z-0 opacity-0 group-hover:opacity-15 transition-opacity duration-700 bg-cover bg-center"
-                style={{ backgroundImage: `url(${exp.image})` }}
+                style={{ backgroundImage: exp.image ? `url(${exp.image})` : 'none' }}
               />
 
               <div className="relative z-10">
                 <div className="w-12 h-12 bg-gradient-to-br from-[#476d15]/10 to-[#2c4549]/10 rounded-full flex items-center justify-center mb-6 text-[#476d15] group-hover:from-[#476d15] group-hover:to-[#2c4549] group-hover:text-white transition-all duration-500 ease-out-back group-hover:scale-110 group-hover:rotate-3">
-                  <exp.icon className="w-6 h-6" />
+                  {/* Icono decorativo */}
+                  <exp.icon className="w-6 h-6" aria-hidden="true" />
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2c4549] transition-colors duration-300">
@@ -61,13 +64,14 @@ export default function ExperiencesSection() {
                   {exp.desc}
                 </p>
 
-                {/*                 <a
-                  href={exp.linkUrl || "#"}
+                {/* <a
+                  href="#"
                   className="inline-flex items-center gap-2 text-sm font-medium text-[#476d15] hover:gap-3 transition-all duration-300"
                 >
-                  {exp.linkText || "Más información"}
+                  Más información
                   <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
-                </a> */}
+                </a> 
+                */}
               </div>
             </div>
           ))}
@@ -78,6 +82,7 @@ export default function ExperiencesSection() {
             as={Link}
             to="/sobre-nosotros"
             onPress={scrollToTopInstant}
+            aria-label="Conocer más sobre la historia y servicios de Catleya"
             className="bg-[#476d15] text-white font-medium px-8 py-4 rounded-full hover:bg-[#3a5a10] transition-all duration-300 shadow-lg hover:shadow-xl"
             endContent={<ArrowRight className="w-4 h-4" />}
           >
