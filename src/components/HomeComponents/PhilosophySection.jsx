@@ -16,32 +16,32 @@ import "swiper/css/navigation";
 const images = [
   {
     id: 1,
-    src: "/images/slideHome/catleya-slider-img1.webp",
+    src: "/images/slideHome/catleya-slider-img1-1.webp",
     alt: "Fachada de arquitectura sostenible integrada en la selva del Eje Cafetero",
   },
   {
     id: 2,
-    src: "/images/slideHome/catleya-slider-img2.webp",
+    src: "/images/slideHome/catleya-slider-img2-1.webp",
     alt: "Diseño de interiores de lujo con materiales naturales y luz cálida",
   },
   {
     id: 3,
-    src: "/images/slideHome/catleya-slider-img3.webp",
+    src: "/images/slideHome/catleya-slider-img3-1.webp",
     alt: "Pasillos y zonas comunes rodeadas de jardines botánicos en Pereira",
   },
   {
     id: 4,
-    src: "/images/slideHome/catleya-slider-img4.webp",
+    src: "/images/slideHome/catleya-slider-img4-1.webp",
     alt: "Habitaciones de hotel boutique con vista a la naturaleza",
   },
   {
     id: 5,
-    src: "/images/slideHome/catleya-slider-img5.webp",
+    src: "/images/slideHome/catleya-slider-img5-1.webp",
     alt: "Detalles arquitectónicos modernos en Catleya Royal Club",
   },
   {
     id: 6,
-    src: "/images/slideHome/catleya-slider-img7.webp",
+    src: "/images/slideHome/catleya-slider-img7-1.webp",
     alt: "Iluminación nocturna y ambiente exclusivo en el hotel",
   },
 ];

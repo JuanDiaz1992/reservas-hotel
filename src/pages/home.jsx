@@ -50,7 +50,7 @@ export default function Home() {
         />
         <meta
           property="og:image"
-          content="https://catleyaroyalclub.com/images/about-catleya-4.webp"
+          content="https://catleyaroyalclub.com/images/about-catleya-4-1.webp"
         />
         <meta property="og:url" content="https://catleyaroyalclub.com/" />
         <meta property="og:type" content="website" />
@@ -61,7 +61,7 @@ export default function Home() {
             name: "Catleya Royal Club",
             description:
               "Refugio de lujo sereno en Pereira, Eje Cafetero. Hospedaje exclusivo y experiencias naturales.",
-            image: "https://catleyaroyalclub.com/images/about-catleya-4.webp",
+            image: "https://catleyaroyalclub.com/images/about-catleya-4-1.webp",
             url: "https://catleyaroyalclub.com/",
             telephone: "+573215957743",
             address: {

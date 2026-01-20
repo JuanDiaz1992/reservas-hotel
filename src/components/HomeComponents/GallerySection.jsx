@@ -20,7 +20,6 @@ export default function GallerySection({
     alt: img.alt,
   }));
 
-  // Función para manejar la apertura con teclado (Enter o Espacio)
   const handleKeyDown = (e, i) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();

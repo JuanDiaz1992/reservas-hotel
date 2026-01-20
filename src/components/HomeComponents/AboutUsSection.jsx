@@ -43,7 +43,7 @@ export default function AboutUsSection() {
             className="lg:col-span-4 relative h-[450px] lg:h-auto overflow-hidden"
           >
             <Image
-              src="/images/about-catleya-3-1.webp"
+              src="/images/about-catleya-3-2.webp"
               alt="Jardines botánicos y zonas de relajación en Catleya Royal Club Pereira"
               className="absolute inset-0 w-full h-full object-cover"
               layout="fullWidth"
@@ -116,7 +116,7 @@ export default function AboutUsSection() {
 
               <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[300px] overflow-hidden group">
                 <img
-                  src="/images/about-catleya-4.webp"
+                  src="/images/about-catleya-4-1.webp"
                   alt="Arquitectura moderna integrada con la naturaleza en Risaralda"
                   className="w-full h-full object-cover rounded-sm shadow-2xl transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"

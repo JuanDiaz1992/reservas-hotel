@@ -1,86 +1,86 @@
 export const galleryImages = [
   {
-    src: "/images/gallery/Catleyaroyalclub-1.webp",
+    src: "/images/gallery/Catleyaroyalclub-1-1.webp",
     alt: "Atardecer en la piscina infinita",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-2.webp",
+    src: "/images/gallery/Catleyaroyalclub-2-1.webp",
     alt: "Detalle de bienvenida en suite de lujo",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-3.webp",
+    src: "/images/gallery/Catleyaroyalclub-3-1.webp",
     alt: "Arquitectura integrada en la selva",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-4.webp",
+    src: "/images/gallery/Catleyaroyalclub-4-1.webp",
     alt: "Cena romántica a la luz de las velas",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-5.webp",
+    src: "/images/gallery/Catleyaroyalclub-5-1.webp",
     alt: "Cóctel artesanal con frutas locales",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-6.webp",
+    src: "/images/gallery/Catleyaroyalclub-6-1.webp",
     alt: "Vista panorámica desde la terraza principal",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-7.webp",
+    src: "/images/gallery/Catleyaroyalclub-7-1.webp",
     alt: "Sesión de spa con aceites botánicos",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-8.webp",
+    src: "/images/gallery/Catleyaroyalclub-8-1.webp",
     alt: "Desayuno gourmet frente al jardín",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-9.webp",
+    src: "/images/gallery/Catleyaroyalclub-9-1.webp",
     alt: "Interior de habitación con diseño minimalista",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-10.webp",
+    src: "/images/gallery/Catleyaroyalclub-10-1.webp",
     alt: "Camino iluminado entre palmeras",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-11.webp",
+    src: "/images/gallery/Catleyaroyalclub-11-1.webp",
     alt: "Experiencia gastronómica en Raíces",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-12.webp",
+    src: "/images/gallery/Catleyaroyalclub-12-1.webp",
     alt: "Área de relajación y lectura",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-13.webp",
+    src: "/images/gallery/Catleyaroyalclub-13-1.webp",
     alt: "Ducha exterior estilo balinés",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-14.webp",
+    src: "/images/gallery/Catleyaroyalclub-14-1.webp",
     alt: "Plato de autor con productos orgánicos",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-15.webp",
+    src: "/images/gallery/Catleyaroyalclub-15-1.webp",
     alt: "Entrada principal al club",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-16.webp",
+    src: "/images/gallery/Catleyaroyalclub-16-1.webp",
     alt: "Detalle de orquídeas en el lobby",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-17.webp",
+    src: "/images/gallery/Catleyaroyalclub-17-1.webp",
     alt: "Jacuzzi privado con vistas a la montaña",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-18.webp",
+    src: "/images/gallery/Catleyaroyalclub-18-1.webp",
     alt: "Yoga matutino frente a la naturaleza",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-19.webp",
+    src: "/images/gallery/Catleyaroyalclub-19-1.webp",
     alt: "Bodega de vinos seleccionados",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-20.webp",
+    src: "/images/gallery/Catleyaroyalclub-20-1.webp",
     alt: "Noche estrellada sobre el resort",
   },
   {
-    src: "/images/gallery/Catleyaroyalclub-21.webp",
+    src: "/images/gallery/Catleyaroyalclub-21-1.webp",
     alt: "Camino iluminado entre palmeras",
   },
 ];
@@ -90,20 +90,20 @@ export const testimonials = [
     id: 2,
     quote: "Súper recomendado la comida 10 de 10 el lugar es espectacular",
     author: "Tatiana Molina",
-    image: "/images/review1.webp",
-    link: "https://maps.app.goo.gl/6dthXbt8yrgnmfoN9", 
+    image: "/images/review1-1.webp",
+    link: "https://maps.app.goo.gl/6dthXbt8yrgnmfoN9",
   },
   {
     id: 1,
     quote: "La atención del personal es de otro mundo, te hacen sentir como en casa desde que llegas. Las habitaciones tienen una vista increíble.",
     author: "Camila Herrera",
-    image: "/images/about-catleya-2.webp",
+    image: "/images/about-catleya-2-1.webp",
   },
   {
     id: 3,
     quote: "Es la segunda vez que venimos en familia y no deja de sorprendernos. La tranquilidad y el clima de Pereira se disfrutan al máximo aquí.",
     author: "Mariana Restrepo",
-    image: "/images/review-4.webp",
+    image: "/images/review-4-1.webp",
   },
 ];
 

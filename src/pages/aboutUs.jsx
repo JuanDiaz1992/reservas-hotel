@@ -102,7 +102,7 @@ export default function AboutUs() {
               className="aspect-[4/5] relative rounded-lg overflow-hidden shadow-2xl"
             >
               <img
-                src="/images/AboutUs/AboutUs-1.webp"
+                src="/images/AboutUs/AboutUs-1-1.webp"
                 alt="Origen Catleya"
                 className="w-full h-full object-cover"
               />
@@ -123,7 +123,7 @@ export default function AboutUs() {
               className="aspect-square relative rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1"
             >
               <img
-                src="/images/AboutUs/AboutUs-2.webp"
+                src="/images/AboutUs/AboutUs-2-1.webp"
                 alt="Experiencia Misión"
                 className="w-full h-full object-cover"
               />
@@ -219,18 +219,18 @@ export default function AboutUs() {
             {[
               {
                 title: "Diseño & Arquitectura",
-                img: "/images/AboutUs/AboutUs-4.webp",
+                img: "/images/AboutUs/AboutUs-4-1.webp",
                 desc: "Arquitectura que rinde homenaje al paisaje cafetero, integrando líneas orgánicas y espacios abiertos diseñados para la reconexión y el descanso absoluto.",
               },
               {
                 title: "Eventos & Experiencias",
-                img: "/images/AboutUs/AboutUs-7.webp",
+                img: "/images/AboutUs/AboutUs-7-1.webp",
                 offset: true,
                 desc: "Creamos atmósferas únicas donde la elegancia y la funcionalidad convergen, nuestra dedicación asegura que cada evento sea una experiencia a medida, marcada por la distinción y una ejecución excepcional.",
               },
               {
                 title: "Gastronomía de Autor",
-                img: "/images/AboutUs/AboutUs-6.webp",
+                img: "/images/AboutUs/AboutUs-6-1.webp",
                 desc: "Cocina innovadora que honra los sabores locales, transformando ingredientes frescos en experiencias culinarias únicas y sofisticadas.",
               },
             ].map((item, index) => (
