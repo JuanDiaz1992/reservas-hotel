@@ -30,7 +30,27 @@ export default function TestimonialsSection({ testimonials }) {
               itemScope
               itemType="https://schema.org/Review"
             >
-              <meta itemProp="reviewRating" content="5" />
+              <div
+                itemProp="itemReviewed"
+                itemScope
+                itemType="https://schema.org/Hotel"
+                className="hidden"
+              >
+                <meta itemProp="name" content="Catleya Royal Club" />
+                <meta itemProp="image" content="https://catleyaroyalclub.com/images/logo-2.webp" />
+                <meta itemProp="description" content="Hotel de Lujo en el Eje Cafetero" />
+              </div>
+
+              <div
+                itemProp="reviewRating"
+                itemScope
+                itemType="https://schema.org/Rating"
+                className="hidden"
+              >
+                <meta itemProp="ratingValue" content="5" />
+                <meta itemProp="bestRating" content="5" />
+                <meta itemProp="worstRating" content="1" />
+              </div>
 
               <Image
                 src={item.image}
