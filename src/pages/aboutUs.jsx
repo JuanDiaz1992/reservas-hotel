@@ -242,7 +242,7 @@ export default function AboutUs() {
                 viewport={{ once: true }}
                 className={`space-y-4 ${item.offset ? "md:mt-12" : ""}`}
               >
-                <div className="aspect-[3/4] overflow-hidden rounded-sm grayscale hover:grayscale-0 transition-all duration-700">
+                <div className="aspect-[3/4] overflow-hidden rounded-sm md:grayscale md:hover:grayscale-0 transition-all duration-700">
                   <img
                     src={item.img}
                     alt={item.title}
