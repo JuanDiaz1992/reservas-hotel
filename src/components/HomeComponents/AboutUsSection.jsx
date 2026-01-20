@@ -43,7 +43,7 @@ export default function AboutUsSection() {
             className="lg:col-span-4 relative h-[450px] lg:h-auto overflow-hidden"
           >
             <Image
-              src="/images/about-catleya-3.webp"
+              src="/images/about-catleya-3-1.webp"
               alt="Jardines botánicos y zonas de relajación en Catleya Royal Club Pereira"
               className="absolute inset-0 w-full h-full object-cover"
               layout="fullWidth"

@@ -35,13 +35,11 @@ export default function HeroSection() {
   return (
     <>
       <section className="relative pt-[80px] pb-[60px] min-h-[80vh] overflow-hidden">
-        {/* VIDEO MOBILE */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          /* SEO: Etiqueta invisible para accesibilidad */
           aria-label="Video ambiental experiencia Catleya"
           className="block md:hidden absolute inset-0 w-full h-full object-cover"
         >
@@ -53,7 +51,7 @@ export default function HeroSection() {
             initial={{ scale: 1.2, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            src="/images/banner.webp"
+            src="/images/banner-1.webp"
             className="w-full h-full object-cover"
             alt="Jardines y arquitectura de lujo en Catleya Royal Club Pereira"
             fetchpriority="high"
