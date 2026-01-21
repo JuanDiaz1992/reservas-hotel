@@ -125,7 +125,7 @@ export const BANK_ACCOUNTS = [
 export const TRANSFER_INSTRUCTIONS = {
   email: "reservas@catleyaroyalclub.com",
   percentage: 50,
-  whatsapp: "https://wa.me/573215957743",
+  whatsapp: "https://wa.me/573104888396",
 };
 
 export const TERMS_AND_CONDITIONS = `

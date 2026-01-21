@@ -397,7 +397,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
                       </span>{" "}
                       o vía{" "}
                       <a
-                        href={`https://wa.me/573215957743?text=Hola!%20Envío%20mi%20comprobante%20de%20pago.`}
+                        href={`https://wa.me/573104888396?text=Hola!%20Envío%20mi%20comprobante%20de%20pago.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-0.5 font-bold text-[#25D366] not-italic hover:underline underline-offset-2"

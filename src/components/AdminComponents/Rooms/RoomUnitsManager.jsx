@@ -37,7 +37,6 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
   const [view, setView] = useState("list");
   const [selectedLock, setSelectedLock] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [formData, setFormData] = useState({
     room_id: "",
     start_date: "",
@@ -56,7 +55,7 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
       setRoomLocks(response.data.data);
     }
     setIsLoading(false);
-  }, [token])
+  }, [token]);
 
   useEffect(() => {
     getLocks();
@@ -117,7 +116,9 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
       token,
     });
     if (!response.error) {
-      toast.success(selectedLock ? "Bloqueo actualizado" : "Bloqueo generado correctamente");
+      toast.success(
+        selectedLock ? "Bloqueo actualizado" : "Bloqueo generado correctamente"
+      );
       setView("list");
       refreshGlobalData();
     } else {
@@ -161,26 +162,28 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Select
-              label="Habitación"
-              placeholder="Seleccione unidad"
-              selectedKeys={formData.room_id ? [formData.room_id] : []}
-              onSelectionChange={(keys) => {
-                const value = Array.from(keys)[0];
-                setFormData({ ...formData, room_id: value });
-              }}
-              isRequired
-              variant="bordered"
-              labelPlacement="outside"
-              disableAnimation={false}
-              classNames={{ label: "text-gray-700 font-medium" }}
-            >
-              {rooms.map((room) => (
-                <SelectItem key={room.id} textValue={room.name}>
-                  {room.name}
-                </SelectItem>
-              ))}
-            </Select>
+            <div className="flex flex-col gap-2">
+              <label className="text-gray-700 font-medium text-sm">
+                Habitación <span className="text-danger">*</span>
+              </label>
+              <select
+                value={formData.room_id}
+                onChange={(e) =>
+                  setFormData({ ...formData, room_id: e.target.value })
+                }
+                required
+                className="h-10 w-full px-3 py-2 bg-transparent border-2 border-gray-200 rounded-xl text-sm transition-colors focus:border-[#D4AF37] focus:outline-none hover:border-gray-300"
+              >
+                <option value="" disabled>
+                  Seleccione unidad
+                </option>
+                {rooms.map((room) => (
+                  <option key={room.id} value={room.id}>
+                    {room.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <Input
               type="number"
@@ -283,87 +286,89 @@ export default memo(function RoomUnitsManager({ rooms, setUpdateRooms }) {
             td: "text-gray-700 text-sm border-b border-gray-50 py-4",
           }}
         >
-        <TableHeader>
-          <TableColumn>UNIDAD / HABITACIÓN</TableColumn>
-          <TableColumn>FECHAS BLOQUEO</TableColumn>
-          <TableColumn align="center">BLOQUEADAS</TableColumn>
-          <TableColumn>MOTIVO</TableColumn>
-          <TableColumn align="center">ACCIONES</TableColumn>
-        </TableHeader>
-        <TableBody
-          items={roomLocks}
-          isLoading={isLoading}
-          loadingContent={<Spinner color="warning" size="md" />}
-          emptyContent={
-            <p className="text-gray-400 py-10">
-              No existen bloqueos de inventario registrados.
-            </p>
-          }
-        >
-          {(lock) => (
-            <TableRow
-              key={lock.id}
-              className="hover:bg-gray-50/50 transition-colors"
-            >
-              <TableCell className="font-bold text-gray-900">
-                {lock.room?.name}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Calendar size={14} className="text-[#D4AF37]" />
-                  <span className="text-xs font-semibold">
-                    {formatDate(lock.start_date)} - {formatDate(lock.end_date)}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Chip
-                  size="sm"
-                  variant="flat"
-                  color="danger"
-                  className="font-bold px-3"
-                >
-                  {lock.quantity} {lock.quantity === 1 ? "Unidad" : "Unidades"}
-                </Chip>
-              </TableCell>
-              <TableCell>
-                <p
-                  className="text-xs text-gray-500 italic max-w-[180px] truncate"
-                  title={lock.reason}
-                >
-                  {lock.reason}
-                </p>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center justify-center gap-1">
-                  <Tooltip content="Editar" closeDelay={0}>
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      variant="light"
-                      className="text-blue-600"
-                      onPress={() => handleEdit(lock)}
-                    >
-                      <Edit size={16} />
-                    </Button>
-                  </Tooltip>
-                  <Tooltip content="Eliminar" color="danger" closeDelay={0}>
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      variant="light"
-                      className="text-danger"
-                      onPress={() => deleteLock(lock.id)}
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </Tooltip>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          <TableHeader>
+            <TableColumn>UNIDAD / HABITACIÓN</TableColumn>
+            <TableColumn>FECHAS BLOQUEO</TableColumn>
+            <TableColumn align="center">BLOQUEADAS</TableColumn>
+            <TableColumn>MOTIVO</TableColumn>
+            <TableColumn align="center">ACCIONES</TableColumn>
+          </TableHeader>
+          <TableBody
+            items={roomLocks}
+            isLoading={isLoading}
+            loadingContent={<Spinner color="warning" size="md" />}
+            emptyContent={
+              <p className="text-gray-400 py-10">
+                No existen bloqueos de inventario registrados.
+              </p>
+            }
+          >
+            {(lock) => (
+              <TableRow
+                key={lock.id}
+                className="hover:bg-gray-50/50 transition-colors"
+              >
+                <TableCell className="font-bold text-gray-900">
+                  {lock.room?.name}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={14} className="text-[#D4AF37]" />
+                    <span className="text-xs font-semibold">
+                      {formatDate(lock.start_date)} -{" "}
+                      {formatDate(lock.end_date)}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    size="sm"
+                    variant="flat"
+                    color="danger"
+                    className="font-bold px-3"
+                  >
+                    {lock.quantity}{" "}
+                    {lock.quantity === 1 ? "Unidad" : "Unidades"}
+                  </Chip>
+                </TableCell>
+                <TableCell>
+                  <p
+                    className="text-xs text-gray-500 italic max-w-[180px] truncate"
+                    title={lock.reason}
+                  >
+                    {lock.reason}
+                  </p>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center justify-center gap-1">
+                    <Tooltip content="Editar" closeDelay={0}>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="text-blue-600"
+                        onPress={() => handleEdit(lock)}
+                      >
+                        <Edit size={16} />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip content="Eliminar" color="danger" closeDelay={0}>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="text-danger"
+                        onPress={() => deleteLock(lock.id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

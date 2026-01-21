@@ -5,7 +5,7 @@ import {
   Mail,
   Phone,
   MapPin,
-  MessageCircle,
+  Facebook,
   Send,
   Instagram,
 } from "lucide-react";
@@ -145,8 +145,8 @@ export default function Contact() {
                       Reservas & WhatsApp
                     </p>
 
-                    <a href="tel:+573215957743" className="text-xl font-serif">
-                      +57 (321) 595-7743
+                    <a href="tel:+573104888396" className="text-xl font-serif">
+                      +57 (310) 488-8396
                     </a>
                   </div>
                 </div>
@@ -201,10 +201,11 @@ export default function Contact() {
                   <Instagram size={20} />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.facebook.com/catleyaroyalclub/"
+                  target="_blank"
                   className="text-[#2c4549] hover:text-[#476d15] transition-colors"
                 >
-                  <MessageCircle size={20} />
+                  <Facebook size={20} />
                 </a>
               </div>
             </motion.div>

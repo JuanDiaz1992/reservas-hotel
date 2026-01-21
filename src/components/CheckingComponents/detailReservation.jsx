@@ -326,7 +326,7 @@ export default function DetailReservation({ setTitle }) {
                     <div className="mt-2 flex items-center gap-1.5">
                       <span>O por WhatsApp:</span>
                       <a
-                        href={`https://wa.me/573215957743?text=Hola!%20Envío%20el%20comprobante%20de%20mi%20reserva%20por%20valor%20de%20$${Number(resData.deposit_required).toLocaleString()}%20COP`}
+                        href={`https://wa.me/573104888396?text=Hola!%20Envío%20el%20comprobante%20de%20mi%20reserva%20por%20valor%20de%20$${Number(resData.deposit_required).toLocaleString()}%20COP`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1 font-bold text-green-700 hover:text-green-800 transition-colors underline decoration-2 underline-offset-2"
