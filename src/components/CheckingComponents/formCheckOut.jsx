@@ -43,7 +43,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
 
   const guestInfoRef = useRef();
 
-  const [paymentMethod, setPaymentMethod] = useState("transferencia");
+  const [paymentMethod, setPaymentMethod] = useState("bank_transfer");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { formatPrice } = useCurrency();
 
