@@ -310,7 +310,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
             isDisabled={isSubmitting}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* <div
+              <div
                 className={`p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === "online" ? "border-[#476d15] bg-green-50" : "border-gray-200"}`}
                 onClick={() => !isSubmitting && setPaymentMethod("online")}
               >
@@ -324,7 +324,7 @@ export default function FormCheckOut({ setTitle, navigateViews, hasAddons }) {
                     </p>
                   </div>
                 </Radio>
-              </div> */}
+              </div>
 
               <div
                 className={`p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === "transferencia" ? "border-[#476d15] bg-green-50" : "border-gray-200"}`}

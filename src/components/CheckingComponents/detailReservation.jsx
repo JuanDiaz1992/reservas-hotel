@@ -245,7 +245,7 @@ export default function DetailReservation({ setTitle }) {
       </div>
 
       {/* BOTÓN PARA CAMBIAR MÉTODO DE PAGO (TOGGLE) */}
-      {/* {isPaymentRequired && (
+      {isPaymentRequired && (
         <div className="flex justify-center">
           <Button
             size="sm"
@@ -261,7 +261,7 @@ export default function DetailReservation({ setTitle }) {
             {isBankTransfer ? "Pago Online" : "Transferencia Bancaria"}
           </Button>
         </div>
-      )} */}
+      )}
 
       {/* CARD DE TRANSFERENCIA BANCARIA */}
       {isPaymentRequired && isBankTransfer && (
