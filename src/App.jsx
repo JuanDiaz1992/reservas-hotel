@@ -9,6 +9,7 @@ import AdminPanel from "./pages/adminPanel";
 import AboutUs from "./pages/aboutUs";
 import Contact from "./pages/contac";
 import { ProtectedRoute, PublicRoute } from "./context/authGuards";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/checkout/details" element={<Checkout />} />
         <Route path="/checkout/success" element={<Checkout />} />
         <Route path="/checkout/success/:param" element={<Checkout />} />
+        <Route path="*" element={<NotFound />} />
         <Route
           path="/my-reservation/:param?"
           element={<CheckReservationPage />}
