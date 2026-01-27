@@ -172,7 +172,7 @@ export default function ReservationForm({
             onSubmit={handleFormSubmit}
             className="space-y-4 lg:space-y-0 w-full"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-4 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 items-center">
               <div className="lg:col-span-2 w-full">
                 <Popover
                   placement="bottom"
@@ -237,7 +237,7 @@ export default function ReservationForm({
               </div>
 
               {/* INPUT HUÉSPEDES */}
-              <div className="w-full">
+              <div className="w-full hidden">
                 <Input
                   type="number"
                   min="1"
